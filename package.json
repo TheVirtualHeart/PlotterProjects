@@ -8,9 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://recanti@bitbucket.org/recanti/plotterproject.git"
+    "url": "git+https://github.com/TheVirtualHeart/PlotterProjects.git"
   },
   "author": "David Foxworthy, Ben Wilcox",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/recanti/plotterproject#readme",
+  "homepage": "http://thevirtualheart.github.io/PlotterProjects/",
+  "dependencies": {
+    "plotter": "thevirtualheart/Plotter"
+  }
 }

@@ -1,13 +1,4 @@
 /**
- * A generic object for holding a point
- * @param {number} px - the x coordinate of the point
- * @param {number} py - the y coordinate of the point
- */
-function Point(px, py) {
-	this.x = px; 
-	this.y = py;
-};
-/**
  * A generic object for holding a line.
  * @param {Point} pa - the first point on the line (used for calculating a line based on two points)
  * @param {Point} pb - the second point on the line (used for calculating a line based on two points)
@@ -20,6 +11,168 @@ function Line(pa, pb, s, p) {
 	this.point = p; 
 	this.slope = s;
 } ;
+function Plot()
+{
+	var ctx = arguments[1];							// the context in which the 
+	var settings = arguments[0];
+	
+	var offsetVar = new Point(0, 0);
+	var domainVar = new Point(-10, 10);
+	var rangeVar = new Point(-10, 10);
+	var plotSizeVar = new Point(0, 0);
+	var pixelPerUnitVar = new Point(10, 10);
+	var unitPerTickVar = new Point(1, 1);
+	var labelFrequencyVar = new Point(2, 2);
+	var labelSizeVar = new Point(0, 0);
+	var labelBleedVar = new Point(0, 0);
+	var labelPrecisionVar = new Point(-1, -1);
+	
+	var self = {
+		settings:
+		{
+			set offset(value) 
+			{
+				offsetVar.x = value.x;
+				offsetVar.y = value.y;
+			},
+			get offset() { return new Point(offsetVar.x + 75, offsetVar.y + 20); },
+			set domain(value)
+			{
+				domainVar.x = value.x < value.y ? value.x : value.y;
+				domainVar.y = value.x < value.y ? value.y : value.x;
+				plotSizeVar.x = this.pixelPerUnit.x * (this.domain.y - this.domain.x);
+			},
+			get domain() { return new Point(domainVar.x, domainVar.y); },
+			set range(value)
+			{
+				rangeVar.x = value.x < value.y ? value.x : value.y;
+				rangeVar.y = value.x < value.y ? value.y : value.x;
+				plotSizeVar.y = this.pixelPerUnit.y * (this.range.y - this.range.x);
+			},
+			get range() { return new Point(rangeVar.x, rangeVar.y); },
+			set pixelPerUnit(value)
+			{
+				pixelPerUnitVar.x = value.x != 0 ? value.x : pixelPerUnitVar.x;
+				pixelPerUnitVar.y = value.y != 0 ? value.y : pixelPerUnitVar.y;
+				plotSizeVar.x = this.pixelPerUnit.x * (this.domain.y - this.domain.x);
+				plotSizeVar.y = this.pixelPerUnit.y * (this.range.y - this.range.x);
+			},
+			get pixelPerUnit() { return new Point(pixelPerUnitVar.x, pixelPerUnitVar.y); },
+			get plotSize() { return new Point(plotSizeVar.x, plotSizeVar.y); },
+			set unitPerTick(value)
+			{
+				unitPerTickVar.x = value.x != 0 ? value.x : unitPerTickVar.x;
+				unitPerTickVar.y = value.y != 0 ? value.y : unitPerTickVar.y;
+			},
+			get unitPerTick() { return new Point(unitPerTickVar.x, unitPerTickVar.y); },
+			get gridSize()
+			{ return new Point(this.unitPerTick.x * this.pixelPerUnit.x, this.unitPerTick.y * this.pixelPerUnit.y); },
+			set labelFrequency(value)
+			{
+				labelFrequencyVar.x = value.x >= 0 ? value.x : 0;
+				labelFrequencyVar.y = value.y >= 0 ? value.y : 0;
+			},
+			get labelFrequency() { return new Point(labelFrequencyVar.x, labelFrequencyVar.y); },
+			get labelSize() { return new Point(labelSizeVar.x, labelSizeVar.y); },
+			get labelBleed() { return new Point(labelBleedVar.x, labelBleedVar.y); },
+			set labelPrecision(value)
+			{
+				labelPrecisionVar.x = value.x >= 0 ? Math.min(20, Math.max(0, value.x)) : -1;
+				labelPrecisionVar.y = value.y >= 0 ? Math.min(20, Math.max(0, value.y)) : -1;
+			},
+			get labelPrecision() { return new Point(labelPrecisionVar.x, labelPrecisionVar.y); },
+			xAxis: "xAxis",
+			yAxis: "yAxis",
+			zeroBoundAxis: true,
+			drawGrid: true,
+			drawCoords: false,
+			orientation: "a"
+		},
+		mouse:
+		{
+			down: new Point(),
+			move: new Point(),
+			up: new Point(),
+			isDown: false,
+			isUp: true
+		},
+		reCalculateLabels: function() { calculateLabelSize(); calculateLabelBleed(); }
+	}
+	
+	for (var key in settings)
+		if (self.settings.hasOwnProperty(key))
+			self.settings[key] = settings[key];
+	
+	plotSizeVar.x = self.settings.pixelPerUnit.x * (self.settings.domain.y - self.settings.domain.x);
+	plotSizeVar.y = self.settings.pixelPerUnit.y * (self.settings.range.y - self.settings.range.x);
+	
+	calculateLabelSize();
+	calculateLabelBleed();
+	
+	function calculateLabelSize()
+	{
+		var x = 0;
+		var y = 0;
+		var s = self.settings;
+		
+		ctx.font = "24px Helvetica";
+		var labelPadding = ctx.measureText("M.").width;
+		
+		if (s.labelFrequency.y != 0)
+			x += Math.max(ctx.measureText(s.range.x).width, ctx.measureText(s.range.x + Math.floor(s.plotSize.y / s.gridSize.y) * s.unitPerTick.y).width);
+		else
+			x += 6;
+		if (s.yAxis != "")
+			x += labelPadding;
+		
+		if (s.labelFrequency.x != 0)
+			y += labelPadding;
+		else
+			y += 6;
+		if (s.xAxis != "")
+			y += labelPadding;
+		if (s.yAxis != "")
+		{
+			ctx.font = "24px Helvetica";
+			var yBleed = ctx.measureText(s.yAxis).width * 0.5 - s.plotSize.y * 0.5;
+			y = yBleed > y ? yBleed : y;
+		}
+		
+		labelSizeVar.x = x;
+		labelSizeVar.y = y;
+	}
+	
+	function calculateLabelBleed()
+	{
+		var s = self.settings;
+		var x = 0;
+		var y = s.labelFrequency.y != 0 ? -8 : 0;
+		
+		ctx.font = "16px Helvetica";
+		
+		if (s.labelFrequency.x != 0)
+			x =  Math.max(s.offset.x + Math.floor(s.plotSize.x / s.gridSize.x) * s.gridSize.x + ctx.measureText(s.domain.x + Math.floor(s.plotSize.x / s.gridSize.x) * s.unitPerTick.x).width * 0.5 - (s.offset.x + s.plotSize.x), 0);
+		
+		ctx.font = "24px Helvetica";
+		
+		if (x.xAxis != "")
+		{
+			var axisBleed = Math.max(((s.domain.y - s.domain.x) * s.pixelPerUnit.x * 0.5 + ctx.measureText(s.xAxis).width * 0.5) - ((s.domain.y - s.domain.x) * s.pixelPerUnit.x), 0);
+			x = x > axisBleed ? x : axisBleed;
+		}
+		
+		if (s.yAxis != "")
+		{
+			var yLabelBleed = s.plotSize.y * 0.5 - ctx.measureText(s.yAxis).width * 0.5;
+			y = yLabelBleed < y ? yLabelBleed : y;
+		}
+		
+		labelBleedVar.x = x;
+		labelBleedVar.y = y;
+	}
+	
+	return self;
+};
 //this function creates a plotter object
 function createPlotter()
 {
@@ -532,6 +685,88 @@ function createPlotter()
 			
 			point = this.plotToCanvas(point);
 			ctx.fillText(text, point.x, point.y);
+		},
+
+		/**
+		 * Take a PointObject and draw it on the graph. It will plot the 
+		 * variable specified with its associated "x" value. The user can also
+		 * specify specific styles for the value.
+		 * 
+		 * @param {PointObject} pointObject - the object that we will plot.
+		 * @param {string} plotVar - the variable from the point object that
+		 * will act as the "y" value on the graph.
+		 * @param {Object} style - An object that contains various style
+		 * style properties for the plot.
+		 */
+		plot: function(pointObject, plotVar, style) {
+
+			var connected = style.connected ? style.connected : false;
+			var radius = style.radius ? style.radius : 0;
+			var strokeStyle = style.strokeStyle ? style.strokeStyle: "#000000";
+			var fillStyle = style.fillStyle ? style.fillStyle: null;
+
+			ctx.strokeStyle = strokeStyle;
+			ctx.fillStyle = fillStyle;
+
+			var points = pointObject.getPoints();
+
+			ctx.beginPath();
+			for (var i = 0; i < points.length; i++) {
+				var pointVars = points[i];
+				var point = new Point(pointVars["x"], pointVars[plotVar]);
+				var p = this.plotToCanvas(point);
+				ctx.arc(p.x, p.y, radius, 0, 2 * Math.PI);
+				if (connected && i > 0) {
+					ctx.lineTo(p.x, p.y);
+				} else {
+					ctx.moveTo(p.x, p.y);
+				}
+			}
+
+			//ctx.fill();
+			//if (strokeWeight !== 0) {
+				ctx.stroke();
+			//}
+		},
+
+		/**
+		 * Print the plot data of the pointObject as CSV. The function accepts
+		 * a PointObject, retrives its points and parses the specified fields
+		 * as a CSV file. If no fields are specified, the function will print
+		 * all of them.
+		 *
+		 * @param  {PointObject} pointObject - the object from which plotter
+		 * retrieves the points.
+		 * @param  {[Array]} fields - an array of the fields to display
+		 */
+		printPlotData: function(pointObject, fields) {
+			var csv = "";
+			var points = pointObject.getPoints();
+
+			var header = fields ? fields : Object.keys(points[0]);
+
+			var point = {};
+			for (var i = 0; i < points.length; i++) {
+				point = points[i];
+				if (i === 0) {	
+					for(var j = 0; j < header.length; j++) {
+						if (j > 0) {
+							csv += ",";
+						}
+						csv += header[j];
+					}
+					csv += "\n";
+				}
+				for (var j = 0; j < header.length; j++) {
+					if (j > 0) {
+						csv += ",";
+					}
+					csv += point[header[j]];
+				}
+				csv += "\n";
+
+			}
+			window.open("data:text/csv;charset=utf-8," + encodeURIComponent(csv));;
 		}
 	}
 }
@@ -539,165 +774,75 @@ function createPlotter()
 // function createPlotter() {
 // 	return Plotter.apply(this, arguments;
 // };
-function Plot()
-{
-	var ctx = arguments[1];							// the context in which the 
-	var settings = arguments[0];
-	
-	var offsetVar = new Point(0, 0);
-	var domainVar = new Point(-10, 10);
-	var rangeVar = new Point(-10, 10);
-	var plotSizeVar = new Point(0, 0);
-	var pixelPerUnitVar = new Point(10, 10);
-	var unitPerTickVar = new Point(1, 1);
-	var labelFrequencyVar = new Point(2, 2);
-	var labelSizeVar = new Point(0, 0);
-	var labelBleedVar = new Point(0, 0);
-	var labelPrecisionVar = new Point(-1, -1);
-	
-	var self = {
-		settings:
-		{
-			set offset(value) 
-			{
-				offsetVar.x = value.x;
-				offsetVar.y = value.y;
-			},
-			get offset() { return new Point(offsetVar.x + 75, offsetVar.y + 20); },
-			set domain(value)
-			{
-				domainVar.x = value.x < value.y ? value.x : value.y;
-				domainVar.y = value.x < value.y ? value.y : value.x;
-				plotSizeVar.x = this.pixelPerUnit.x * (this.domain.y - this.domain.x);
-			},
-			get domain() { return new Point(domainVar.x, domainVar.y); },
-			set range(value)
-			{
-				rangeVar.x = value.x < value.y ? value.x : value.y;
-				rangeVar.y = value.x < value.y ? value.y : value.x;
-				plotSizeVar.y = this.pixelPerUnit.y * (this.range.y - this.range.x);
-			},
-			get range() { return new Point(rangeVar.x, rangeVar.y); },
-			set pixelPerUnit(value)
-			{
-				pixelPerUnitVar.x = value.x != 0 ? value.x : pixelPerUnitVar.x;
-				pixelPerUnitVar.y = value.y != 0 ? value.y : pixelPerUnitVar.y;
-				plotSizeVar.x = this.pixelPerUnit.x * (this.domain.y - this.domain.x);
-				plotSizeVar.y = this.pixelPerUnit.y * (this.range.y - this.range.x);
-			},
-			get pixelPerUnit() { return new Point(pixelPerUnitVar.x, pixelPerUnitVar.y); },
-			get plotSize() { return new Point(plotSizeVar.x, plotSizeVar.y); },
-			set unitPerTick(value)
-			{
-				unitPerTickVar.x = value.x != 0 ? value.x : unitPerTickVar.x;
-				unitPerTickVar.y = value.y != 0 ? value.y : unitPerTickVar.y;
-			},
-			get unitPerTick() { return new Point(unitPerTickVar.x, unitPerTickVar.y); },
-			get gridSize()
-			{ return new Point(this.unitPerTick.x * this.pixelPerUnit.x, this.unitPerTick.y * this.pixelPerUnit.y); },
-			set labelFrequency(value)
-			{
-				labelFrequencyVar.x = value.x >= 0 ? value.x : 0;
-				labelFrequencyVar.y = value.y >= 0 ? value.y : 0;
-			},
-			get labelFrequency() { return new Point(labelFrequencyVar.x, labelFrequencyVar.y); },
-			get labelSize() { return new Point(labelSizeVar.x, labelSizeVar.y); },
-			get labelBleed() { return new Point(labelBleedVar.x, labelBleedVar.y); },
-			set labelPrecision(value)
-			{
-				labelPrecisionVar.x = value.x >= 0 ? Math.min(20, Math.max(0, value.x)) : -1;
-				labelPrecisionVar.y = value.y >= 0 ? Math.min(20, Math.max(0, value.y)) : -1;
-			},
-			get labelPrecision() { return new Point(labelPrecisionVar.x, labelPrecisionVar.y); },
-			xAxis: "xAxis",
-			yAxis: "yAxis",
-			zeroBoundAxis: true,
-			drawGrid: true,
-			drawCoords: false,
-			orientation: "a"
-		},
-		mouse:
-		{
-			down: new Point(),
-			move: new Point(),
-			up: new Point(),
-			isDown: false,
-			isUp: true
-		},
-		reCalculateLabels: function() { calculateLabelSize(); calculateLabelBleed(); }
+/**
+ * A generic object for holding a point
+ * @param {number} px - the x coordinate of the point
+ * @param {number} py - the y coordinate of the point
+ */
+function Point(px, py) {
+	this.x = px; 
+	this.y = py;
+
+	this.points = function() {
+		return [{"x": this.x, "y":this.y}];
 	}
-	
-	for (var key in settings)
-		if (self.settings.hasOwnProperty(key))
-			self.settings[key] = settings[key];
-	
-	plotSizeVar.x = self.settings.pixelPerUnit.x * (self.settings.domain.y - self.settings.domain.x);
-	plotSizeVar.y = self.settings.pixelPerUnit.y * (self.settings.range.y - self.settings.range.x);
-	
-	calculateLabelSize();
-	calculateLabelBleed();
-	
-	function calculateLabelSize()
-	{
-		var x = 0;
-		var y = 0;
-		var s = self.settings;
-		
-		ctx.font = "24px Helvetica";
-		var labelPadding = ctx.measureText("M.").width;
-		
-		if (s.labelFrequency.y != 0)
-			x += Math.max(ctx.measureText(s.range.x).width, ctx.measureText(s.range.x + Math.floor(s.plotSize.y / s.gridSize.y) * s.unitPerTick.y).width);
-		else
-			x += 6;
-		if (s.yAxis != "")
-			x += labelPadding;
-		
-		if (s.labelFrequency.x != 0)
-			y += labelPadding;
-		else
-			y += 6;
-		if (s.xAxis != "")
-			y += labelPadding;
-		if (s.yAxis != "")
-		{
-			ctx.font = "24px Helvetica";
-			var yBleed = ctx.measureText(s.yAxis).width * 0.5 - s.plotSize.y * 0.5;
-			y = yBleed > y ? yBleed : y;
-		}
-		
-		labelSizeVar.x = x;
-		labelSizeVar.y = y;
+};
+
+/**
+ * An object that emits a collection of points. This object is only a template.
+ * It can and should be expanded upon.
+ * @class
+ */
+function PointObject() {
+
+	/**
+	 * An array that contains all the points in the array. 
+	 * @type {Array}
+	 */
+	this.points = [];
+
+	/**
+	 * This function is used to add a point to the points array.
+	 * @param {Object} p - The point we are adding to the points array.
+	 */
+	this.addPoint = function(p) {
+		this.points.push(p);
+	};
+
+	/**
+	 * Create a point based on the given value.
+	 * @param  {number} p - the independent variable. Used to calculate the
+	 * values at the specified point.
+	 * @return {Object} - an object containing a series of values. These
+	 * values are calculated based on the given input. 
+	 */
+	this.calculate = function(p) {
+		return {"x":p};
 	}
-	
-	function calculateLabelBleed()
-	{
-		var s = self.settings;
-		var x = 0;
-		var y = s.labelFrequency.y != 0 ? -8 : 0;
-		
-		ctx.font = "16px Helvetica";
-		
-		if (s.labelFrequency.x != 0)
-			x =  Math.max(s.offset.x + Math.floor(s.plotSize.x / s.gridSize.x) * s.gridSize.x + ctx.measureText(s.domain.x + Math.floor(s.plotSize.x / s.gridSize.x) * s.unitPerTick.x).width * 0.5 - (s.offset.x + s.plotSize.x), 0);
-		
-		ctx.font = "24px Helvetica";
-		
-		if (x.xAxis != "")
-		{
-			var axisBleed = Math.max(((s.domain.y - s.domain.x) * s.pixelPerUnit.x * 0.5 + ctx.measureText(s.xAxis).width * 0.5) - ((s.domain.y - s.domain.x) * s.pixelPerUnit.x), 0);
-			x = x > axisBleed ? x : axisBleed;
+
+	/**
+	 * This function iterates from the specified start point to the specified 
+	 * end point and does so by a step value if one is provided. At each step,
+	 * it creates a point object according to the calculate() function.
+	 * 
+	 * @param {number} start - The point where the function will start itrating
+	 * @param {number} end - The point where the function will stop iterating.
+	 * @param {number} [step = 1] - The amount by which the function iterates 
+	 * at each step. 
+	 */
+	this.generate = function(start, end, step) {
+
+		for (var i = start; i < end; i += step) {
+			this.points.push(this.calculate(i));
 		}
-		
-		if (s.yAxis != "")
-		{
-			var yLabelBleed = s.plotSize.y * 0.5 - ctx.measureText(s.yAxis).width * 0.5;
-			y = yLabelBleed < y ? yLabelBleed : y;
-		}
-		
-		labelBleedVar.x = x;
-		labelBleedVar.y = y;
+	};
+
+	/**
+	 * Retrieve the points array
+	 * @return {Array} the points array
+	 */
+	this.getPoints = function() {
+		return this.points;
 	}
-	
-	return self;
+
 }

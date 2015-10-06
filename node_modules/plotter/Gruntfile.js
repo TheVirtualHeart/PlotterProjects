@@ -22,11 +22,14 @@ module.exports = function(grunt) {
 				options: {
 					separator: ';\n'
 				},
+				// src: [
+				// 	'src/point.js', 
+				// 	'src/line.js',
+				// 	'src/plotter.js', 
+				// 	'src/plot.js'
+				// ],
 				src: [
-					'src/point.js', 
-					'src/line.js',
-					'src/plotter.js', 
-					'src/plot.js'
+					'src/**/*.js'
 				],
 				dest: 'plotter.dev.js'
 			}
