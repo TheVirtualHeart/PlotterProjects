@@ -11,7 +11,7 @@ layout: default
       {% if page.plot == true %}
         <li>
           <h2>
-            <a class="page-link" href="{{ page.url | prepend: site.baseurl }}">
+            <a class="page-link" href="{{site.baseurl}}{{page.url}}">
             {{ page.title }}
             </a>
           </h2>
