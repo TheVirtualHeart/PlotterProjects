@@ -1,0 +1,742 @@
+---
+title: ird1d
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>lrd1d</title>
+	<script src="plotter.js"></script>
+	<script>
+	var app, plotState = 1; //plotState is a binary boolean array for graph modes
+	var plotColor = ["#FF0000", "#13AB13", "#0099FF", "#FF9900", "#666666", "#FF99FF", "#AF1AEB", "#9BE211", "#2F26E0", "#000000", "#FEEE00", "#1DEFF2"]; //colors for the plots
+	var v = [], m = [], h = [], j = [], d = [], f = [], xs1 = [], xs2 = [], xr = [], b = [], g = [], ca = []; //differential equation data
+	var gna = 16, gnab = 0.004, gcat = 0.05; //variable values for equation data
+	var vmin = -115, dvt = 0.01, nvt = 20000; //used to calculate exponent tables and to access them
+	var udt = 0.01, dx = 0.02;
+	var mss = [], hss = [], jss = [], dss = [], fss = [], bss = [], gss = [], xrss = [], r = [], otauxs1 = [], xs1ss = [], kp = [], fnak = [], expzca = [], expzna = [], expzk = [], expgammas = [], expvfrdy = [], expm = [], exph = [], expj = [], expd = [], expd = [], expf = [], expb = [], expg = [], expxr = [], expxs1 = [], expxs2 = [], expaki1 = [], expeki1 = [], expeki2 = [], expeki3 = [], expeki4 = [], expbki1 = [], expbki2 = [], expbki3 = []; //pre-computed exponent values used as lookup tables
+	var dvdt = [], xlap = [], utsc = [], irelcicr = [], stimsen = [], nai = [], ki = [], caiont = [], dvdtnew = [], tcicr = [], flag = [], it = [], dt = [], nsr = [], jsr = [], dcaiontnew = [], caiontold = [], dcaiont = [], vnew = [], tstim = []; //arrays used for data calculation
+	var nao = 140, frdy = 96485, R = 8314, temp = 310, zca = 2, zna = 1, zk = 1, l = 0.01, a = 0.0011; //constant variables
+	var acap = (2 * Math.PI * Math.pow(a, 2) + 2 * Math.PI * a * l) * 2;
+	var vcell = 1000 * Math.PI * Math.pow(a, 2) * l;
+	var vmyo = vcell * 0.68;
+	var vnsr = vcell * 0.0552;
+	var vjsr = vcell * 0.0048;
+	var frdy_Rtemp = frdy / (R * temp);
+	var ffrdy_Rtemp = frdy * frdy_Rtemp;
+	var Rtemp_frdy = 1 / frdy_Rtemp;
+	var lap = udt * 0.001 / (dx * dx);
+	var cableLength = 801; //length of cable to be simulated and the threshold
+	var batchSize = 128, paused = false; //adjust batchSize to adjust speed
+	var isCable = true;
+	var mouseWasDown = false;
+	var step = 0, drawTime = true, t = 0;
+	var stimStrength;
+	
+	function init()
+	{
+		buildGraph(); //build the graph using the plotter.js object
+		buildForm();
+		buildTables(nvt); //build tables with a nvt value of 36000
+		restart(); //initialize the data
+		setInterval(update, 1000/60); //run at 60fps
+	}
+	
+	window.onload = init;
+	
+	function update()
+	{
+		if (paused)
+			return;
+		
+		if (app.mouse.isUp && mouseWasDown)
+			stimulateU(Math.min(Math.max(0, app.mouse.up.y), 1) * 133.764746184 - 88.654973, Math.round(app.mouse.up.x / dx) - 2, 5);
+		mouseWasDown = app.mouse.isDown;
+		
+		for (var b = 0; b < batchSize; b++)
+		{
+			calcData();
+			step++;
+		}
+		
+		graphData();
+	}
+	
+	function calcData()
+	{
+		var speed1, speed2;
+		if (cableLength > 300)
+		{
+			speed1 = 250;
+			speed2 = 400;
+		}
+		else if (cableLength <= 300 && cableLength > 200)
+		{
+			speed1 = 80;
+			speed2 = 100;
+		}
+		else if (cableLength <= 200 && cableLength > 175)
+		{
+			speed1 = 20;
+			speed2 = 20;
+		}
+		else if (cableLength <= 175)
+		{
+			speed1 = 4;
+			speed2 = 4;
+		}
+		
+		var nxstep, index, ena, ina, ibarca, ibarna, ibark, fca, ilca, ilcana, ilcak, eca, icat, gkr, ekr, ikr, gks, eks, iks, gki, eki, bki, aki, kin, iki, ikp, inaca, inak, ipca, ecan, icab, inab, naiont, kiont, dnai, dki, itr, ileak, iup, on, off, magrel, csqn, djsr, bjsr, cjsr, dcai, trpn, cmdn, catotal, bmyo, cmyo, dmyo, gpig;
+		var kmca = 0.0006, pca = 0.00054, gacai = 1, gacao = 0.341, pna = 0.000000675, ganai = 0.75, ganao = 0.75, pk = 0.000000193, gaki = 0.75, gako = 0.75, cao = 1.8, ko = 4.5, kmup = 0.00092, iupbar = 0.00875, nsrbar = 15, tauon = 0.5, tauoff = 0.5, gmaxrel = 150, csqnbar = 10, kmcsqn = 0.8, tautr = 180, cmdnbar = 0.05, trpnbar = 0.07, kmcmdn = 0.00238, kmtrpn = 0.0005, c1 = 0.00025, c2 = 0.0001, kmpca = 0.0005, ibarpca = 1.15, kmko = 1.5, kmnai = 10, ibarnak = 2.25, prnak = 0.01833, gkp = 0.00552, gcab = 0.003016;
+		for (var i = 0; i < cableLength; i++)
+		{
+			nxstep = speed2;
+			if (v[i] > 10 || j[i] < 0.1)
+				nxstep = speed1;
+			if (Math.abs(dvdt[i]) > 5)
+				nxstep = 0;
+			else if (v[i] > 0 && j[i] > 0.3)
+				nxstep = 0;
+			else if (xlap[i] > 0.15 && j[i] > 0.2)
+				nxstep = 0;
+			else if (j[i] * m[i] > 0.5)
+				nxstep = 0;
+			
+			if (utsc[i] >= nxstep || irelcicr[i] > 0.01 || stimsen[i])
+			{
+				index = getTableIndex(i);
+				ena = Rtemp_frdy * Math.log(nao / nai[i]);
+				ina = gna * Math.pow(m[i], 3) * h[i] * j[i] * (v[i] - ena);
+				
+				if (Math.abs(v[i]) < 0.000001)
+				{
+					ibarca = 0.00108 * (gacai * ca[i] * expzca[index] - gacao * cao);
+					ibarna = 0.000000675 * (ganai * nai[i] * expzna[index] - ganao * nao);
+					ibark = 0.000000193 * (gaki * ki[i] * expzk[index] - gako * ko);
+				}
+				else
+				{
+					ibarca = pca * Math.pow(zca, 2) * (v[i] * ffrdy_Rtemp) * ((gacai * ca[i] * expzca[index] - gacao * cao) / (expzca[index] - 1));
+					ibarna = pna * Math.pow(zna, 2) * (v[i] * ffrdy_Rtemp) * ((ganai * nai[i] * expzna[index] - ganao * nao) / (expzna[index] - 1));
+					ibark = pk * Math.pow(zk, 2) * (v[i] * ffrdy_Rtemp) * ((gaki * ki[i] * expzk[index] - gako * ko) / (expzk[index] - 1));
+				}
+				
+				fca = 1 / (1 + ca[i] / kmca);
+				ilca = d[i] * f[i] * fca * ibarca;
+				ilcana = d[i] * f[i] * fca * ibarna;
+				ilcak = d[i] * f[i] * fca * ibark;
+				eca = Rtemp_frdy * 0.5 * Math.log(cao / ca[i]);
+				icat = gcat * Math.pow(b[i], 2) * g[i] * (v[i] - eca);
+				gkr = 0.02614 * Math.sqrt(ko / 5.4);
+				ekr = Rtemp_frdy * Math.log(ko / ki[i]);
+				ikr = gkr * xr[i] * r[index] * (v[i] - ekr);
+				gks = 0.433 * (1 + 0.6 / (1 + Math.pow(0.000038 / ca[i], 1.4)));
+				eks = Rtemp_frdy * Math.log((ko + prnak * nao) / (ki[i] + prnak * nai[i]));
+				iks = gks * xs1[i] * xs2[i] * (v[i] - eks);
+				gki = 0.75 * Math.sqrt(ko / 5.4);
+				eki = Rtemp_frdy * Math.log(ko / ki[i]);
+				
+				index = Math.round((eki + 93) / 0.0005);
+				bki = (0.49124 * expbki1[index] * expeki2[index] + expbki2[index] * expeki3[index]) / (1 + expbki3[index] * expeki4[index]);
+				aki = 1.02 / (1 + expaki1[index] * expeki1[index]);
+				kin = aki / (aki + bki);
+				iki = gki * kin * (v[i] - eki);
+				ikp = gkp * kp[index] * (v[i] - eki);
+				inaca = c1 * expgammas[index] * ((expvfrdy[index] * Math.pow(nai[i], 3) * cao - Math.pow(nao, 3) * ca[i]) / (1 + c2 * expgammas[index] * (expvfrdy[index] * Math.pow(nai[i], 3) * cao + Math.pow(nao, 3) * ca[i])));
+				inak = ibarnak * fnak[index] * (1 / (1 + Math.pow(kmnai / nai[i], 2))) * (ko / (ko + kmko));
+				ipca = ibarpca * ca[i] / (kmpca + ca[i]);
+				ecan = Rtemp_frdy * 0.5 * Math.log(cao / ca[i]);
+				icab = gcab * (v[i] - ecan);
+				inab = gnab * (v[i] - ena);
+				naiont = ina + inab + ilcana + 3 * inak + 3 * inaca;
+				kiont = ikr + iks + iki + ikp + ilcak - 2 * inak;
+				caiont[i] = ilca + icab + ipca - 2 * inaca + icat;
+				
+				if (dvdtnew[i] > 10 && tcicr[i] > 10 && flag[i])
+					flag[i] = false;
+				
+				it[i] = (stimsen[i] ? stimStrength : 0) + naiont + kiont + caiont[i];
+				dnai = -dt[i] * (naiont * acap) / (vmyo * zna * frdy);
+				nai[i] = dnai + nai[i];
+				
+				if (stimsen[i])
+					dki = -dt[i] * ((kiont + stimStrength) * acap) / (vmyo * zk * frdy);
+				else
+					dki = -dt[i] * (kiont * acap) / (vmyo * zk * frdy);
+				
+				ki[i] = dki + ki[i];
+				itr = (nsr[i] - jsr[i]) / tautr;
+				ileak = (iupbar / nsrbar) * nsr[i];
+				iup = iupbar * ca[i] / (ca[i] + kmup);
+				dcaiontnew[i] = (caiont[i] - caiontold[i]) / dt[i];
+				
+				if (v[i] > -35 && dcaiontnew[i] > dcaiont[i] && !flag[i])
+				{
+					flag[i] = true;
+					tcicr[i] = 0;
+				}
+				
+				on = 1 / (1 + Math.exp((-tcicr[i] + 4) / tauon));
+				off = 1 - 1 / (1 + Math.exp((-tcicr[i] + 4) / tauoff));
+				magrel = 1 / (1 + Math.exp((ilca + icab + ipca - 2 * inaca + icat + 5) / 0.9));
+				irelcicr[i] = gmaxrel * on * off * magrel * (jsr[i] - ca[i]);
+				tcicr[i] += dt[i];
+				csqn = csqnbar * (jsr[i] / (jsr[i] + kmcsqn));
+				djsr = dt[i] * (itr - irelcicr[i]);
+				bjsr = csqnbar - csqn - djsr - jsr[i] + kmcsqn;
+				cjsr = kmcsqn * (csqn + djsr + jsr[i]);
+				jsr[i] = (Math.sqrt(Math.pow(bjsr, 2) + 4 * cjsr) - bjsr) * 0.5;
+				nsr[i] += dt[i] * (iup - ileak - itr * vjsr / vnsr);
+				dcai = -dt[i] * (caiont[i] * acap / (vmyo * zca * frdy) + (iup - ileak) * vnsr / vmyo - irelcicr[i] * vjsr / vmyo);
+				trpn = trpnbar * (ca[i] / (ca[i] + kmtrpn));
+				cmdn = cmdnbar * (ca[i] / (ca[i] + kmcmdn));
+				catotal = trpn + cmdn + dcai + ca[i];
+				bmyo = cmdnbar + trpnbar - catotal + kmtrpn + kmcmdn;
+				cmyo = kmcmdn * kmtrpn - catotal * (kmtrpn + kmcmdn) + trpnbar * kmcmdn + cmdnbar * kmtrpn;
+				dmyo = -kmtrpn * kmcmdn * catotal;
+				gpig = Math.sqrt(Math.pow(bmyo, 2) - 3 * cmyo);
+				ca[i] = 2 * gpig / 3 * Math.cos(Math.acos((9 * bmyo * cmyo - 2 * Math.pow(bmyo, 3) - 27 * dmyo) / (2 * Math.pow(Math.pow(bmyo, 2) - 3 * cmyo, 1.5))) / 3) - bmyo / 3;
+				utsc[i] = 0;
+				dt[i] = 0;
+			}
+			
+			if (i == 0)
+			{
+				if (isCable)
+					xlap[i] = 2 * v[1] - 2 * v[i];
+				else
+					xlap[i] = v[cableLength-1] + v[1] - 2 * v[i];
+			}
+			else if (i == cableLength - 1)
+			{
+				if (isCable)
+					xlap[i] = 2 * v[cableLength-2] - 2 * v[i];
+				else
+					xlap[i] = v[cableLength-2] + v[0] - 2 * v[i];
+			}
+			else
+				xlap[i] = v[i-1] + v[i+1] - 2 * v[i];
+			
+			vnew[i] = v[i] - it[i] * udt + lap * xlap[i];
+			dvdtnew[i] = (vnew[i] - v[i]) / udt;
+		}
+		
+		for (var i = 0; i < cableLength; i++)
+		{
+			v[i] = vnew[i];
+			index = getTableIndex(i);
+			dt[i] += udt;
+			utsc[i] += 1;
+			dvdt[i] = dvdtnew[i];
+			caiontold[i] = caiont[i];
+			dcaiont[i] = dcaiontnew[i];
+			
+			m[i] = mss[index] - (mss[index] - m[i]) * expm[index];
+			h[i] = hss[index] - (hss[index] - h[i]) * exph[index];
+			j[i] = jss[index] - (jss[index] - j[i]) * expj[index];
+			d[i] = dss[index] - (dss[index] - d[i]) * expd[index];
+			f[i] = fss[index] - (fss[index] - f[i]) * expf[index];
+			b[i] = bss[index] - (bss[index] - b[i]) * expb[index];
+			g[i] = gss[index] - (gss[index] - g[i]) * expg[index];
+			xr[i] = xrss[index] - (xrss[index] - xr[i]) * expxr[index];
+			xs1[i] = xs1ss[index] - (xs1ss[index] - xs1[i]) * expxs1[index];
+			xs2[i] = xs1ss[index] - (xs1ss[index] - xs2[i]) * expxs2[index];
+			
+			if (t > tstim[i])
+				stimsen[i] = false;
+		}
+		t += udt;
+	}
+	
+	function graphData()
+	{
+		app.selectPlot(0);
+		app.ctx.lineWidth = 2;
+		for (var i = 0; i < 12; i++)
+		{
+			if (!(plotState >> i & 1))
+				continue;
+			
+			app.ctx.strokeStyle = plotColor[i];
+			app.plotFunction( function(x)
+			{
+				switch(i)
+				{
+					case 0:
+						return (v[getIndex(x)] + 88.654973) / 133.764746184;
+					case 1:
+						return m[getIndex(x)];
+					case 2:
+						return h[getIndex(x)];
+					case 3:
+						return j[getIndex(x)];
+					case 4:
+						return d[getIndex(x)];
+					case 5:
+						return f[getIndex(x)];
+					case 6:
+						return xs1[getIndex(x)];
+					case 7:
+						return xs2[getIndex(x)];
+					case 8:
+						return xr[getIndex(x)];
+					case 9:
+						return b[getIndex(x)];
+					case 10:
+						return g[getIndex(x)];
+					case 11:
+						return (ca[getIndex(x)] - 0.000079) / 0.001019766554;
+				}
+			}, true, dx);
+		}
+		
+		if (drawTime)
+		{
+			app.ctx.textBaseline = "bottom";
+			app.ctx.textAlign = "start";
+			app.ctx.font = "20px Helvetica";
+			app.plotText("Time: " + (step * udt).toFixed(1) + "ms", new Point(1, 1));
+		}
+	}
+	
+	function stimulateU(strength, location, width)
+	{
+		strength = typeof strength !== "undefined" ? strength : 1;
+		location = typeof location !== "undefined" ? location : 0;
+		width = typeof width !== "undefined" ? width : 1;
+		
+		location = Math.min(Math.max(0, location), cableLength - 1 - width)
+		
+		for (var i = location; i < location + width; i++)
+			v[i] = strength;
+	}
+	
+	function buildTables(nvt)
+	{
+		var d1, am, bm, ah, bh, aj, bj, mtau, htau, jtau, omtau, ohtau, ojtau, d2, otaud, otauf, taub, taug, otauxr, sigma, gammas, vv;
+		for (var i = 0; i < nvt; i++)
+		{
+			d1 = vmin + i * dvt;
+			
+			if (Math.abs(d1 + 47.13) < 0.000001)
+				am = 3.2;
+			else
+				am = 0.32 * (d1 + 47.13) / (1 - Math.exp(-0.1 * (d1 + 47.13)));
+			bm = 0.08 * Math.exp(-d1 / 11);
+			
+			if (d1 < -40)
+			{
+				ah = 0.135 * Math.exp((80 + d1) / -6.8);
+				bh = 3.56 * Math.exp(0.079 * d1) + 310000 * Math.exp(0.35 * d1);
+				aj = (-127140 * Math.exp(0.2444 * d1) - 0.00003474 * Math.exp(-0.04391 * d1)) * ((d1 + 37.78) / (1 + Math.exp(0.311 * (d1 + 79.23))));
+				bj = 0.1212 * Math.exp(-0.01052 * d1) / (1 + Math.exp(-0.1378 * (d1 + 40.14)));
+			}
+			else
+			{
+				ah = 0;
+				bh = 1 / (0.13 * (1 + Math.exp((d1 + 10.66) / -11.1)));
+				aj = 0;
+				bj = 0.3 * Math.exp(-0.0000002535 * d1) / (1 + Math.exp(-0.1 * (d1 + 32)));
+			}
+			
+			mtau = 1 / (am + bm);
+			htau = 1 / (ah + bh);
+			jtau = 1 / (aj + bj);
+			mss[i] = am * mtau;
+			hss[i] = ah * htau;
+			jss[i] = aj * jtau;
+			omtau = 1 / mtau;
+			ohtau = 1 / htau;
+			ojtau = 1 / jtau;
+			
+			dss[i] = 1 / (1 + Math.exp(-(d1 + 10) / 6.24));
+			d2 = 0.035 * (d1 + 10);
+			otaud = 0;
+			if (d2 != 0)
+				otaud = 1 / (dss[i] * (1 - Math.exp(-(d1 + 10) / 6.24)) / (0.035 * (d1 + 10)));
+			fss[i] = 1 / (1 + Math.exp((d1 + 32) / 8)) + 0.6 / (1 + Math.exp((50 - d1) / 20));
+			otauf = 1 / (1 / (0.0197 * Math.exp(-Math.pow(0.0337 * (d1 + 10), 2)) + 0.02));
+			
+			bss[i] = 1 / (1 + Math.exp(-(d1 + 14) / 10.8));
+			taub = 3.7 + 6.1 / (1 + Math.exp((d1 + 25) / 4.5));
+			
+			gss[i] = 1 / (1 + Math.exp((d1 + 60) / 5.6));
+			taug = 12;
+			if (d1 <= 0)
+				taug = -0.875 * d1 + 12;
+			
+			xrss[i] = 1 / (1 + Math.exp(-(d1 + 21.5) / 7.5));
+			otauxr = 1 / (1 / (0.00138 * (d1 + 14.2) / (1 - Math.exp(-0.123 * (d1 + 14.2))) + 0.00061 * (d1 + 38.9) / (Math.exp(0.145 * (d1 + 38.9)) - 1)));
+			
+			r[i] = 1 / (1 + Math.exp((d1 + 9) / 22.4));
+			if (d1 != -30)
+				otauxs1[i] = 1 / (1 / (0.0000719 * (d1 + 30) / (1 - Math.exp(-0.148 * (d1 + 30))) + 0.000131 * (d1 + 30) / (Math.exp(0.0687 * (d1 + 30)) - 1)));
+			else
+				otauxs1[i] = otauxs1[i-1];
+			xs1ss[i] = 1 / (1 + Math.exp(-(d1 - 1.5) / 16.7));
+			
+			kp[i] = 1 / (1 + Math.exp((7.488 - d1) / 5.98));
+			
+			sigma = (Math.exp(nao / 67.3) - 1) / 7;
+			
+			fnak[i] = 1 / (1 + 0.1245 * Math.exp(-0.1 * d1 * frdy_Rtemp) + 0.0365 * sigma * Math.exp(-d1 * frdy_Rtemp));
+			
+			expzca[i] = Math.exp(zca * d1 * frdy_Rtemp);
+			expzna[i] = Math.exp(zna * d1 * frdy_Rtemp);
+			expzk[i] = Math.exp(zk * d1 * frdy_Rtemp);
+			if (expzca[i] == 1)
+				expzca[i] = expzca[i-1];
+			if (expzna[i] == 1)
+				expzna[i] = expzna[i-1];
+			if (expzk[i] == 1)
+				expzk[i] = expzk[i-1];
+			
+			gammas = 0.15;
+			expgammas[i] = Math.exp((gammas - 1) * d1 * frdy_Rtemp);
+			expvfrdy[i] = Math.exp(d1 * frdy_Rtemp);
+			expm[i] = Math.exp(-udt * omtau);
+			exph[i] = Math.exp(-udt * ohtau);
+			expj[i] = Math.exp(-udt * ojtau);
+			expd[i] = Math.exp(-udt * otaud);
+			expf[i] = Math.exp(-udt * otauf);
+			expb[i] = Math.exp(-udt / taub);
+			expg[i] = Math.exp(-udt / taug);
+			expxr[i] = Math.exp(-udt * otauxr);
+			expxs1[i] = Math.exp(-udt * otauxs1[i]);
+			expxs2[i] = Math.exp(-udt * otauxs1[i] * 0.25);
+			
+			vv = -93 + i * 0.0005;
+			expaki1[i] = Math.exp(0.2385 * (d1 - 59.215));
+			expeki1[i] = Math.exp(-vv * 0.2385);
+			expeki2[i] = Math.exp(-vv * 0.08032);
+			expeki3[i] = Math.exp(-vv * 0.06175);
+			expeki4[i] = Math.exp(vv * 0.5143);
+			expbki1[i] = Math.exp(0.08032 * (d1 + 5.476));
+			expbki2[i] = Math.exp(0.06175 * (d1 - 594.31));
+			expbki3[i] = Math.exp(-0.5143 * (d1 + 4.753));
+		}
+		restart();
+	}
+	
+	function restart()
+	{
+		cableLength = 801;
+		document.getElementById("cableLabel").innerHTML = "<strong>Cable Length: " + ((cableLength - 1) * dx).toFixed(2) + "cm</strong>";
+		app.editPlot(0, {domain: new Point(0, (cableLength - 1) * dx)}, true);
+		for (var i = 0; i < cableLength; i++)
+		{
+			v[i] = -88.654973;
+			m[i] = 0.000838;
+			h[i] = 0.993336;
+			j[i] = 0.995484;
+			d[i] = 0.000003;
+			f[i] = 0.999745;
+			xs1[i] = 0.004503;
+			xs2[i] = 0.004503;
+			xr[i] = 0.000129;
+			b[i] = 0.000994;
+			g[i] = 0.000994;
+			ca[i] = 0.000079;
+			
+			tstim[i] = 0;
+			stimsen[i] = false;
+			flag[i] = false;
+			irelcicr[i] = 0;
+			dvdt[i] = 0;
+			nai[i] = 12.236437;
+			ki[i] = 136.89149;
+			tcicr[i] = 1000;
+			jsr[i] = 1.179991;
+			nsr[i] = 1.179991;
+			dt[i] = udt;
+			utsc[i] = 50;
+			dcaiont[i] = 0;
+			caiont[i] = 0;
+			xlap[i] = 0;
+			it[i] = 0;
+		}
+		app.selectPlot(0);
+		batchSize = 128;
+		document.getElementById("speedLabel").innerHTML = "<strong>Speed: " + batchSize + "</strong>";
+		document.getElementById("speed").value = batchSize;
+		document.getElementById("cableLength").value = cableLength;
+		isCable = true;
+		document.getElementById("geometryCable").checked = true;
+		gna = 16;
+		gnab = 0.004;
+		gcat = 0.05;
+		document.getElementById("gna").value = gna;
+		document.getElementById("gnab").value = gnab;
+		document.getElementById("gcat").value = gcat;
+		document.getElementById("stimStrength").value = -5;
+		document.getElementById("stimDuration").value = 15;
+		document.getElementById("stimLength").value = 0.4;
+		document.getElementById("stimPosition").value = 0.75;
+		stimulating = false;
+		step = 0;
+		t = 0;
+	}
+	
+	function getIndex(value) { return Math.round(value / dx); }
+	function getTableIndex(i) { return Math.round((v[i] - vmin) / dvt); }
+	
+	function buildGraph()
+	{
+		app = createPlotter(document.getElementById("plot"), new Point(160, 76));
+		
+		var settings =
+		{
+			offset: new Point(0, 65),
+			domain: new Point(0, (cableLength - 1) * dx),
+			range: new Point(-0.1, 1.1),
+			pixelPerUnit: new Point((cableLength - 1) * 0.885 / ((cableLength - 1) * dx), 250),
+			unitPerTick: new Point(1, 0.1),
+			labelFrequency: new Point(1, 1),
+			xAxis: "Space (cm)",
+			yAxis: "Normalized Variables",
+			zeroBoundAxis: false,
+			labelPrecision: new Point(-1, 1)
+		}
+		app.newPlot(settings);
+	}
+	
+	function buildForm()
+	{
+		var speedSlider = document.getElementById("speed");
+		var speedLabel = document.getElementById("speedLabel");
+		speedLabel.innerHTML = "<strong>Speed: " + batchSize + "</strong>";
+		speedSlider.value = batchSize;
+		
+		//used by other events to update the speed label and slider value accordingly
+		function updateSpeed(speed)
+		{
+			if (speed == batchSize) //if it is not changed, do nothing
+				return;
+			
+			speedSlider.value = speed;
+			speedLabel.innerHTML = "<strong>Speed: " + speed + "</strong>";
+			batchSize = speed;
+		}
+		speedSlider.addEventListener("input",
+		function()
+		{
+			updateSpeed(parseInt(speedSlider.value)); //just use the function previously declared
+		}, false);
+		//all the buttons for the sliders simply check if the number is in bounds for the operation and adjust it by 1 if it is, then updates the speed
+		document.getElementById("speedDown").addEventListener("click",
+		function()
+		{
+			if(parseInt(speedSlider.value) > parseInt(speedSlider.min))
+				speedSlider.value--;
+			updateSpeed(parseInt(speedSlider.value));
+		}, false);
+		document.getElementById("speedUp").addEventListener("click",
+		function()
+		{
+			if(parseInt(speedSlider.value) < parseInt(speedSlider.max))
+				speedSlider.value++;
+			updateSpeed(parseInt(speedSlider.value));
+		}, false);
+		
+		var cableSlider = document.getElementById("cableLength");
+		var cableLabel = document.getElementById("cableLabel");
+		cableLabel.innerHTML = "<strong>Cable Length: " + ((cableLength - 1) * dx).toFixed(2) + "cm</strong>";
+		cableSlider.value = 801;
+		
+		//used by other events to update the cable length label and slider accordingly
+		function updateCableLength(length)
+		{
+			if (length == cableLength) //if it is not changed, do nothing
+				return;
+			
+			cableSlider.value = length;
+			cableLabel.innerHTML = "<strong>Cable Length: " + ((length - 1) * dx).toFixed(2) + "cm</strong>";
+			if (length > cableLength)
+				for (var i = cableLength; i < length; i++)
+				{
+					v[i] = v[cableLength-1];
+					m[i] = m[cableLength-1];
+					h[i] = h[cableLength-1];
+					j[i] = j[cableLength-1];
+					d[i] = d[cableLength-1];
+					f[i] = f[cableLength-1];
+					xs1[i] = xs1[cableLength-1];
+					xs2[i] = xs2[cableLength-1];
+					xr[i] = xr[cableLength-1];
+					b[i] = b[cableLength-1];
+					g[i] = g[cableLength-1];
+					ca[i] = ca[cableLength-1];
+				}
+			cableLength = length;
+			app.editPlot(0, {domain: new Point(0, (cableLength - 1) * dx)}, true, true);
+			graphData();
+		}
+		cableSlider.addEventListener("input",
+		function()
+		{
+			updateCableLength(parseInt(cableSlider.value));
+		}, false);
+		//all the buttons for the sliders simply check if the number is in bounds for the operation and adjust it by 1 if it is, then updates the cable length
+		document.getElementById("cableShorter").addEventListener("click",
+		function()
+		{
+			if(parseInt(cableSlider.value) > parseInt(cableSlider.min))
+				cableSlider.value--;
+			updateCableLength(parseInt(cableSlider.value));
+		}, false);
+		document.getElementById("cableLonger").addEventListener("click",
+		function()
+		{
+			if(parseInt(cableSlider.value) < parseInt(cableSlider.max))
+				cableSlider.value++;
+			updateCableLength(parseInt(cableSlider.value));
+		}, false);
+		
+		//simply bind the restart button to the restart function
+		document.getElementById("restart").addEventListener("click", restart, false);
+		
+		var pauseButton = document.getElementById("pause");
+		pauseButton.addEventListener("click",
+		function()
+		{
+			paused = !paused; //toggle paused
+			pauseButton.innerHTML = paused ? "Resume" : "Pause"; //and update the button accordingly
+		}, false);
+		
+		var geometry = document.getElementsByName("geometry");
+		for (var i = 0; i < geometry.length; i++)
+			geometry[i].addEventListener("click", function(e) { isCable = e.target.value == "cable"; }, false);
+			
+		var renderTime = document.getElementById("graphTime");
+		renderTime.checked = true;
+		renderTime.addEventListener("change", function(e) { drawTime = e.target.checked; }, false);
+		
+		var graphToggles = document.getElementsByName("graphToggles");
+		for (var i = 0; i < graphToggles.length; i++)
+		{
+			graphToggles[i].addEventListener("change",
+			function(e)
+			{
+				plotState += (e.target.checked ? 1 : -1) * Math.pow(2, parseInt(e.target.value));
+			}, false);
+			
+			graphToggles[i].checked = graphToggles[i].id == "graphVoltage";
+			graphToggles[i].parentElement.style.backgroundColor = plotColor[i];
+			graphToggles[i].parentElement.style.color = "white";
+			graphToggles[i].parentElement.style.textShadow = "#000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px";
+		}
+		
+		var variables = document.getElementsByName("variables");
+		for (var i = 0; i < variables.length; i++)
+		{
+			window[variables[i].id] = parseFloat(variables[i].value);
+			variables[i].addEventListener("change",
+			function(e)
+			{
+				window[e.target.id] = Math.max(0, parseFloat(e.target.value));
+			}, false);
+		}
+		
+		document.getElementById("applyS1").addEventListener("click",
+		function()
+		{
+			t = 0;
+			var stimDuration = Math.round(Math.max(0, parseFloat(document.getElementById("stimDuration").value)));
+			stimStrength = parseFloat(document.getElementById("stimStrength").value);
+			var stimLoc = parseFloat(document.getElementById("stimPosition").value) / dx;
+			var stimGirth = parseFloat(document.getElementById("stimLength").value) / dx / 2;
+			var a = Math.min(Math.max(0, Math.round(stimLoc - stimGirth)), cableLength - 1);
+			var b = Math.min(Math.max(0, Math.round(stimLoc + stimGirth)), cableLength - 1);
+			
+			for (var i = a; i <= b; i++)
+			{
+				tstim[i] = stimDuration;
+				stimsen[i] = true;
+			}
+		}, false);
+	}
+	</script>
+	<style>
+	input[type="number"] { width: 60px; }
+	</style>
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">This graph requires HTML5 canvas support, sorry!</canvas>
+		<div style="position:absolute;top:15px;left:96px;border:2px solid black;padding:10px;">
+			<div style="float:left;margin-right:25px;">
+				<p style="margin:0px;"><label id="speedLabel" for="speedDown"><strong>Speed</strong></label></p>
+				<button id="speedDown">Slower</button>
+				<input id="speed" type="range" min="1" max="128" step="1" value="128" />
+				<button id="speedUp">Faster</button>
+			</div>
+			<div style="float:right;">
+				<p style="margin:0px;"><label id="cableLabel" for="cableShorter"><strong>Cable Length</strong></label></p>
+				<button id="cableShorter">Shorter</button>
+				<input id="cableLength" type="range" min="1" max="801" step="1" value="801" />
+				<button id="cableLonger">Longer</button>
+			</div>
+		</div>
+		<div style="position:absolute;top:84px;left:810px;border:2px solid black;padding:10px;">
+			<button id="restart">Restart</button>
+			<button id="pause">Pause</button>
+			<p style="margin:0px;"><label><strong>Geometry Type</strong></label></p>
+			<input id="geometryCable" type="radio" name="geometry" value="cable" checked="checked" />
+			<label id="geometryCableLabel" for="geometryCable">cable</label>
+			<input id="geometryRing" type="radio" name="geometry" value="ring" />
+			<label id="geometryRingLabel" for="geometryRing">ring</label>
+			<p style="margin:0px;"><input id="graphTime" type="checkbox" checked="checked" />
+			<label id="graphTimeLabel" for="graphTime">show time</label></p>
+			<p style="margin:0px;"><label><strong>Graph</strong></label></p>
+			<p style="margin:0px;"><input id="graphVoltage" type="checkbox" name="graphToggles" value="0" checked="checked" />
+			<label id="graphVoltageLabel" for="graphVoltage">voltage</label></p>
+			<p style="margin:0px;"><input id="graphMGate" type="checkbox" name="graphToggles" value="1" />
+			<label id="graphMGateLabel" for="graphMGate">m gate</label></p>
+			<p style="margin:0px;"><input id="graphHGate" type="checkbox" name="graphToggles" value="2" />
+			<label id="graphHGateLabel" for="graphHGate">h gate</label></p>
+			<p style="margin:0px;"><input id="graphJGate" type="checkbox" name="graphToggles" value="3" />
+			<label id="graphJGateLabel" for="graphJGate">j gate</label></p>
+			<p style="margin:0px;"><input id="graphDGate" type="checkbox" name="graphToggles" value="4" />
+			<label id="graphDGateLabel" for="graphDGate">d gate</label></p>
+			<p style="margin:0px;"><input id="graphFGate" type="checkbox" name="graphToggles" value="5" />
+			<label id="graphFGateLabel" for="graphFGate">f gate</label></p>
+			
+			<p style="margin:0px;"><input id="graphXS1Gate" type="checkbox" name="graphToggles" value="6" />
+			<label id="graphXS1GateLabel" for="graphXS1Gate">xs1 gate</label></p>
+			<p style="margin:0px;"><input id="graphXS2Gate" type="checkbox" name="graphToggles" value="7" />
+			<label id="graphXS2GateLabel" for="graphXS2Gate">xs2 gate</label></p>
+			<p style="margin:0px;"><input id="graphXRGate" type="checkbox" name="graphToggles" value="8" />
+			<label id="graphXRGateLabel" for="graphXRGate">xr gate</label></p>
+			<p style="margin:0px;"><input id="graphBGate" type="checkbox" name="graphToggles" value="9" />
+			<label id="graphBGateLabel" for="graphBGate">b gate</label></p>
+			<p style="margin:0px;"><input id="graphGGate" type="checkbox" name="graphToggles" value="10" />
+			<label id="graphGGateLabel" for="graphGGate">g gate</label></p>
+			
+			<p style="margin:0px;"><input id="graph[Ca]" type="checkbox" name="graphToggles" value="11" />
+			<label id="graph[Ca]Label" for="graph[Ca]">[Ca]</label></p>
+		</div>
+		<div style="position:absolute;top:450px;left:71px;border:2px solid black;padding:10px;">
+			<button id="applyS1">Apply S1</button>
+			<label id="stimSettings"><strong>Stimulation Settings</strong></label>
+			<label id="stimStrengthLabel" for="stimStrength">strength</label>
+			<input id="stimStrength" type="number" step="1" value="-5" />
+			<label id="stimDurationLabel" for="stimDuration">duration</label>
+			<input id="stimDuration" type="number" min="0" step="1" value="15" />
+			<label id="stimLengthLabel" for="stimLength">length</label>
+			<input id="stimLength" type="number" min="0" step="0.01" value="0.4" />
+			<label id="stimPositionLabel" for="stimPosition">position</label>
+			<input id="stimPosition" type="number" min="0" step="0.01" value="0.75" />
+			<div style="position:relative;left:120px;padding-top:5px;">
+				<label><strong>Conductance Values</strong></label>
+				<label id="gk2Label" for="gna">gna</label>
+				<input id="gna" type="number" name="variables" min="0" step="0.1" value="16" />
+				<label id="gnabLabel" for="gnab">gnab</label>
+				<input id="gnab" type="number" name="variables" min="0" step="0.001" value="0.004" />
+				<label id="gcatLabel" for="gcat">gcat</label>
+				<input id="gcat" type="number" name="variables" min="0" step="0.01" value="0.05" />
+			</div>
+		</div>
+	</div>
+</body>
+</html>

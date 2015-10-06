@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>plotter</title>
+	<style>
+		code { background-color: lightGray; }
+		p { text-indent: 25px; }
+	</style>
+</head>
+<body>
+	<h1>Make a plotter</h1>
+	<p>
+		<code>var app = createPlotter(canvas, padding);</code>
+	</p>
+	<p>
+		Making a plotter is simple. Just provide this function with a <code>canvas</code> element and you are done. The function returns a plotter object that you use to interact with the plots, manage them, and more. Optionally you can pass in a Point object with <code>padding</code> for the right and bottom edges of the canvas. Use this for fitting UI over top of the canvas.
+	</p>
+	<p>
+		<code>app.drawBorders = true;</code>
+	</p>
+	<p>
+		If you set <code>drawBorders</code> to true, a thin black rectangle will be drawn on all plot borders. This will make placing your plots a <strong>lot</strong> easier because you can see where plots re-draw and not overlap them.
+	</p>
+	<p>
+		<code>app.ctx</code>
+	</p>
+	<p>
+		You can directly access the context of the canvas through the plotter application. This enables you to style what you plot in any fashion you desire.
+	</p>
+	
+	<hr>
+	
+	<h1>Make a plot</h1>
+	<p>
+		<code>var plotID = app.newPlot(settings, name);</code>
+	</p>
+	<p>
+		A plotter can hold as many plots as you need. To create a plot you use the plotter object that you made. The newPlot function takes a <code>settings</code> object (example and list of settings below) and name. The <code>name</code> is an optional string that can be used to access the plot. If you do not specify a name, you can use the ID returned by the function to access the plot.
+	</p>
+	<h3>Example: Default settings of a plot, these are defined inside of any new plot you make.</h3>
+<pre><code>var settings = {
+	offset: new Point(0, 0),
+	domain: new Point(-10, 10),
+	range: new Point(-10, 10),
+	pixelPerUnit: new Point(10, 10),
+	unitPerTick: new Point(1, 1),
+	labelFrequency: new Point(2, 2),
+	labelPrecision: new Point(-1, -1),
+	xAxis: "xAxis",
+	yAxis: "yAxis",
+	zeroBoundAxis: true,
+	drawGrid: true,
+	drawCoords: false,
+	orientation: "a"
+};</code></pre>
+	<h3>Example: New settings of a plot, they work in a similar fashion to JQuery plugin settings, not all options have to be present!</h3>
+<pre><code>var settings = {
+	offset: new Point(0, 130),
+	domain: new Point(0, 100),
+	range: new Point(-100, 0),
+	pixelPerUnit: new Point(3, 2),
+	labelFrequency: new Point(4, 4)
+};</code></pre>
+	<h3>Applicable Settings: What they are and What they do.</h3>
+	<ul>
+		<li><strong>offset: </strong>A point that offsets the plot, use this to position your plots on the canvas. The canvas will automatically adjust to fit the plots.</li>
+		<li><strong>domain: </strong>A point that represents the domain of the plot in it's native units. The point should have X as the lower end and Y as the higher end. Going in reverse will ignored.</li>
+		<li><strong>range: </strong>A point that represents the range of the plot in it's native units. The point should have X as the lower end and Y as the higher end. Going in reverse will ignored.</li>
+		<li><strong>pixelPerUnit: </strong>A point that controls how many pixels there are per unit on the plot.</li>
+		<li><strong>unitPerTick: </strong>A point that controls the resolution of the visual grid, via how many units per tick on the plot.</li>
+		<li><strong>labelFrequency: </strong>A point that determines how often the grid lines are to be labelled along the corresponding axis. A value less than or equal to 0 disables axis labelling for the corresponding axis.</li>
+		<li><strong>labelPrecision: </strong>A point that determines how many decimals trail after the '.' (uses Number.toFixed(...)) in the tick labels. This was added to help avoid floating point errors making labels massive. A value less than 0 will disable this feature for the corresponding axis.</li>
+		<li><strong>xAxis: </strong>The X axis label.</li>
+		<li><strong>yAxis: </strong>The Y axis label.</li>
+		<li><strong>zeroBoundAxis: </strong>If false, the thicker black lines that mark where 0 is will be rendered at the edges of the plot instead. The edges are determined by the orientation.</li>
+		<li><strong>drawGrid: </strong>If false, the criss-crossing grid that is tick aligned will not be rendered.</li>
+		<li><strong>drawCoords: </strong>If true, the current mouse coordinates will be rendered, providing the user with feedback interaction and easier to identify values. !!CURRENTLY NOT WORKING AESTHETICALLY!! (a proper solution has not been found...)</li>
+		<li><strong>orientation: </strong>A character, ranging from "a" to "d", that determines which corner the "origin" is for rendering inverted axis and plots. Starting from the Top-Left as "a" and going counter-clockwise.</li>
+	</ul>
+	
+	<hr>
+	
+	<h1>Edit a plot</h1>
+	<p>
+		<code>app.editPlot(plot, settings, reCalcLabels, redrawCanvas)</code>
+	</p>
+	<p>
+		Once a plot has been made, you may want to change parts of it on the fly. Use the <code>editPlot(...)</code> function to do so. You will learn an alternative way later but this function provides some helpful features. Here <code>plot</code> is the ID or given Name of the plot you wish to edit, where <code>settings</code> is an object literal like the one used to make a new plot. You only need to specify the settings that you are changing. The remaining two parameters are optional and default to false. The <code>reCalcLabels</code> parameter takes a boolean and determines if the plotter should re-calculate the label bleed and label size Points, which are used internally for the drawing boundaries of the plot. The <code>redrawCanvas</code> parameter takes a boolean and will redraw the entire canvas if set to true. This prevents "ghosting" of the graphics in the event a plot shrinks in size. (For future developers: A better implementation would be to only redraw the portion of the canvas that is ghosting. I did not implement this as my time is running short!)
+	</p>
+	
+	<hr>
+	
+	<h1>Select a plot</h1>
+	<p>
+		<code>app.selectPlot(plot, clear, clip)</code>
+	</p>
+	<p>
+		All further functions will require that you select which plot you are accessing before using them. Note that you only have to select a plot once if you are using multiple functions back to back on the same plot. You specify which plot you want to select via the <code>plot</code> parameter, using either it's ID or the given Name. The remaining two parameters are optional and default to true. The <code>clear</code> parameter will clear the plot and redraw it empty if set to true. The <code>clip</code> parameter will clip the canvas to the draw-able region of the plot if set to true. Passing in false will enable all future function calls and context calls to draw outside of the current plot region. Until the canvas is clipped again of course. If drawing outside of a plot region is desired, it is OK to use this method to control clipping.
+	</p>
+	
+	<hr>
+	
+	<h1>Plot properties</h1>
+	<p>
+		<code>app.mouse</code>
+	</p>
+	<p>
+		Each plot has a mouse object that you can access after selecting a plot. Each mouse object has five properties that allow full mouse interaction with the plot.
+	</p>
+	<ul>
+		<li><strong>down: </strong>A point that represents where the mouse was last clicked down in plot space.</li>
+		<li><strong>move: </strong>A point that represents where the mouse was last moved to in plot space.</li>
+		<li><strong>up: </strong>A point that represents where the mouse was last released in plot space.</li>
+		<li><strong>isDown: </strong>A boolean that is true if the mouse is currently held down.</li>
+		<li><strong>isUp: </strong>A boolean that is true if the mouse is currently not held down.</li>
+	</ul>
+	<p>
+		You can check if the user clicks by tracking the current state of <code>app.mouse.isDown</code> with a previously stored state. You can also add extra properties to the mouse object and they will persist for that plot.
+	</p>
+	<p>
+		<code>app.settings</code>
+	</p>
+	<p>
+		You can directly access the plot's settings by using the settings object. Be warned that this is a sensitive object meant only for reading and that <code>app.editPlot</code> should be used to apply settings whenever possible. There are four additional properties available in the settings after you make a plot. They describe the extra pixel measurements as based off of the defined properties.
+	</p>
+	<ul>
+		<li><strong>plotSize: </strong>A point that describes the size of the plot in pixels.</li>
+		<li><strong>gridSize: </strong>A point that describes the size of a single rectangle in the grid.</li>
+		<li><strong>labelSize: </strong>A point that describes the added padding for the labels.</li>
+		<li><strong>labelBleed: </strong>A point that describes the added padding for "bleeding labels" if any.</li>
+	</ul>
+	
+	<hr>
+	
+	<h1>Plot utilities</h1>
+	<p>
+		<code>app.clearPlot(unclip)</code>
+	</p>
+	<p>
+		This will clear the current plot without having to re-select it. The optional <code>unclip</code> parameter will clear outside of the plot grid if passed a value of true. This can come in useful if you need to redraw the plot labels manually.
+	</p>
+	<p>
+		<code>app.pointOnPlot(p, plot)</code>
+	</p>
+	<p>
+		This will return true if the given point <code>p</code> lies within the plot boundaries. You have the optional parameter <code>plot</code> if you want to test against another plot that is not the currently selected plot. It takes the ID of a plot or it's given Name. If not specified, the currently selected plot is used.
+	</p>
+	<p>
+		<code>app.plotToCanvas(p)</code>
+	</p>
+	<p>
+		This will return a new Point object. The purpose of this function is to convert plot space coordinates (via the <code>p</code> parameter) into canvas space coordinates. Use this function if you need to draw something custom using plot space coordinates and the provided plot functions are not enough to get the job done.
+	</p>
+	
+	<hr>
+	
+	<h1>Plot to a plot</h1>
+	<p>
+		The following functions all provide a means of plotting to the currently selected plot. You can access the canvas's context directly via <code>app.ctx</code> to change the color and styling of the render before you plot using these functions. All functions use domain/range relative values, known as plot space.
+	</p>
+	<p>
+		<code>app.plotPoint(p, r, fill)</code>
+	</p>
+	<p>
+		Use this function to draw points or circles. The point it will draw at is defined with the <code>p</code> parameter. The size, aka radius, of the circle is defined with the <code>r</code> parameter and defaults to 2. The <code>fill</code> parameter is a boolean that determines if the circle should be filled or not and defaults to true.
+	</p>
+	<p>
+		<code>app.plotLine(p1, p2)</code>
+	</p>
+	<p>
+		Use this function to draw a line connecting from point <code>p1</code> to point <code>p2</code>.
+	</p>
+	<p>
+		<code>app.plotSlope(p, slope)</code>
+	</p>
+	<p>
+		Use this function to draw a line intersecting at point <code>p</code> with a slope of <code>slope</code>.
+	</p>
+	<p>
+		<code>app.plotPoly(points, closed)</code>
+	</p>
+	<p>
+		Use this function to draw a series of connecting line segments. The <code>points</code> parameter is an array of Point objects, in the order they are to be drawn. If <code>closed</code> is set to true, an additional line segment will be drawn connecting the last endpoint to the starting endpoint (this is false by default).
+	</p>
+	<p>
+		<code>app.plotFunction(func, xFunc, step, start, end)</code>
+	</p>
+	<p>
+		Use this function to draw complex plots and literal mathematical functions. The <code>func</code> parameter takes any function and expects it to return a number when passed a number. If the given function returns undefined, it will be treated as a break in the render and allow multiple things to be drawn within one function call. Clever usage of this will allow you to render anything with ease. All other parameters are optional, although useful. The <code>xFunc</code> parameter is a boolean that determines if the function passed is on the X or Y axis, with the default being true for X-axis. The <code>step</code> parameter is used to control the step size in the function, the default being 1. The <code>start</code> parameter tells the function what value to start at, with app.settings.domain.x being the default starting value if <code>xFunc</code> is true, else app.settings.range.x. The <code>end</code> parameter tells the function what value to stop at, with app.settings.domain.y being thhe default ending value if <code>xFunc</code> is true, else app.settings.range.y.
+	</p>
+	<h3>Examples of plotting a function:</h3>
+	<p>
+<pre><code>app.plotFunction(
+	function(x)
+	{
+		if (x <= 5 || x >= 107)
+			return x*x;
+		else
+			return undefined;
+	},
+	true, 0.025);</code></pre>
+<pre><code>app.plotFunction(
+	function(x)
+	{
+		if (Math.floor(x) & 1)
+			app.ctx.strokeStyle = "#FF900";
+		else
+			app.ctx.strokeStyle = "#FF900";
+		return 5;
+	});</code></pre>
+	</p>
+	<p>
+		<code>app.plotText(text, point)</code>
+	</p>
+	<p>
+		Use this function to draw <code>text</code> on the plot. By default it will draw on the exact center of the plot, if this is not desired just pass a new position via the <code>point</code> parameter.
+	</p>
+</body>
+</html>

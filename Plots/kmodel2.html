@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>alternansmall</title>
+	<script src="plotter.js"></script>
+	<script>
+
+		var app; 			// initialize the app
+		var Vm = 0;			// initialize the Voltage at 0
+		var v = 0;
+		var vstar = .64;	// this can be edited later
+		var gamma = 1.92;	
+		var alpha = 7.5;
+		var delta = 0.23;
+		var xm = 10;		// this can be edited
+
+
+		/**
+		 * initialize the graphs for the plotter
+		 */
+		function buildGraphs() {
+			app = createPlotter(document.getElementById("plot"));
+
+			app.newPlot({
+				domain: new Point(0, 10),
+				range: new Point(0, 10),
+				xAxis: "Time (ms)",
+				yAxis: "V (mv)",
+				labelFrequency: new Point(10, 10),
+				pixelPerUnit: new Point(50, 50),
+				unitPerTick: new Point(.1, .1)
+
+			}, "Karma");
+		}
+
+		/**
+		 * The function for the Karma model graph
+		 * @param  {[int]} x [the independent variable]
+		 * @return {[int]}   [the dependent variable calculated based on x]
+		 */
+		function karmaGraph(x) {
+
+			if(x === 2) {
+				Vm = 1.5;
+			}
+
+			calculateVm();
+			calculateV();
+
+			return v;
+		}
+
+		function calculateVm() {
+			Vm += ((-1 * Vm) + (gamma - Math.pow((v/vstar), xm)) * h(Vm)) / alpha;
+		}
+		function h(value) {
+			return (Math.pow(value, 2) - delta * Math.pow(value, 3));
+		}
+
+		function calculateV() {
+			v += (Heaviside(Vm - 1) - v);
+		}
+
+		/**
+		 * Compute the Heaviside value of an expression.
+		 * 0 if the value is less than 0.
+		 * 1 otherwise
+		 * 
+		 * @param {[int]} expression [The expression we want to comupute]
+		 */
+		function Heaviside(expression) {
+			if (expression < 0) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
+
+		window.onload = function() {
+			buildGraphs();
+			app.selectPlot("Karma");
+			app.plotFunction(karmaGraph);
+		}
+
+	</script>
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">This graph requires HTML5 canvas support, sorry!</canvas>
+	</div>
+</body>
+</html>
