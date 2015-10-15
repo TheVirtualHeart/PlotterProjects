@@ -41,4 +41,22 @@
 	float: right;
 }
 
+.plotter_form button {
+	color: black;
+	background-color: white;
+	text-decoration: none;
+	text-align: center;
+	padding: 4px 12px;
+	font-size: 12px;
+	font-weight: 700;
+	font-family: helvetica, arial, sans-serif;
+	border-radius: 4px;
+	border: 1px solid gray;
+}
+
+.plotter_form [type="submit"] {
+	background-color: #3B99FC;
+	color: white;
+	border: 1px solid #3B99FC;
+}
 

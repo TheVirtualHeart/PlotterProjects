@@ -4,6 +4,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-browserify');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.initConfig({
 		// browserify: {
@@ -43,9 +44,18 @@ module.exports = function(grunt) {
 					'plotter.min.js': ['plotter.dev.js']
 				}
 			}
+		},
+		watch: {
+			js: {
+				files: ["**/*.js"],
+				tasks: ["concat", "uglify"],
+				options: {
+					spawn: false
+				}
+			}
 		}
 	});
 
 	grunt.registerTask('build', ['concat', 'uglify']);
-	grunt.registerTask('default', ['concat']);
+	grunt.registerTask('default', ['watch']);
 }

@@ -1,5 +1,5 @@
 ---
-title: new kmodel
+title: Noble0d
 plot: true
 ---
 <!DOCTYPE html>
@@ -10,6 +10,160 @@ plot: true
 	<link href="../node_modules/plotter/plotter.css" type="text/css" rel="stylesheet" />
 	<script src="../node_modules/plotter/plotter.dev.js"></script>
 	<script>
+
+
+		//% Noble model in 0d
+
+		//% parameter values
+		//cm=12;          % membrane capacitance
+		//% vary gan e.g. 0, 0.075, 0.18, 0.4
+		//gan=0.0;         % conductance of leak current; higher values promote auto-oscillation
+		// ean=-60;        % leak current reversal potential
+
+		//% stimulus (this will be a periodic square pulse)
+		//% threshold is about -53; double this
+		// stimmag=-106;   % magnitude of stimulus in units of current (\muA?)
+		// stimdur=2.0;    % duration of stimulus in ms
+		// period=500.0;   % period of stimulus in ms (270 shows alternans, 500 does not)
+		// % note that slowing the period too much will allow the cell to stimulate 
+		// % itself without an external stimulus, although it still can respond to it
+
+		// % initial values 
+		// v = -80.0;      % initial value of membrane potential in mV
+		// m = 0.0;        % initial value of m-gate (sodium activation gate)
+		// h = 1.0;        % initial value of h-gate (sodium inactivation gate)
+		// n = 0.0;        % initial value of n-gate (potassium activation gate)
+
+		// % numerical parameters
+		// dt = 0.01;      % time step in ms
+		// endtime = 5000; % duration of simulation in ms
+		// nsteps=ceil(endtime/dt);    % number of time steps for whole simulation
+
+		// % vectors for saving data to plot
+		// vsave = zeros(nsteps+1,1);
+		// msave = zeros(nsteps+1,1);
+		// hsave = zeros(nsteps+1,1);
+		// nsave = zeros(nsteps+1,1);
+		// vsave(1,1) = v;
+		// msave(1,1) = m;
+		// hsave(1,1) = h;
+		// nsave(1,1) = n;
+
+		// ina1save = zeros(nsteps+1,1);
+		// ina2save = zeros(nsteps+1,1);
+		// ik1save = zeros(nsteps+1,1);
+		// ik2save = zeros(nsteps+1,1);
+		// ilsave = zeros(nsteps+1,1);
+		// inasave(1,1) = 0;
+		// iksave(1,1) = 0;
+		// ilsave(1,1) = 0;
+		// t = 0:dt:endtime;       % time vector
+
+		// for ntime=0:nsteps-1
+
+		//     % calculate alphas and betas for updating gating variables
+		//     if(abs(-v-48)<1e-3)
+		//         am=0.15;
+		//     else
+		//         am=0.1*(-v-48)./(exp((-v-48)/15)-1);
+		//     end
+		//     
+		//     if(abs(v+8)<1e-3)
+		//         bm=0.6;
+		//     else
+		//         bm=0.12*(v+8)./(exp((v+8)/5)-1);
+		//     end
+
+		    
+		//     ah=0.17*exp((-v-90)/20);
+		//     bh=1./(exp((-v-42)/10)+1);
+		//     if(abs(-v-50)<1e-3)
+		//         an=0.001;
+		//     else
+		//         an=0.0001*(-v-50)./(exp((-v-50)/10)-1);
+		//     end
+		//     bn=0.002*exp((-v-90)/80);
+
+		//     % calculate derivatives of gating variables
+		//     dm=am*(1-m)-bm*m;
+		//     dh=ah*(1-h)-bh*h;
+		//     dn=an*(1-n)-bn*n;
+
+		//     % update gating variables using explicit method
+		//     m = m + dt*dm;
+		//     h = h + dt*dh;
+		//     n = n + dt*dn;
+		//     % semi-implicit
+		//     % m=(m+dt*am)/(1+dt*(am+bm));
+		//     % h=(h+dt*ah)/(1+dt*(ah+bh));
+		//     % n=(n+dt*an)/(1+dt*(an+bn));
+
+		//     % calculate potassium current conductance values
+		//     gk1 = 1.2*exp((-v-90)/50)+0.015*exp((v+90)/60);
+		//     gk2 = 1.2*n.*n.*n.*n;
+
+		//     % calculate currents
+		//     ina1=400*m.*m.*m.*h.*(v-40);
+		//     % ina2=0.13*(v-40); % this makes it not auto-oscillatory
+		//     ina2=0.14.*(v-40);
+		//     ik1=gk1.*(v+100);
+		//     ik2=gk2.*(v+100);
+		//     il=gan*(v-ean);
+
+		//     % sum the two sodium and the two potassium currents
+		//     ina=ina1+ina2;
+		//     ik=ik1+ik2;
+
+		//     % set stimulus current periodically to be nonzero
+		//     istim=0;
+		//     if(mod(ntime,round(period/dt))<round(stimdur/dt))
+		//         istim=stimmag;
+		//     end
+
+		//     % calculate derivative of voltage 
+		//     dv=(-ina-ik-il-istim)/cm;
+
+		//     % update voltage using forward Euler
+		//     v = v + dt*dv;
+
+		//     % save voltage, gating variables, and currents for plotting
+		//     % note that we update location ntime+2, because the loop starts at
+		//     % index 0 and we also save one initial value outside the loop, and
+		//     % Matlab starts indexing at 1
+		//     vsave(ntime+2,1) = v;
+		//     msave(ntime+2,1) = m;
+		//     hsave(ntime+2,1) = h;
+		//     nsave(ntime+2,1) = n;
+
+		//     ina1save(ntime+2,1) = ina1;
+		//     ina2save(ntime+2,1) = ina2;
+		//     ik1save(ntime+2,1) = ik1;
+		//     ik2save(ntime+2,1) = ik2;
+		//     ilsave(ntime+2,1) = il;
+
+		// end
+
+		// % plot the voltage in top subplot and the three gating variables below
+		// figure(1)
+		// subplot(2,1,1)
+		// plot(t,vsave,'k','linewidth',2)
+		// ylabel('V_m')
+		// subplot(2,1,2)
+		// plot(t,msave,'b',t,hsave,'g',t,nsave,'r','linewidth',2)
+		// xlabel('Time')
+		// legend('m','h','n')
+		// legend boxoff
+
+		// % plot the currents in a separate plot
+		// figure(2)
+		// plot(t,ina1save,'r',t,ina2save,'g',t,ik1save,'b',t,ik2save,'c',t,ilsave,'m','linewidth',2)
+		// xlabel('Time')
+		// legend('I_{Na1}','I_{Na2}','I_{K1}','I_{K2}','I_l')
+		// legend boxoff
+
+
+
+
 
 		/**************************************************
 		 VARIABLES
@@ -42,34 +196,39 @@ plot: true
 		var displayVm = true;
 
 
-		var Karma = new PointObject();
-		Karma.voltage = 0.0;
-		Karma.vgate = 0.0;
 
-		Karma.calculate = function(p) {
+		// Define the Point Object
+		var Noble = new PointObject();
+		Noble.cm=12;
+		Noble.gan = 0.0;
+		Noble.ean=-60;
+		Noble.stimmag=-106;
+		Noble.stimdur=2.0;
+		Noble.period=500.0;
 
-			// if the time is either s1 or s2, change the value of Vm to 1.5
-		    if (p == s1 || p == s2) { 
-		    	this.voltage = 1.5;
+		Noble.v = -80.0; 
+		Noble.m = 0.0;
+		Noble.h = 1.0;
+		Noble.n = 0.0;
+
+		Noble.timestep = 0.02;
+
+
+		Noble.calculate = function(p) {
+
+			// if(abs(-v-48)<1e-3)
+		 //        am=0.15;
+		 //    else
+		 //        am=0.1*(-v-48)./(exp((-v-48)/15)-1);
+		 //    end
+
+		    if (Math.abs(-this.v - 48) < Math.pow(10, -3)) {
+		    	am=0.015;
+		    } else {
+		    	am= 0.1 * (-this.v - 48) / Math.exp(((-v-48)/15)-1);
 		    }
-
-	        // calculate heaviside of 
-	        previousHeaviside = heaviside(this.voltage - 1);
-
-		    // Partial derivative of Vm (equation 1)
-		    var gamma = 1.92;
-		    var delta = 0.23;
-		    var alpha = 7.5;
-		    var h = Math.pow(this.voltage, 2) * (1 - (delta * this.voltage));
-		    var diffVoltage = (-this.voltage + (gamma - Math.pow((this.vgate / vstar), xm)) * h);
-		    this.voltage += 5 * timestep * diffVoltage / alpha; // don't know why this works
-
-		    var diffVGate = eps * (previousHeaviside - this.vgate);
-		    this.vgate += timestep * diffVGate;
-
-		    //debug.push({ "time":p, "Vm":voltage, "V":vgate});
 		    
-		    return { "x":p, "voltage": this.voltage, "vgate": this.vgate };
+		    return { "x":p, "v": this.v, "m": this.m, "h": this.h, "n": this.n };
 
 		}
 
@@ -85,15 +244,15 @@ plot: true
 			app = createPlotter(document.getElementById("plot"));
 
 			app.newPlot({
-				domain: new Point(0, time),
-				range: new Point(0, voltageHeight),
+				domain: new Point(0, 2r00),
+				range: new Point(-100, 100),
+				unitPerTick: new Point(20, 20),
+				pixelPerUnit: new Point(2, 2),
+				labelFrequency: new Point(1, 1),
 				xAxis: "Time (ms)",
 				yAxis: "V (mv)",
-				labelFrequency: new Point(1, 1),
-				pixelPerUnit: new Point(1, 100),
-				unitPerTick: new Point(50, .5)
 
-			}, "Karma");
+			}, "Noble");
 		}
 
 
@@ -101,7 +260,7 @@ plot: true
 		 * Wire the form event handlers
 		 */
 		function buildForms() {
-			document.getElementById("reset").onclick = resetGraph;
+			document.getElementById("update").onclick = resetGraph;
 			document.getElementById("default").onclick = setDefaults;
 
 			document.getElementById("displayVm").onclick = resetGraph;
@@ -113,7 +272,7 @@ plot: true
 		 * print the data from plotter.
 		 */
 		function printData() {
-			var csv = app.printPlotData(Karma);
+			var csv = app.printPlotData(Noble);
 			//window.open("data:text/csv;charset=utf-8," + encodeURIComponent(csv));
 		}
 
@@ -173,13 +332,13 @@ plot: true
 		}
 
 		function refitPlot() {
-			app.editPlot("Karma",
-			{
-				domain: new Point(0, time),
-				pixelPerUnit: new Point(1/(time/500), 100)
-			},
-			true,
-			true);
+			// app.editPlot("Noble",
+			// {
+			// 	domain: new Point(0, time),
+			// 	pixelPerUnit: new Point(1/(time/500), 100)
+			// },
+			// true,
+			// true);
 		}
 
 		/**
@@ -188,11 +347,11 @@ plot: true
 		//var count = 0;
 		function update() {
 
-			refitPlot();
+			//refitPlot();
 
 			//app.clearPlot();
 
-			app.selectPlot("Karma");
+			app.selectPlot("Noble");
 
 			//var Karma = new PointObject();
 			// Karma.voltage = 0.0;
@@ -225,17 +384,11 @@ plot: true
 
 			// }
 
-			Karma.generate(0, time, timestep);
-			app.plot(Karma, "vgate", {
+			Noble.generate(0, time, timestep);
+			app.plot(Noble, "v", {
 				connected: true,
 				radius: 0,
 				strokeStyle: "green"
-			});
-
-			app.plot(Karma, "voltage", {
-				connected: true,
-				r: 0,
-				strokeStyle: "red"
 			});
 
 			// // display vgate
@@ -269,7 +422,7 @@ plot: true
 			// app.plotLine(p1, p2);
 
 			// var p = new Point(s2 + 15, 1.5);
-			app.plotText("S2", p);
+			//app.plotText("S2", p);
 
 			//window.requestAnimationFrame(update);		
 		}
@@ -288,71 +441,6 @@ plot: true
 			//requestAnimationFrame(update);
 		}
 
-		/**
-		 * Debug function. Display a table containing the values that are being displayed
-		 */
-		function displayTable() {
-			console.table(debug, ["time", "Vm", "V"]);
-		}
-
-		/**************************************************
-		 GRAPH FUNCTIONS	
-		 declare functions that control the behavior of the
-		 graphs here
-		 **************************************************/
-		/**
-		 * a function that draws a graph based on the Karma model
-		 * @param  {[int]} x [the current x value of the function]
-		 * @return {[int]}   [the y value generated based on the x value]
-		 */
-		function calculateKarma(x) {
-
-		    // if the time is either s1 or s2, change the value of Vm to 1.5
-		    if (x == s1 || x == s2) { 
-		    	voltage = 1.5;
-		    }
-
-	        // calculate heaviside of 
-	        previousHeaviside = heaviside(voltage - 1);
-
-		    // Partial derivative of Vm (equation 1)
-		    var gamma = 1.92;
-		    var delta = 0.23;
-		    var alpha = 7.5;
-		    var h = Math.pow(voltage, 2) * (1 - (delta * voltage));
-		    var diffVoltage = (-voltage + (gamma - Math.pow((vgate / vstar), xm)) * h);
-		    voltage += 5 * timestep * diffVoltage / alpha; // don't know why this works
-
-		    var diffVGate = eps * (previousHeaviside - vgate);
-		    vgate += timestep * diffVGate;
-
-		    debug.push({ "time":x, "Vm":voltage, "V":vgate});
-		    
-		    return { "voltage": voltage, "vgate": vgate };
-		}
-
-		/**
-		 * graph the VGate value from the calculateKarma function
-		 * @param  {[int]} x [the current x value of the function]
-		 * @return {[int]}   [the y value generated based on the x value]
-		 */
-		function calculateVGate(x) {
-			
-		    var vgate = calculateKarma(x)["vgate"];
-		    app.ctx.strokeStyle = "#00FF00";
-		    return vgate;
-		}
-
-		/**
-		 * graph the Voltage value from the calculateKarma function
-		 * @param  {[int]} x [the current x value of the function]
-		 * @return {[int]}   [the y value generated based on the x value]
-		 */
-		function calculateVoltage(x) {
-			var voltage = calculateKarma(x)["voltage"];
-			app.ctx.strokeStyle = "#FF0000";
-			return voltage;
-		}
 
 
 		/**
@@ -436,7 +524,7 @@ plot: true
 		<!-- Buttons -->
 		<fieldset>
 			<div class="plotter_inputgroup">
-				<button id="reset">Reset</button>
+				<button id="update">Update</button>
 				<button id="default">Defaults</button>
 				<button id="getData">Print Data</button>
 			</div>
