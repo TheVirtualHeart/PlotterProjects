@@ -696,7 +696,16 @@ function createPlotter()
 		 * @param {string} plotVar - the variable from the point object that
 		 * will act as the "y" value on the graph.
 		 * @param {Object} style - An object that contains various style
-		 * style properties for the plot.
+		 * style properties for the plot. The properties it accepts are:
+		 * 		connected {boolean} - if true connects points sequentially with
+		 * 		a line
+		 * 		radius {number} - the radius of a circle around a point. Can be
+		 * 		zero
+		 * 		strokeStyle {string} - the hex value of the color of a stroke
+		 * 		fillStyle {string} - the hex value of the color of the fill
+		 * 		normalize {Point} - a Point that defines a range. The "y" value
+		 * 		will be normalized within this range.
+		 * 		
 		 */
 		plot: function(pointObject, plotVar, style) {
 
@@ -826,6 +835,14 @@ function PointObject() {
 	 */
 	this.calculate = function(x, dx) {
 		return {"x":x, "dx":dx};
+	}
+
+	/**
+	 * This function reinitializes the PointObject. It clears the points array,
+	 * but it can be used to reset differential equation values.
+	 */
+	this.clear = function() {
+		this.points = [];
 	}
 
 }

@@ -20,6 +20,7 @@ plot: true
 		var timestep = .25;					// dt - this should be covered by x
 		var displayV = true;
 		var displayVm = true;
+		var vHeight = 4;
 
 		var defaultUeps = 250.0;
 		var defaultEps = 1/defaultUeps;
@@ -70,6 +71,9 @@ plot: true
 		    return { "x":x, "voltage": this.voltage, "vgate": this.vgate };
 		};
 
+		var s1Line = new PointObject();
+		var s2Line = new PointObject();
+
 		/** 
 		 * This function creates the plotter object and then defines the
 		 * initial plots.
@@ -78,7 +82,7 @@ plot: true
 			app = createPlotter(document.getElementById("plot"));
 			app.newPlot({
 				domain: new Point(0, 500),
-				range: new Point(0, 4),
+				range: new Point(0, vHeight),
 				xAxis: "Time (ms)",
 				yAxis: "V (mv)",
 				labelFrequency: new Point(1, 1),
@@ -96,6 +100,19 @@ plot: true
 		// }
 
 		/**
+		 * Clear and reinitialize all PointObjects
+		 */
+		function clearPointObjects() {
+			Karma.clear();
+			s1Line.clear();
+			s2Line.clear();
+		}
+
+		function generatePoints() {
+			Karma.generate(0, curtime, timestep);
+		}
+
+		/**
 		 * Set the initial values for the form elements and then wire the form
 		 * elements so that they can change the graph
 		 */
@@ -105,9 +122,9 @@ plot: true
 			var fieldsForm = document.getElementById("controls");
 			fieldsForm.addEventListener("submit", function(e) {
 					e.preventDefault();
+					clearPointObjects();
 					updatePlots();
-					Karma.clear();
-					Karma.generate(0, curtime, timestep);
+					generatePoints();
 					drawPlots();
 			});
 			var vCheckbox = document.getElementById("displayV");
@@ -134,18 +151,18 @@ plot: true
 
 			document.getElementById("update").addEventListener('click', 
 				function() {
+					clearPointObjects();
 					updatePlots();
-					Karma.clear();
-					Karma.generate(0, curtime, timestep);
+					generatePoints();
 					drawPlots();
 				}, false);
 
 			document.getElementById("default").addEventListener('click',
 				function() {
 					setFieldDefaults();
+					clearPointObjects();
 					updatePlots();
-					Karma.clear();
-					Karma.generate(0, curtime, timestep);
+					generatePoints();
 					drawPlots();
 				}, false);
 
@@ -188,6 +205,14 @@ plot: true
 				curtime = fieldTime;
 				refitPlot()
 			}
+
+			
+			s1Line.addPoint( {"x": Karma.s1, "y":0} );
+			s1Line.addPoint( {"x": Karma.s1, "y":vHeight} );
+
+			s2Line.addPoint( {"x": Karma.s2, "y":0} );
+			s2Line.addPoint( {"x": Karma.s2, "y":vHeight});
+
 		}
 
 		/** 
@@ -209,6 +234,20 @@ plot: true
 					strokeStyle: "red"
 				});
 			}
+
+			app.plot(s1Line, "y", {
+				connected: true,
+				strokeStyle: "black"
+			});
+
+			app.plot(s2Line, "y", {
+				connected: true,
+				strokeStyle: "black"
+			});
+
+			app.plotText("S1", new Point(s1Line.getPoints()[0]["x"], vHeight/2));
+			app.plotText("S2", new Point(s2Line.getPoints()[0]["x"], vHeight/2));
+
 		}
 
 		/**
@@ -254,7 +293,7 @@ plot: true
 			initializePlotter();
 			initializeForms();
 			updatePlots();
-			Karma.generate(0, curtime, timestep);
+			generatePoints();
 			drawPlots();
 		}
 
