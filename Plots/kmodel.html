@@ -17,7 +17,7 @@ plot: true
 		 **************************************************/
 		var app;
 		var curtime = 500.0;
-		var timestep = .25;					// dt - this should be covered by x
+		var timestep = .01;					// dt - this should be covered by x
 		var displayV = true;
 		var displayVm = true;
 		var vHeight = 4;
@@ -30,7 +30,7 @@ plot: true
 		var defaultVGate = 0.0;
 		var defaultS1 = 0.0;
 		var defaultS2 = 300.0;
-		var defaultTime = 500.0;
+		var defaultTime = 5000.0;
 
 		/**
 		 * Define the Karma PointObject
@@ -219,6 +219,7 @@ plot: true
 		 * Once the plots have been initialized, draw them with Plotter
 		 */
 		function drawPlots() {
+			console.log("draw plots");
 			app.selectPlot("Karma");
 			if(displayV) {
 				app.plot(Karma, "vgate", {

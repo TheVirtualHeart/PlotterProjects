@@ -1,0 +1,179 @@
+---
+title: calcium
+plot: true
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>calcium</title>
+	<script src="plotter.js"></script>
+	<script>
+	var app; //the plotter object
+	var n = 15; //default value of n
+	var influx = 15; //default value of influx
+	var nSlider, influxSlider; //the GUI sliders that adjust n and influx respectively
+	var anchorPoint; //the point at which the user last clicked
+	
+	//initialises the app and creates the graphs
+	function init()
+	{
+		app = createPlotter(document.getElementById("plot"), new Point(0, 130));
+		
+		var settings =
+		{
+			domain: new Point(0, 100),
+			range: new Point(0, 100),
+			pixelPerUnit: new Point(4, 2),
+			unitPerTick: new Point(20, 25),
+			labelFrequency: new Point(1, 1),
+			xAxis: "SR_i",
+			yAxis: "SR_i+1"
+		};
+		app.newPlot(settings, "SR_i+1"); //creates the SR_i+1 graph
+		
+		settings =
+		{
+			offset: new Point(0, 270),
+			domain: new Point(0, 100),
+			range: new Point(0, 100),
+			pixelPerUnit: new Point(4, 2),
+			unitPerTick: new Point(20, 25),
+			labelFrequency: new Point(1, 1),
+			xAxis: "SR_i",
+			yAxis: "Efflux_i"
+		}
+		app.newPlot(settings, "Efflux_i"); //create the Efflux_i graph
+		
+		//store the html element sliders, for better readability and faster reference calls
+		influxSlider = document.getElementById("influx");
+		nSlider = document.getElementById("n");
+		
+		//these event listeners configure the buttons to acts as standard scroll bar buttons
+		document.getElementById("influxDown").addEventListener("click",
+		function()
+		{
+			if(parseInt(influxSlider.value) > parseInt(influxSlider.min))
+				influxSlider.value--;
+		}, false);
+		document.getElementById("influxUp").addEventListener("click",
+		function()
+		{
+			if(parseInt(influxSlider.value) < parseInt(influxSlider.max))
+				influxSlider.value++;
+		}, false);
+		document.getElementById("nDown").addEventListener("click",
+		function()
+		{
+			if(parseInt(nSlider.value) > parseInt(nSlider.min))
+				nSlider.value--
+		;}, false);
+		document.getElementById("nUp").addEventListener("click",
+		function()
+		{
+			if(parseInt(nSlider.value) < parseInt(nSlider.max))
+				nSlider.value++;
+		}, false);
+		
+		setInterval(update, 1000/60); //update once per frame at a desired 60fps
+	}
+	
+	window.onload = init;
+	
+	//is optimally called once per frame at 60fps
+	function update()
+	{
+		//set the n and influx variables to the values found on the sliders
+		influx = parseInt(influxSlider.value);
+		n = parseInt(nSlider.value);
+		
+		//render the equations using the n and influx variables
+		document.getElementById("srEq").innerHTML = "SR<sub>i+1</sub> = SR<sub>i</sub> - Efflux + <strong>influx</strong>; <strong>influx</strong> = <strong>" + influx + "</strong>";
+		document.getElementById("effluxEq").innerHTML = "Efflux = SR * SR<sup><strong>n</strong></sup>/(50<sup><strong>n</strong></sup> + SR<sup><strong>n</strong></sup>); <strong>n</strong> = <strong>" + n + "</strong>";
+		
+		app.selectPlot("SR_i+1"); //this clears the SR_i+1 plot and gets it ready for interaction
+		app.ctx.strokeStyle = "#0000FF"; //blue
+		app.plotSlope(new Point(0,0), 1); //this draws the line that is iterated against
+		app.ctx.strokeStyle = "#000000"; //black
+		app.plotFunction(sr); //this draws the SR_i+1 curve
+		
+		if (app.mouse.isDown) //if you are dragging the mouse
+			anchorPoint = new Point(app.mouse.move.x, app.mouse.move.y); //store the mouse.move point as a new point
+		
+		var srPoints = []; //the points returned by the hop algorithm, the hopf bifurcation
+		if (anchorPoint != undefined) //if there is an anchor point to start the hop from
+			srPoints = hop(sr, anchorPoint, 100); //using SR_i+1 as the curve, do 100 hops from anchorPoint
+		
+		app.ctx.strokeStyle = "#FF0000"; //red
+		app.plotPoly(srPoints); //plot the hopf bifurcation
+		
+		app.selectPlot("Efflux_i"); //this clears the Efflux_i plot and gets it ready for interaction
+		app.plotFunction(efflux); //this draws the Efflux_i curve
+		var srEffluxPoints = []; //this is populated with points that represent the curve that is used for the hopf bifurcation against Efflux_i's curve
+		for (var i = 0; i < 200; i++)
+			srEffluxPoints.push(new Point(sr(i),efflux(i)));
+		app.ctx.strokeStyle = "#0000FF"; //blue
+		app.plotPoly(srEffluxPoints); //this draws the hopf bifurcation mimicking curve
+		
+		srPoints.splice(0,1); //this removes the anchorPoint from the array, to prep it for a modified hopf bifurcation algorithm
+		
+		for (var i = 0; i < srPoints.length; i++)
+		{
+			var p;
+			if (i & 1) //if odd
+				p = new Point(srPoints[i].x, srPoints[i - 1].y); //use previous point's y
+			else
+				p = new Point(srPoints[i].x, efflux(srPoints[i].x)); //use efflux at SR_i+1's x as y
+			
+			srPoints[i] = p; //replace the point in the array with the newly calculated one
+		}
+		
+		app.ctx.strokeStyle = "#00FF00"; //green
+		app.plotPoly(srPoints); //this draws the modified hopf bifurcation of SR_i+1 against Efflux_i
+	}
+	
+	//the SR function used for the black line on graph 0
+	function sr(x) { return x - efflux(x) + influx; }
+	//the SR function used for the black line on graph 1
+	function efflux(x) { return Math.pow(x, n+1) / (Math.pow(x, n) + Math.pow(50, n)); }
+	
+	//this algorithm produces a hopf bifurcation at point p, against the given curve, depth amount of iterations
+	function hop(curve, p, depth)
+	{
+		var points = [new Point(p.x, p.y)] //the points generated by the hops
+		var x = p.x;
+		var y = p.y;
+		
+		for (var i = 0; i < depth; i++)
+		{
+			if (i & 1) //if odd
+				x = y; //set x to the y value of the current point
+			else
+				y = curve(p.x); //find y on curve given last x
+			p = new Point(x, y); //store x and y as a new point
+			points.push(p); //and push it into the array
+		}
+		
+		return points; //return the points so that they can be rendered by plotPoly and/or re-used
+	}
+	</script>
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">This graph requires HTML5 canvas support, sorry!</canvas>
+		<div style="position:absolute;top:560px;left:101px;border:2px solid black;padding:10px;">
+			<p style="margin:0px;"><label id="influxLabel" for="influx"><strong>Influx</strong></label>
+			<button id="influxDown">-</button>
+			<input id="influx" type="range" min="0" max="30" step="1" value="15" />
+			<button id="influxUp">+</button></p>
+			<div id="srEq"></div>
+			<p style="margin:0px;"><label id="nLabel" for="n"><strong>n</strong></label>
+			<button id="nDown">-</button>
+			<input id="n" type="range" min="0" max="30" step="1" value="15" />
+			<button id="nUp">+</button></p>
+			<div id="effluxEq"></div>
+		</div>
+	</div>
+</body>
+</html>

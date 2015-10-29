@@ -21,7 +21,7 @@ plot: true
 		app = createPlotter(document.getElementById("plot"));
 		var settings =
 		{
-			domain: new Point(0, 400),
+			domain: new Point(0, 4000),
 			range: new Point(0, 300),
 			pixelPerUnit: new Point(1, 1),
 			unitPerTick: new Point(50, 50),
@@ -34,7 +34,7 @@ plot: true
 		settings =
 		{
 			offset: new Point(0, 380),
-			domain: new Point(250, 500),
+			domain: new Point(250, 5000),
 			range: new Point(0, 300),
 			pixelPerUnit: new Point(1.5, 1),
 			unitPerTick: new Point(50, 50),
@@ -52,10 +52,11 @@ plot: true
 	//is optimally called once per frame at 60fps
 	function update()
 	{
+		console.log("h");
 		app.selectPlot("graph"); //this clears the graph plot and gets it ready for interaction
 		
 		app.plotSlope(app.mouse.down, -1); //this draws the black line where you clicked down
-		app.plotFunction(curve, true, 1, cutoff); //this draws the curve starting at the cutoff
+		app.plotFunction(curve, true, .01, cutoff); //this draws the curve starting at the cutoff
 		
 		app.ctx.strokeStyle = "#0000FF"; //blue
 		if (app.mouse.isDown) //if you are dragging the mouse

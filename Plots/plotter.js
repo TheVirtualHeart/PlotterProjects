@@ -480,6 +480,7 @@ function createPlotter()
 			while (i < end)
 			{
 				funcValue = func(i);
+				//console.log(funcValue);
 				if (typeof funcValue !== "undefined")
 					points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
 				else

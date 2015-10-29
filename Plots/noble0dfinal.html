@@ -1,5 +1,5 @@
 ---
-title: Noble0d
+title: Noble0d Other
 plot: true
 ---
 <!DOCTYPE html>
@@ -8,7 +8,7 @@ plot: true
 	<meta charset="utf-8" />
 	<title>Noble Model</title>
 	<link href="../node_modules/plotter/plotter.css" type="text/css" rel="stylesheet" />
-	<script src="../node_modules/plotter/plotter.dev.js"></script>
+	<script src="plotter.js"></script>
 	<script>
 
 
@@ -178,11 +178,11 @@ plot: true
 		var vstar = 0.64;
 		var s1 = 0.0;						// the first point to introduce voltage
 		var s2 = 300.0;						// the second point to introduce voltage
-		var time = 5000;					// the time over which we view the function
+		//var time = 5000;					// the time over which we view the function
 		var previousHeaviside = 0;
 		var currentHeaviside = 0;
 
-		var timestep = .01;					// dt - this should be covered by x
+		//var timestep = .01;					// dt - this should be covered by x
 		var voltageHeight = 4;
 
 		var curTime = 0.0;					// t - this should be covered by x
@@ -196,145 +196,198 @@ plot: true
 		var displayVm = true;
 
 
-
 		// Define the Point Object
-		var Noble = new PointObject();
-		Noble.cm=12;
-		Noble.gan = 0.0;
-		Noble.ean=-60;
-		Noble.stimmag=-106;
-		Noble.stimdur=2.0;
-		Noble.period=500.0;
+		var cm= 12;
+		var gan = 0.0;
+		var ean= -60;
+		var stimmag= -106;
+		var stimdur= 2.0;
+		var period=500.0;
 
-		Noble.v = -80.0; 
-		Noble.m = 0.0;
-		Noble.h = 1.0;
-		Noble.n = 0.0;
+		var v = -80.0; 
+		var m = 0.0;
+		var h = 1.0;
+		var n = 0.0;
 
-		Noble.timestep = 0.01;
+		/**
+		 * These control how how often points are graphed. The time and the 
+		 * timestep should remain constant. At each step, the function performs
+		 * a batch of calculations and records the final result. The size of
+		 * each batch is determined by the batchSize variable.
+		 */
+		var time = 5000;
+		var timestep = 0.01;
+		var batchSize = 1;
+		var stepSize = batchSize * timestep;
+		var steps = (time / stepSize);
 
+		var vArray = [];
+		var count = 0;
 
-		Noble.calculate = function(x, dx) {
-
-			// if(abs(-v-48)<1e-3)
-		 //        am=0.15;
-		 //    else
-		 //        am=0.1*(-v-48)./(exp((-v-48)/15)-1);
-		 //    end
-
-		 	var am;
-		    if (Math.abs(-this.v - 48) < Math.pow(10, -3)) {
-		    	am=0.15;
-		    } else {
-		    	am= 0.1 * (-this.v - 48) / Math.exp(((-this.v-48)/15)-1);
-		    }
-
-		    // console.log(am);
-
-		//     if(abs(v+8)<1e-3)
-		//         bm=0.6;
-		//     else
-		//         bm=0.12*(v+8)./(exp((v+8)/5)-1);
-		//     end
-			var bm;
-			if (Math.abs(this.v + 8) < 0.001) {
-				bm = 0.6;
-			}
-			else {
-				bm = 0.12 * (this.v + 8) / (Math.exp((this.v + 8)/5)-1);
-			}
-			// console.log(bm);
-
-		//     ah=0.17*exp((-v-90)/20);
-		//     bh=1./(exp((-v-42)/10)+1);
-		//     if(abs(-v-50)<1e-3)
-		//         an=0.001;
-		//     else
-		//         an=0.0001*(-v-50)./(exp((-v-50)/10)-1);
-		//     end
-		//     bn=0.002*exp((-v-90)/80);
-			var ah = 0.17 * Math.exp((-this.v - 90)/20);
-			var bh = 1 / (Math.exp((-this.v - 42)/10) + 1);
-			var an;
-			if (Math.abs(-this.v - 50) < 0.001) {
-				an = 0.001;
+		/** 
+		 * A rounding function that more closely resembles Matlab's round() 
+		 * function.
+		 * http://www.mathworks.com/help/matlab/ref/round.html
+		 */
+		function round(val) {
+			if (val > 0) {
+				return Math.round(val);
+			} else if (val < 0) {
+				var abs = Math.abs(val);
+				var round = Math.round(abs);
+				return -round;
 			} else {
-				an = 0.0001 * (-this.v - 50) / (Math.exp((-this.v-50)/10)-1);
+				return 0;
 			}
-			var bn = 0.002 * Math.exp((-this.v-90)/80);
+		}
 
-			//console.log("ah: " + ah + " bh: " + bh + " an: " + an + " bn: " + bn);
+		var calculate = function(x) {
+
+			//vArray.push(v);
+			var count = 0;
+			for (var j = 0; j < steps; j++) {			
+				var val = v;
+				for (var i = 0; i < batchSize; i++) {
+
+					// if(abs(-v-48)<1e-3)
+				 //        am=0.15;
+				 //    else
+				 //        am=0.1*(-v-48)./(exp((-v-48)/15)-1);
+				 //    end
+
+				 	var am;
+				    if (Math.abs(-v - 48) < 0.001) {
+				    	am=0.15;
+				    } else {
+				    	am= 0.1 * (-v - 48) / Math.exp(((-v-48)/15)-1);
+				    }
+
+				    //console.log(am);
+
+				    //console.log(v);
+
+				//     if(abs(v+8)<1e-3)
+				//         bm=0.6;
+				//     else
+				//         bm=0.12*(v+8)./(exp((v+8)/5)-1);
+				//     end
+					var bm;
+					if (Math.abs(v + 8) < 0.001) {
+						bm = 0.6;
+					}
+					else {
+						bm = 0.12 * (v + 8) / (Math.exp((v + 8)/5)-1);
+					}
+					// console.log(bm);
+
+				//     ah=0.17*exp((-v-90)/20);
+				//     bh=1./(exp((-v-42)/10)+1);
+				//     if(abs(-v-50)<1e-3)
+				//         an=0.001;
+				//     else
+				//         an=0.0001*(-v-50)./(exp((-v-50)/10)-1);
+				//     end
+				//     bn=0.002*exp((-v-90)/80);
+					var ah = 0.17 * Math.exp((-v - 90)/20);
+					var bh = 1 / (Math.exp((-v - 42)/10) + 1);
+					var an;
+					if (Math.abs(-v - 50) < 0.001) {
+						an = 0.001;
+					} else {
+						an = 0.0001 * (-v - 50) / (Math.exp((-v-50)/10)-1);
+					}
+					var bn = 0.002 * Math.exp((-v-90)/80);
+
+					//console.log("ah: " + ah + " bh: " + bh + " an: " + an + " bn: " + bn);
 
 
-		// % calculate derivatives of gating variables
-		//     dm=am*(1-m)-bm*m;
-		//     dh=ah*(1-h)-bh*h;
-		//     dn=an*(1-n)-bn*n;
-			var dm = am * (1-this.m) - bm * this.m;
-			var dh = ah * (1-this.h) - bh * this.h;
-			var dn = an * (1-this.n) - bn * this.n;
+				// % calculate derivatives of gating variables
+				//     dm=am*(1-m)-bm*m;
+				//     dh=ah*(1-h)-bh*h;
+				//     dn=an*(1-n)-bn*n;
+					var dm = am * (1-m) - bm * m;
+					var dh = ah * (1-h) - bh * h;
+					var dn = an * (1-n) - bn * n;
 
-			//console.log("dm: " + dm + " dh: " + dh + " dn: " + dn);
+					//console.log("dm: " + dm + " dh: " + dh + " dn: " + dn);
 
 
-		//     % update gating variables using explicit method
-		//     m = m + dt*dm;
-		//     h = h + dt*dh;
-		//     n = n + dt*dn;
-		//     % semi-implicit
-		//     % m=(m+dt*am)/(1+dt*(am+bm));
-		//     % h=(h+dt*ah)/(1+dt*(ah+bh));
-		//     % n=(n+dt*an)/(1+dt*(an+bn));
-		//     
-			this.m += dx * dm;
-			this.h += dx * dh;
-			this.n += dx * dn;
+				//     % update gating variables using explicit method
+				//     m = m + dt*dm;
+				//     h = h + dt*dh;
+				//     n = n + dt*dn;
+				//     % semi-implicit
+				//     % m=(m+dt*am)/(1+dt*(am+bm));
+				//     % h=(h+dt*ah)/(1+dt*(ah+bh));
+				//     % n=(n+dt*an)/(1+dt*(an+bn));
+				//     
+					m += timestep * dm;
+					h += timestep * dh;
+					n += timestep * dn;
 
-		//     % calculate potassium current conductance values
-		//     gk1 = 1.2*exp((-v-90)/50)+0.015*exp((v+90)/60);
-		//     gk2 = 1.2*n.*n.*n.*n;
-			var gk1 = 1.2 * Math.exp((-this.v-90)/50) + 0.015 * Math.exp((this.v+90)/60);
-			var gk2 = 1.2 * Math.pow(this.n, 4);
+				//     % calculate potassium current conductance values
+				//     gk1 = 1.2*exp((-v-90)/50)+0.015*exp((v+90)/60);
+				//     gk2 = 1.2*n.*n.*n.*n;
+					var gk1 = 1.2 * Math.exp((-v-90)/50) + 0.015 * Math.exp((v+90)/60);
+					var gk2 = 1.2 * Math.pow(n, 4);
 
-		//     % calculate currents
-		//     ina1=400*m.*m.*m.*h.*(v-40);
-		//     % ina2=0.13*(v-40); % this makes it not auto-oscillatory
-		//     ina2=0.14.*(v-40);
-		//     ik1=gk1.*(v+100);
-		//     ik2=gk2.*(v+100);
-		//     il=gan*(v-ean);
-			var ina1 = 400 * this.m * this.m * this.m * this.h * (this.v - 40);
-			var ina2 = 0.14 * (this.v - 40);
+				//     % calculate currents
+				//     ina1=400*m.*m.*m.*h.*(v-40);
+				//     % ina2=0.13*(v-40); % this makes it not auto-oscillatory
+				//     ina2=0.14.*(v-40);
+				//     ik1=gk1.*(v+100);
+				//     ik2=gk2.*(v+100);
+				//     il=gan*(v-ean);
+					var ina1 = 400 * m * m * m * h * (v - 40);
+					var ina2 = 0.14 * (v - 40);
 
-			var ik1 = gk1 * (this.v + 100);
-			var ik2 = gk2 * (this.v + 100);
-			var il = this.gan * (this.v - this.ean);
+					var ik1 = gk1 * (v + 100);
+					var ik2 = gk2 * (v + 100);
+					var il = gan * (v - ean);
 
-		//     ina=ina1+ina2;
-		//     ik=ik1+ik2;
-			var ina = ina1 + ina2;
-			var ik = ik1 + ik2;
+				//     ina=ina1+ina2;
+				//     ik=ik1+ik2;
+					var ina = ina1 + ina2;
+					var ik = ik1 + ik2;
 
-		//     istim=0;
-		//     if(mod(ntime,round(period/dt))<round(stimdur/dt))
-		//         istim=stimmag;
-		//     end
-			var istim = 0;
-			if (x % 1000 > 0) {							// change 50 to period
-				istime = this.stimmag;
+				//     istim=0;
+				//     if(mod(ntime,round(period/dt))<round(stimdur/dt))
+				//         istim=stimmag;
+				//     end
+					var istim = 0;
+					// if (count % 1000 === 0) {							// change 50 to period
+					// 	istim = stimmag;
+					// }
+					// 
+					if (count % round(period/timestep) < round(stimdur / timestep)) {
+						istim = stimmag
+					}
+
+
+				//     dv=(-ina-ik-il-istim)/cm;
+					var dv = (-ina - ik - il - istim) / cm;
+					//console.log(dv);
+
+
+				//     v = v + dt*dv;
+					v += timestep * dv;
+					count++;
+					// console.log(dv);
+					//console.log(v);
+				    
+				    //return { "x":x, "v": v, "m": m, "h": h, "n": n };
+				    //
+				    
+				    // round to the appropriate decimal place
+				    // v = round(v * 1000) / 1000;
+				    // m = round(m * 1000000) / 1000000;
+				    // h = round(h * 100000) / 100000;
+				    // n = round(n * Math.pow(10, 9)) / Math.pow(10, 9);
+			    }
+			    //count++;
+			    //console.log(count);
+			    vArray.push(val);	
 			}
-
-
-		//     dv=(-ina-ik-il-istim)/cm;
-			var dv = (-ina - ik - il - istim) / this.cm;
-
-
-		//     v = v + dt*dv;
-			this.v += dx * dv;
-			// console.log(dv);
-			//console.log(this.v);
-		    
-		    return { "x":x, "v": this.v, "m": this.m, "h": this.h, "n": this.n };
 			
 
 		}
@@ -350,27 +403,27 @@ plot: true
 		function buildGraphs() {
 			app = createPlotter(document.getElementById("plot"));
 
-			app.newPlot({
-				domain: new Point(0, 5000),
-				range: new Point(0, 1),
-				unitPerTick: new Point(500, 1),
-				pixelPerUnit: new Point(.1, 400),
-				labelFrequency: new Point(1, 1),
-				xAxis: "Time (ms)",
-				yAxis: "V (mv)",
-
-			}, "Noble");
-
 			// app.newPlot({
 			// 	domain: new Point(0, 5000),
-			// 	range: new Point(-100, 100),
-			// 	unitPerTick: new Point(20, 20),
-			// 	pixelPerUnit: new Point(2, 2),
+			// 	range: new Point(0, 1),
+			// 	unitPerTick: new Point(500, 1),
+			// 	pixelPerUnit: new Point(.1, 400),
 			// 	labelFrequency: new Point(1, 1),
 			// 	xAxis: "Time (ms)",
 			// 	yAxis: "V (mv)",
 
 			// }, "Noble");
+
+			app.newPlot({
+				domain: new Point(0, time),
+				range: new Point(-100, 100),
+				unitPerTick: new Point(100, 20),
+				pixelPerUnit: new Point(.4, 10),
+				labelFrequency: new Point(2, 1),
+				xAxis: "Time (ms)",
+				yAxis: "V (mv)",
+
+			}, "Noble");
 		}
 
 
@@ -378,7 +431,7 @@ plot: true
 		 * Wire the form event handlers
 		 */
 		function buildForms() {
-			document.getElementById("update").onclick = update;
+			document.getElementById("update").onclick = resetGraph;
 			document.getElementById("default").onclick = setDefaults;
 
 			document.getElementById("displayVm").onclick = resetGraph;
@@ -465,95 +518,35 @@ plot: true
 		//var count = 0;
 		function update() {
 
-			//console.log(Noble.getPoints());
-
-			//refitPlot();
-
-			//app.clearPlot();
-
 			app.selectPlot("Noble");
 
-			//var Karma = new PointObject();
-			// Karma.voltage = 0.0;
-			// Karma.vgate = 0.0;
+			//Noble.generate(0, time, timestep);
+			app.ctx.strokeStyle = "#FF0000";
+			calculate(0);
 
-			// Karma.calculate = function(p) {
+			console.log(vArray);
+			console.log(time);
+			console.log(stepSize);
 
-			// 	// if the time is either s1 or s2, change the value of Vm to 1.5
-			//     if (p == s1 || p == s2) { 
-			//     	this.voltage = 1.5;
-			//     }
+			app.plotFunction(function(x) {
+				var index = Math.round(x / stepSize);
+				//console.log(index);
+				return vArray[index];
+			}, true, stepSize, 0, time);
 
-		 //        // calculate heaviside of 
-		 //        previousHeaviside = heaviside(this.voltage - 1);
+			// app.plot(Noble, "v", {
+			// 	normalize: new Point(-85, -75),
+			// 	connected: true,
+			// 	radius: 0,
+			// 	strokeStyle: "green"
+			// });
 
-			//     // Partial derivative of Vm (equation 1)
-			//     var gamma = 1.92;
-			//     var delta = 0.23;
-			//     var alpha = 7.5;
-			//     var h = Math.pow(this.voltage, 2) * (1 - (delta * this.voltage));
-			//     var diffVoltage = (-this.voltage + (gamma - Math.pow((this.vgate / vstar), xm)) * h);
-			//     this.voltage += 5 * timestep * diffVoltage / alpha; // don't know why this works
-
-			//     var diffVGate = eps * (previousHeaviside - this.vgate);
-			//     this.vgate += timestep * diffVGate;
-
-			//     //debug.push({ "time":p, "Vm":voltage, "V":vgate});
-			    
-			//     return { "x":p, "voltage": this.voltage, "vgate": this.vgate };
-
-			// }
-
-
-			Noble.generate(0, time, timestep);
-			app.plot(Noble, "v", {
-				normalize: new Point(-85, -45),
-				connected: true,
-				radius: 0,
-				strokeStyle: "green"
-			});
-
-			app.plot(Noble, "h", {
-				normalize: new Point(0, 1),
-				connected: true,
-				radius: 0,
-				strokeStyle: "red"
-			});
-
-			// // display vgate
-			// if (displayV) {
-			// 	voltage = 0.0;
-			// 	vgate = 0.0;
-			// 	app.plotFunction(calculateVGate, true, timestep);
-			// }
-
-			// // display voltage
-			// if (displayVm) {
-			// 	voltage = 0.0;
-			// 	vgate = 0.0;
-			// 	app.plotFunction(calculateVoltage, true, timestep);
-			// }
-
-			// // display s1
-			// var p1 = new Point(s1, 0),
-			// 	p2 = new Point(s1, voltageHeight);
-			// app.ctx.strokeStyle = "#000000";
-			// app.plotLine(p1, p2);
-
-			// var p = new Point(s1 + 15, 1.5);
-			// app.plotText("S1", p);
-
-			
-			// // display s2
-			// var p1 = new Point(s2, 0),
-			// 	p2 = new Point(s2, voltageHeight);
-			// app.ctx.strokeStyle = "#000000";
-			// app.plotLine(p1, p2);
-
-			// var p = new Point(s2 + 15, 1.5);
-			//app.plotText("S2", p);
-
-			//window.requestAnimationFrame(update);		
+			// app.plot(Noble, "h", {
+			// 	normalize: new Point(0, 1),
+			// 	connected: true,
+			// 	radius: 0,
+			// 	strokeStyle: "red"
+			// });	
 		}
 
 		/**
@@ -561,9 +554,11 @@ plot: true
 		 * the form loads
 		 */
 		window.onload = function() {
+			//calculate(0);
+			//console.log(data);
 			//debug = [];
 			buildGraphs();
-			buildForms();
+		 	buildForms();
 			update();
 
 			//setInterval(update, 1000/60);

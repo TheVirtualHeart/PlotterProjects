@@ -1,0 +1,513 @@
+---
+title: alternansmall
+plot: true
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>alternansmall</title>
+	<script src="plotter.js"></script>
+	<script>
+	var app; //the plotter object
+	var uNew = [], u = [], v = [], w = [], s = []; //differential equation data
+	var dvt, vlo = -0.2; //used to calculate exponent tables and to access them
+	var dt = 0.15, diffusion = 0.001;
+	var dx = 0.0479; //used as a step size for graphing and a ratio for cableLength to centimeters
+	var ddtOdx2 = diffusion * dt / (dx * dx); //a constant
+	var table1 = [], table2 = [], table3 = []; //pre-computed exponent values used as lookup tables
+	var cableLength = 195, threshold = 0.25; //length of cable to be simulated and the threshold
+	var batchSize = 32, step = 0, paused = false; //adjust batchSize to adjust speed
+	var periodCounter = 0, period = 297; //stimulus control variables
+	var ntp = [], tp = [[]], apd1 = [], per1 = [], apd2 = [], per2 = [], cv1 = [], cv2 = []; //analysis variables
+	
+	//prepares all the objects and populates all the arrays, and more
+	function init()
+	{
+		buildGraphs(); //build the graphs using the plotter.js object
+		buildForm(); //populate event listeners with anonymous functions
+		buildTables(1100); //build tables with a nvt value of 1100
+		restart(); //initialize the data using the restart button function
+		setInterval(update, 1000/60); //update once per frame at a desired 60fps
+	}
+	
+	window.onload = init;
+	
+	//is optimally called once per frame at 60fps
+	function update()
+	{
+		if (paused) //simple early exit check for if the app is paused
+			return;
+		
+		var uOld = u.slice(); //used for the space time plot
+		for (var b = 0; b < batchSize; b++) //run through the data
+		{
+			calcData();
+			analyzeData();
+			
+			step++; //step*dt is the time passed in ms
+			u = uNew.slice(); //copy the new u values into the u array
+		
+			periodCounter++;
+			if (periodCounter >= period / dt) //if enough time has passed, stimulate the cable
+			{
+				stimulate();
+				periodCounter = 0; //start counting over
+			}
+		}
+		
+		var averagePeriod = new Point(period, period); //this is used to track the average of each period in a convenient point to reduce variable footprint and express it as a range
+		for (var i = 0; i < cableLength; i++) //add up the periods' values at each cell
+		{
+			averagePeriod.x += per1[i];
+			averagePeriod.y += per2[i];
+		}
+		//average out the values based on cableLength
+		averagePeriod.x /= cableLength;
+		averagePeriod.y /= cableLength;
+
+		//the avgPrd is the lowest of averagePeriod plus the median of the two
+		var avgPrd = Math.round(Math.min(averagePeriod.x, averagePeriod.y) + (Math.max(averagePeriod.x, averagePeriod.y) - Math.min(averagePeriod.x, averagePeriod.y)) / 2);
+		
+		//this new avgPrd is used as the median of the range +/- 6
+		//and only applied if it is different than the current one
+		var periodRange = new Point(avgPrd - 6, avgPrd + 6);
+		if (periodRange.x != app.settings.range.x || periodRange.y != app.settings.range.y)
+			app.editPlot("Period", {range: periodRange});
+		
+		graphData(uOld); //uOld is passed in to allow the graphing of the space V time plot
+	}
+	
+	//this calculates new values of uvws using prior values of each
+	function calcData()
+	{
+		for (var i = 0; i < cableLength; i++) //iterate over each cell
+		{
+			var wIndex = Math.floor((w[i] - vlo) / dvt);
+			var vIndex = Math.floor((u[i] - vlo) / dvt);
+			var um = 0.3, up = 0.13, uq = 0.2, ur = 0.006;
+			var xm = u[i] > um ? 1:0;
+			var xp = u[i] > up ? 1:0;
+			var xq = u[i] > uq ? 1:0;
+			var xr = u[i] > ur ? 1:0;
+			var tvm1 = 20, tvm2 = 20, twm = 50;
+			var tvm = (1 - xq) * tvm1 + xq * tvm2;
+			
+			if (w[i] > 0.45)
+				twm = 180;
+			else if (w[i] > 0.4)
+				twm = 92;
+			else if (w[i] > 0.14)
+				twm = table1[wIndex];
+			
+			var ts1 = 1, ts2 = 1.7721446, to1 = 600, to2 = 20;
+			var ts = (1 - xp) * ts1 + xp * ts2;
+			var to = (1 - xr) * to1 + xr * to2;
+			var vin = 1 - xq, twinf = 9.397222, winfast = 2.8725006;
+			var win = Math.min((1 - xr) * (1 - u[i] / twinf) + xr * winfast, 1);
+			var tvp = 1.4506, twp = 67.880750;
+			var dv = (1 - xm) * (vin - v[i]) / tvm - xm * v[i] / tvp;
+			var dw = (1 - xp) * (win - w[i]) / twm - xp * w[i] / twp;
+			var ds = (table3[vIndex] - s[i]) / ts;
+			v[i] += dt * dv;
+			w[i] += dt * dw;
+			s[i] += dt * ds;
+			var uu = 1.56, tfi = 0.104, uo = 0, tsi = 1.3459624;
+			var tso = table2[vIndex];
+			var xfi = -v[i] * xm * (u[i] - um) * (uu - u[i]) / tfi;
+			var xso = (u[i] - uo) * (1 - xp) / to + xp / tso;
+			var xsi = -xp * w[i] * s[i] / tsi;
+			
+			if (i == 0) //edge case for first cell
+				uNew[i] = 2 * u[1] - 2 * u[i];
+			else if (i == cableLength - 1) //edge case for last cell
+				uNew[i] = 2 * u[i - 1] - 2 * u[i];
+			else //all the other cells
+				uNew[i] = u[i + 1] + u[i - 1] - 2 * u[i];
+			
+			//the above code is only a part of it, it is used in the equation below
+			uNew[i] = u[i] + ddtOdx2 * uNew[i] - dt * (xfi + xso + xsi);
+		}
+	}
+	
+	//this goes through the cable and analyses the data at each cell
+	function analyzeData()
+	{
+		for (var i = 0; i < cableLength; i++) //iterate over each cell
+		{
+			if ((u[i] - threshold) * (uNew[i] - threshold) < 0) //if the voltage has passed the threshold between two cells
+			{
+				ntp[i]++;
+				if (i!= 0)
+					if ((ntp[i] & 1) && ((ntp[i-1] != ntp[i] && ntp[i] < 5) || (ntp[i] == 5 && ntp[i-1] != 1)))
+					{
+						if (ntp[i] == 1)
+							ntp[i] = 5;
+						else
+							ntp[i] = ntp[i-1];
+						var tp2 = tp[i][2];
+						tp[i][2] = tp[i][4];
+						tp[i][4] = tp2;
+						if (ntp[i] == 5)
+							tp[i][3] = tp[i][1];
+						if (ntp[i] == 3)
+							tp[i][1] = tp[i][3];
+					}
+				tp[i][ntp[i]] = step * dt - ((u[i] - threshold) / (uNew[i] - u[i])) * dt;
+				
+				switch (ntp[i]) //covers each value of ntp and it's cases
+				{
+					case 1:
+						if (i != 0)
+							cv1[i] = dx / (tp[i][5] - tp[i - 1][5]);
+						if (i == 2)
+						{
+							cv1[0] = cv1[2];
+							cv1[1] = cv1[2];
+						}
+						break;
+					case 2:
+						apd1[i] = tp[i][2] - tp[i][1];
+						break;
+					case 3:
+						per2[i] = tp[i][3] - tp[i][1];
+						if (i > 1)
+							cv2[i] = dx / (tp[i][3] - tp[i - 1][3]);
+						//the first 2 values of cv can not be calculated, so it is mirrored from the 3rd
+						if (i == 2)
+						{
+							cv2[0] = cv2[2];
+							cv2[1] = cv2[2];
+						}
+						break;
+					case 4:
+						apd2[i] = tp[i][4] - tp[i][3];
+						break;
+					case 5:
+						per1[i] = tp[i][5] - tp[i][3];
+						if (i > 1)
+							cv1[i] = dx / (tp[i][5] - tp[i - 1][5]);
+						//the first 2 values of cv can not be calculated, so it is mirrored from the 3rd
+						if (i == 2)
+						{
+							cv1[0] = cv1[2];
+							cv1[1] = cv1[2];
+						}
+						ntp[i] = 1;
+						tp[i][1] = tp[i][5];
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	}
+	
+	//this selects each plot one at a time and plots the analysed data and some raw data on each plot
+	function graphData(uOld)
+	{
+		app.selectPlot("V"); //this clears the voltage plot and gets it ready for interaction
+		app.plotFunction(function(x){return u[getIndex(x)] * 80 - 80;}, true, dx); //graphs the voltage
+		app.plotFunction(function(x) //this draws the blue and orange lines, marking even and odd beats
+		{
+			if (ntp[getIndex(x)] == 1) //if even
+				app.ctx.strokeStyle = "#FF9900"; //orange
+			else if (ntp[getIndex(x)] == 3) //if odd
+				app.ctx.strokeStyle = "#0099FF"; //blue
+			return (ntp[getIndex(x)] == 1 || ntp[getIndex(x)] == 3) ? threshold * 80 - 80 : undefined; //undefined is used to create gaps
+		}, true, dx); //the step size is dx to scale the function to the domain
+		
+		app.selectPlot("APD"); //this clears the apd plot and gets it ready for interaction
+		app.ctx.strokeStyle = "#FF9900"; //orange
+		app.plotFunction(function(x){return apd1[getIndex(x)];}, true, dx); //graph the even beat
+		app.ctx.strokeStyle = "#0099FF"; //blue
+		app.plotFunction(function(x){return apd2[getIndex(x)];}, true, dx); //graph the odd beat
+		app.ctx.lineWidth = app.settings.plotSize.x / (cableLength / 2); //this ensures that the difference bar renders a solid rectangle
+		for (var i = app.settings.domain.x; i <= app.settings.domain.y; i+=dx)
+		{
+			var index = getIndex(i);
+			//a and b are the two APD values at the index scaled and measured from 0-1 in a range of 80
+			var a = Math.min(80, Math.max(0, apd1[index] - apd2[index])) / 80;
+			var b = Math.min(80, Math.max(0, apd2[index] - apd1[index])) / 80;
+			//a and b determine which hue is used and offset saturation and luminance accordingly
+			var hsl = "hsl(" + (a>b ? 0: 240) + "," + Math.floor(65 + Math.abs(a-b) * 35) + "%," + Math.floor(100 - 60 * Math.max(a,b)) + "%)";
+			app.ctx.strokeStyle = hsl; //set the stroke color
+			var p1 = new Point(i, app.settings.range.x);
+			var p2 = new Point(i, app.settings.range.x + 20);
+			app.plotLine(p1, p2); //draw a vertical line at the index location
+		}
+		
+		app.selectPlot("Period"); //this clears the period plot and gets it ready for interaction
+		app.ctx.strokeStyle = "#FF9900"; //orange
+		app.plotFunction(function(x){return per1[getIndex(x)];}, true, dx); //graph the even beat
+		app.ctx.strokeStyle = "#0099FF"; //blue
+		app.plotFunction(function(x){return per2[getIndex(x)];}, true, dx); //graph the odd beat
+		
+		
+		app.selectPlot("CV"); //this clears the CV plot and gets it ready for interaction
+		app.ctx.strokeStyle = "#FF9900"; //orange
+		app.plotFunction(function(x){return cv1[getIndex(x)] * 1000;}, true, dx); //graph the even beat
+		app.ctx.strokeStyle = "#0099FF"; //blue
+		app.plotFunction(function(x){return cv2[getIndex(x)] * 1000;}, true, dx); //graph the odd beat
+		
+		app.selectPlot("Space", false); //this clears the space plot and gets it ready for interaction
+		app.ctx.lineWidth = 1.35; //ideal line thickness for proper reading
+		app.ctx.lineCap = "round"; //prevents odd rendering issues
+		for (var i = 0; i < cableLength; i+=2) //every 2 points, to de-cluster data
+		{
+			if (ntp[i] == 1 || ntp[i] == 2)
+				app.ctx.strokeStyle = "#FF9900"; //orange
+			else
+				app.ctx.strokeStyle = "#0099FF"; //blue
+			var x1 = (step * dt) % app.settings.domain.y; //get where the current line starts
+			var x2 = ((step + batchSize) * dt) % app.settings.domain.y; //and where it will end
+			var offset = (cableLength - 1 - i) * dx //this zeros out the graph
+			app.plotLine(new Point(x1, (cableLength - 1) * dx - (uOld[i] + offset)), new Point(x2, (cableLength - 1) * dx - (u[i] + offset))); //plot from uOld to u with the offset and vertical mirroring
+		}
+		if (x1 > ((step + batchSize) * dt) % app.settings.domain.y) //if the next step will cycle over
+			app.clearPlot(true); //clear the plot, allowing unclipping to occur
+	}
+	
+	//stimulates the cable at a location for width amount of cells at the specified strength
+	function stimulate(strength, location, width)
+	{
+		//the default values are a single cell at the start with a strength of 1
+		strength = typeof strength !== "undefined" ? strength : 1;
+		location = typeof location !== "undefined" ? location : 0;
+		width = typeof width !== "undefined" ? width : 1;
+		for (var i = location; i < location + width; i++) //iterate over the cells effected
+		{
+				if (u[i] <= threshold)
+					ntp[i]++;
+				u[i] = strength;
+				tp[i][ntp[i]] = step * dt;
+				
+				switch (ntp[i])
+				{
+					case 1:
+						if (i != 0)
+							cv1[i] = (dx) / (tp[i][5] - tp[i - 1][5]);
+						break;
+					case 3:
+						per2[i] = tp[i][3] - tp[i][1];
+						if (i != 0)
+							cv2[i] = (dx) / (tp[i][3] - tp[i - 1][3]);
+						break;
+					case 5:
+						per1[i] = tp[i][5] - tp[i][3];
+						if (i != 0)
+							cv1[i] = (dx) / (tp[i][5] - tp[i - 1][5]);
+						ntp[i] = 1;
+						tp[i][1] = tp[i][5];
+						break;
+					default:
+						break;
+				}
+		}
+	}
+	
+	//tanh is preferred, but not yet supported in IE (via ecmascript 6 proposal)
+	//exponential equations to represent the tanh used instead
+	function buildTables(nvt)
+	{
+		var vhi = 2, vv, tso1 = 200, tso2 = 0.54494910, us = 0.86854118, uso = 0.34233130, xks = 3.2239589, xkso = 2.7969265;
+		dvt = (vhi - vlo) / nvt;
+		for (var i = 0; i < nvt; i++)
+		{
+			vv = vlo + dvt * i;
+			table1[i] = 97 + (170 - 97) * (1 - ((Math.exp((vv - 0.325) * 20) - Math.exp(-(vv - 0.325) * 20)) / (Math.exp((vv - 0.325) * 20) + Math.exp(-(vv - 0.325) * 20)))) / 2;
+			table2[i] = tso1 + (tso2 - tso1) * (1 + ((Math.exp((vv - uso) * xkso) - Math.exp(-(vv - uso) * xkso)) / (Math.exp((vv - uso) * xkso) + Math.exp(-(vv - uso) * xkso)))) / 2;
+			table3[i] = (1 + ((Math.exp((vv - us) * xks) - Math.exp(-(vv - us) * xks)) / (Math.exp((vv - us) * xks) + Math.exp(-(vv - us) * xks)))) / 2;
+		}
+	}
+	
+	//restarts the whole program, as a soft reset
+	//also used to start the program, providing a means of populating default values
+	function restart()
+	{
+		for (var i = 0; i < cableLength; i++)
+		{
+			u[i] = i == 0 ? 1 : 0;
+			v[i] = 1;
+			w[i] = 1;
+			s[i] = 0;
+			//analysis variables
+			ntp[i] = i == 0 ? 1 : 0;
+			tp[i] = [];
+			tp[0][ntp[i]] = step * dt;
+			apd1[i]=0;
+			apd2[i]=0;
+			per1[i]=297;
+			per2[i]=297;
+			cv1[i]=0;
+			cv2[i]=0;
+		}
+		for (var i = 0; i < 5; i++) //this forces all the plots to clear
+			app.selectPlot(i);
+		step = 0;
+		periodCounter = 0;
+		document.getElementById("periods").value = 297;
+		period = 297;
+	}
+	
+	//simple helper function that converts domain values into array indexes
+	function getIndex(value) { return Math.round(value / dx); }
+	
+	//used only ONCE, to generate and populate the plotter app
+	function buildGraphs()
+	{
+		app = createPlotter(document.getElementById("plot"));
+		
+		//all domains/ranges that use cableLength are multiplied by dx to represent the actual length of the cable in centimeters
+		//as a result, their corresponding pixelPerUnit values are set to scale appropriately
+		
+		var settings =
+		{
+			domain: new Point(0, (cableLength - 1) * dx),
+			range: new Point(-90, 38),
+			pixelPerUnit: new Point((cableLength - 1) * 1.5 / ((cableLength - 1) * dx), 1.5),
+			unitPerTick: new Point(1, 20),
+			labelFrequency: new Point(1, 1),
+			xAxis: "Space (cm)",
+			yAxis: "V (mV)",
+			zeroBoundAxis: false
+		}
+		app.newPlot(settings, "V"); //creates the voltage graph
+		
+		settings =
+		{
+			offset: new Point(0, 260),
+			domain: new Point(0, (cableLength - 1) * dx),
+			range: new Point(30, 180),
+			pixelPerUnit: new Point((cableLength - 1) * 1.5 / ((cableLength - 1) * dx), 1),
+			unitPerTick: new Point(1, 10),
+			labelFrequency: new Point(1, 2),
+			xAxis: "Space (cm)",
+			yAxis: "APD (ms)"
+		}
+		app.newPlot(settings, "APD"); //creates the apd graph
+		
+		settings =
+		{
+			offset: new Point(0, 500),
+			domain: new Point(0, (cableLength - 1) * dx),
+			range: new Point(291, 303),
+			pixelPerUnit: new Point((cableLength - 1) * 1.5 / ((cableLength - 1) * dx), 5),
+			unitPerTick: new Point(1, 2),
+			labelFrequency: new Point(1, 2),
+			xAxis: "Space (cm)",
+			yAxis: "Period (ms)"
+		}
+		app.newPlot(settings, "Period"); //creates the period graph
+		
+		settings =
+		{
+			offset: new Point(0, 630),
+			domain: new Point(0, (cableLength - 1) * dx),
+			range: new Point(40, 48),
+			pixelPerUnit: new Point((cableLength - 1) * 1.5 / ((cableLength - 1) * dx), 10),
+			unitPerTick: new Point(1, 1),
+			labelFrequency: new Point(1, 2),
+			xAxis: "Space (cm)",
+			yAxis: "CV (cm/s)"
+		}
+		app.newPlot(settings, "CV"); //creates the cv graph
+		
+		settings =
+		{
+			offset: new Point(355, 198),
+			domain: new Point(0, 3000),
+			range: new Point(-2, (cableLength - 1) * dx + 0.1),
+			pixelPerUnit: new Point(0.21, (cableLength - 1) * 2.16 / ((cableLength - 1) * dx)),
+			unitPerTick: new Point(250, 1),
+			labelFrequency: new Point(1, 1),
+			xAxis: "Time (ms)",
+			yAxis: "Space (cm)",
+			orientation: "b",
+			zeroBoundAxis: false
+		}
+		app.newPlot(settings, "Space"); //creates the space graph
+	}
+	
+	//used only ONCE, to populate the HTML5 form with event listeners and anonymous functions
+	function buildForm()
+	{
+		var speedSlider = document.getElementById("speed");
+		document.getElementById("speedLabel").innerHTML = "<strong>Speed: " + batchSize + "</strong>";
+		speedSlider.value = 32;
+		
+		//used by other events to update the speed label and slider value accordingly
+		function updateSpeed(speed)
+		{
+			if (speed == batchSize) //if it is not changed, do nothing
+				return;
+			
+			speedSlider.value = speed;
+			document.getElementById("speedLabel").innerHTML = "<strong>Speed: " + speed + "</strong>";
+			batchSize = speed;
+		}
+		speedSlider.addEventListener("input",
+		function()
+		{
+			updateSpeed(parseInt(speedSlider.value)); //just use the function previously declared
+		}, false);
+		//all the buttons for the sliders simply check if the number is in bounds for the operation and adjust it by 1 if it is, then updates the speed
+		document.getElementById("speedDown").addEventListener("click",
+		function()
+		{
+			if(parseInt(speedSlider.value) > parseInt(speedSlider.min))
+				speedSlider.value--;
+			updateSpeed(parseInt(speedSlider.value));
+		}, false);
+		document.getElementById("speedUp").addEventListener("click",
+		function()
+		{
+			if(parseInt(speedSlider.value) < parseInt(speedSlider.max))
+				speedSlider.value++;
+			updateSpeed(parseInt(speedSlider.value));
+		}, false);
+		
+		//simply bind the restart button to the restart function
+		document.getElementById("restart").addEventListener("click", restart, false);
+		
+		var pauseButton = document.getElementById("pause");
+		pauseButton.addEventListener("click",
+		function()
+		{
+			paused = !paused; //toggle paused
+			pauseButton.innerHTML = paused ? "Resume" : "Pause"; //and update the button accordingly
+		}, false);
+		
+		var periodList = document.getElementById("periods");
+		periodList.value = 297;
+		periodList.addEventListener("change",
+		function()
+		{
+			period = parseInt(periodList.value); //give direct control of the period variable to the periodList
+		}, false);
+	}
+	</script>
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">This graph requires HTML5 canvas support, sorry!</canvas>
+		<div style="position:absolute;top:40px;left:570px;border:2px solid black;padding:10px;">
+			<p style="margin:0px;"><label id="speedLabel" for="speedDown"><strong>Speed</strong></label></p>
+			<button id="speedDown">Slower</button>
+			<input id="speed" type="range" min="1" max="128" step="1" value="32" />
+			<button id="speedUp">Faster</button>
+			<p style="margin:0px;margin-top:8px;"><button id="restart">Restart</button>
+			<button id="pause">Pause</button></p>
+			<p style="margin:0px;margin-top:8px;"><label id="periodsLabel" for="periods"><strong>Periods</strong></label></p>
+			<select id="periods">
+				<option value="297">297</option>
+				<option value="205.5">205.5</option>
+				<option value="165">165</option>
+				<option value="150">150</option>
+				<option value="135">135</option>
+			</select>
+		</div>
+	</div>
+</body>
+</html>
