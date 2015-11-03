@@ -30,7 +30,8 @@ module.exports = function(grunt) {
 				// 	'src/plot.js'
 				// ],
 				src: [
-					'src/**/*.js'
+					'src/**/*.js',
+					'!src/pointObject.js'
 				],
 				dest: 'plotter.dev.js'
 			}

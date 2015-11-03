@@ -217,11 +217,14 @@ plot: true
 		 */
 		var time = 5000;
 		var timestep = 0.01;
-		var batchSize = 1;
+		var batchSize = 50;
 		var stepSize = batchSize * timestep;
 		var steps = (time / stepSize);
 
 		var vArray = [];
+		var mArray = [];
+		var hArray = [];
+		var nArray = [];
 		var count = 0;
 
 		/** 
@@ -241,12 +244,17 @@ plot: true
 			}
 		}
 
-		var calculate = function(x) {
+		var calculate = function() {
 
 			//vArray.push(v);
 			var count = 0;
-			for (var j = 0; j < steps; j++) {			
-				var val = v;
+			for (var j = 0; j < steps; j++) {	
+
+				var vVal = v;
+				var mVal = m;
+				var hVal = h;
+				var nVal = n;
+
 				for (var i = 0; i < batchSize; i++) {
 
 					// if(abs(-v-48)<1e-3)
@@ -259,14 +267,14 @@ plot: true
 				    if (Math.abs(-v - 48) < 0.001) {
 				    	am=0.15;
 				    } else {
-				    	am= 0.1 * (-v - 48) / Math.exp(((-v-48)/15)-1);
+				    	am=0.1*(-v-48)/(Math.exp((-v-48)/15)-1);
 				    }
 
 				    //console.log(am);
 
 				    //console.log(v);
 
-				//     if(abs(v+8)<1e-3)
+				//     if(abs(v+8)<1e-3)su
 				//         bm=0.6;
 				//     else
 				//         bm=0.12*(v+8)./(exp((v+8)/5)-1);
@@ -276,7 +284,7 @@ plot: true
 						bm = 0.6;
 					}
 					else {
-						bm = 0.12 * (v + 8) / (Math.exp((v + 8)/5)-1);
+						bm=0.12*(v+8)/(Math.exp((v+8)/5)-1);
 					}
 					// console.log(bm);
 
@@ -386,7 +394,10 @@ plot: true
 			    }
 			    //count++;
 			    //console.log(count);
-			    vArray.push(val);	
+			    vArray.push(normalize(vVal, new Point(-80, 40)));
+			    mArray.push(mVal);
+			    hArray.push(hVal);
+			    nArray.push(nVal);	
 			}
 			
 
@@ -414,12 +425,23 @@ plot: true
 
 			// }, "Noble");
 
+			// app.newPlot({
+			// 	domain: new Point(0, time),
+			// 	range: new Point(-100, 100),
+			// 	unitPerTick: new Point(1000, 50),
+			// 	pixelPerUnit: new Point(.1, 2),
+			// 	labelFrequency: new Point(1, 1),
+			// 	xAxis: "Time (ms)",
+			// 	yAxis: "V (mv)",
+
+			// }, "Noble");
+
 			app.newPlot({
 				domain: new Point(0, time),
-				range: new Point(-100, 100),
-				unitPerTick: new Point(100, 20),
-				pixelPerUnit: new Point(.4, 10),
-				labelFrequency: new Point(2, 1),
+				range: new Point(0, 1),
+				unitPerTick: new Point(1000, .1),
+				pixelPerUnit: new Point(.1, 500),
+				labelFrequency: new Point(1, 1),
 				xAxis: "Time (ms)",
 				yAxis: "V (mv)",
 
@@ -518,21 +540,51 @@ plot: true
 		//var count = 0;
 		function update() {
 
+			//Noble.generate(0, time, timestep);
+
+			// console.log(vArray);
+			// console.log(mArray);
+			// console.log(hArray);
+			// console.log(nArray);
+
+			// console.log(time);
+			// console.log(stepSize);
+
 			app.selectPlot("Noble");
 
-			//Noble.generate(0, time, timestep);
 			app.ctx.strokeStyle = "#FF0000";
-			calculate(0);
-
-			console.log(vArray);
-			console.log(time);
-			console.log(stepSize);
-
+			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
 				var index = Math.round(x / stepSize);
 				//console.log(index);
 				return vArray[index];
 			}, true, stepSize, 0, time);
+
+			app.ctx.strokeStyle = "#00FF00";
+			app.ctx.lineWidth = 3;
+			app.plotFunction(function(x) {
+				var index = Math.round(x / stepSize);
+				//console.log(index);
+				return mArray[index];
+			}, true, stepSize, 0, time);
+
+			app.ctx.strokeStyle = "#0000FF";
+			app.ctx.lineWidth = 3;
+			app.plotFunction(function(x) {
+				var index = Math.round(x / stepSize);
+				//console.log(index);
+				return hArray[index];
+			}, true, stepSize, 0, time);
+
+			app.ctx.strokeStyle = "#FF00FF";
+			app.ctx.lineWidth = 3;
+			app.plotFunction(function(x) {
+				var index = Math.round(x / stepSize);
+				//console.log(index);
+				return nArray[index];
+			}, true, stepSize, 0, time);
+
+			requestAnimationFrame(update);
 
 			// app.plot(Noble, "v", {
 			// 	normalize: new Point(-85, -75),
@@ -559,7 +611,8 @@ plot: true
 			//debug = [];
 			buildGraphs();
 		 	buildForms();
-			update();
+		 	calculate();
+			requestAnimationFrame(update);
 
 			//setInterval(update, 1000/60);
 			//requestAnimationFrame(update);
@@ -587,6 +640,11 @@ plot: true
 			} else {
 				return 0;
 			}
+		}
+
+		function normalize(value, range) {
+			var norm = (value - range.x)/(range.y - range.x);
+			return norm;
 		}
 
 

@@ -1,3 +1,7 @@
+/**
+ * Plots are what Points (and objects that consist of Points) are rendered on.
+ * 
+ */
 function Plot()
 {
 	var ctx = arguments[1];							// the context in which the 
@@ -14,7 +18,45 @@ function Plot()
 	var labelBleedVar = new Point(0, 0);
 	var labelPrecisionVar = new Point(-1, -1);
 	
-	var self = {
+	/**
+	 * [self description]
+	 * @type {Object}
+	 */
+	var self = {	
+
+		/**
+		 * @property {object} settings - a collection of settings that affect
+		 * how the plot is rendered
+		 * 
+		 * @property {Point} settings.offset - by default, a graph is rendered 
+		 * in the upper left corner of the canvas. This allows you to 
+		 * reposition the plot relative to this point.
+		 *
+		 * @property {Point} settings.domain - the points along the x-axis that
+		 * the plot will display
+		 *
+		 * @property {Point} settings.range - the points along the y-axis that 
+		 * the plot will display
+		 *
+		 * @property {Point} settins.pixelPerUnit - The number of pixels that 
+		 * each unit of the plot will take up
+		 *
+		 * @property {Point} settings.plotSize - (readonly) The size of the 
+		 * plot in pixels. This value is calculated by multiplying the pixels 
+		 * per unit by the number of units in the graph (domain end - domain 
+		 * start and range end - range start)
+		 *
+		 * @property {Point} settings.unitPerTick - A tick is wherever a line is drawn
+		 * on the plot. This controls how many units must pass before a tick is
+		 * drawn
+		 *
+		 * @property {Point} gridSize - (readonly) The size of each block of 
+		 * ticks on the plot. Calculated by multiplying the pixelPerUnit by the
+		 * unitPerTick
+		 *
+		 * @property {Point} labelFrequency - This is the rate at which labels
+		 * are drawn on the ticks. It will default to a label for every tick
+		 */
 		settings:
 		{
 			set offset(value) 
@@ -75,6 +117,26 @@ function Plot()
 			drawCoords: false,
 			orientation: "a"
 		},
+
+		/**
+		 * @property {object} mouse - a collection of settings related to the 
+		 * mouse in relation to the plot.
+		 *
+		 * @property {Point} mouse.down - The point in the plot's local
+		 * coordinates where the mouse was last down.
+		 *
+		 * @property {Point} mouse.move - The point in the plot's local
+		 * coordinates where the mouse was last down.		 
+		 * 
+		 * @property {Point} mouse.up - The point in the plot's local
+		 * coordinates where the mouse was last down.
+		 *
+		 * @property {Point} mouse.isDown - The point in the plot's local
+		 * coordinates where the mouse was last down.
+		 *
+		 * @property {Point} mouse.isUp - The point in the plot's local
+		 * coordinates where the mouse was last down.
+		 */
 		mouse:
 		{
 			down: new Point(),

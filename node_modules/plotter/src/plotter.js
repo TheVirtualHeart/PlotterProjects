@@ -1,4 +1,17 @@
-//this function creates a plotter object
+/**
+ * Creates a Plotter object. Given a HTML Canvas Element, this function creates
+ * a series of functions for interacting with it. It also attaches some of
+ * these functions to event listeners for mouse and touch events.
+ *
+ * @param {HTMLCanvasElement} canvas - The Canvas element that plots will be
+ * drawn on.
+ *
+ * @param {Point} padding - a Point that describs how much padding
+ * to apply to the canvas element before rendering elements.
+ * 
+ * @return {Plotter} - An object that collects properties and methods for 
+ * interacting with the canvas element passed to the function.
+ */
 function createPlotter()
 {
 	var canvas, ctx;
@@ -143,20 +156,22 @@ function createPlotter()
 			drawPlot(plots[i]);
 	}
 	
+	/**
+	 * Renders the specified plot on the canvas. This function takes a Plot
+	 * object and then uses its settings to draw it on the canvas.
+	 * @param  {Plot} plot - the Plot object we want to render on the canvas
+	 */
 	function drawPlot(plot)
 	{
 		var s = plot.settings;
 		
 		ctx.translate(s.offset.x, s.offset.y);
-		
 		ctx.clearRect(-s.labelSize.x, s.labelBleed.y, s.plotSize.x + s.labelSize.x + s.labelBleed.x, s.plotSize.y + s.labelSize.y - s.labelBleed.y);
-		
 		if (debugBorders)
 		{
 			ctx.lineWidth = 0.5;
 			ctx.strokeRect(-s.labelSize.x, s.labelBleed.y, s.plotSize.x + s.labelSize.x + s.labelBleed.x, s.plotSize.y + s.labelSize.y - s.labelBleed.y);
-		}
-		
+		}	
 		ctx.lineWidth = 2;
 		
 		//plot
@@ -168,57 +183,55 @@ function createPlotter()
 		ctx.textAlign = "center";
 		ctx.textBaseline = "top";
 		ctx.beginPath();
-		for( var i = 0; i <= s.plotSize.x / s.gridSize.x; i++)
-		{
-			var x = i * s.gridSize.x;
-			if (s.orientation=="c" || s.orientation=="d")
-				x = s.plotSize.x - x;
-			
-			if (s.drawGrid)
+			for( var i = 0; i <= s.plotSize.x / s.gridSize.x; i++)
 			{
-				ctx.moveTo(x, s.plotSize.y);
-				ctx.lineTo(x, 0);
+				var x = i * s.gridSize.x;
+				if (s.orientation=="c" || s.orientation=="d")
+					x = s.plotSize.x - x;
+				
+				if (s.drawGrid)
+				{
+					ctx.moveTo(x, s.plotSize.y);
+					ctx.lineTo(x, 0);
+				}
+				
+				if (!(i % s.labelFrequency.x) && s.labelFrequency.x > 0)
+				{
+					var tickLabel = s.domain.x + i * s.unitPerTick.x;
+					ctx.fillText( s.labelPrecision.x == -1 ? tickLabel : tickLabel.toFixed(s.labelPrecision.x), x, s.plotSize.y + 5);
+				}
 			}
-			
-			if (!(i % s.labelFrequency.x) && s.labelFrequency.x > 0)
+			ctx.textAlign = "right";
+			ctx.textBaseline = "middle";
+			for( var i = 0; i <= s.plotSize.y / s.gridSize.y; i++)
 			{
-				var tickLabel = s.domain.x + i * s.unitPerTick.x;
-				ctx.fillText( s.labelPrecision.x == -1 ? tickLabel : tickLabel.toFixed(s.labelPrecision.x), x, s.plotSize.y + 5);
+				var y = i * s.gridSize.y;
+				if (!(s.orientation=="b" || s.orientation=="c"))
+					y = s.plotSize.y - y;	
+				if (s.drawGrid)
+				{
+					ctx.moveTo(0, y);
+					ctx.lineTo(s.plotSize.x, y);
+				}
+				if (!(i % s.labelFrequency.y) && s.labelFrequency.y > 0)
+				{
+					var tickLabel = s.range.x + i * s.unitPerTick.y;
+					ctx.fillText(s.labelPrecision.y == -1 ? tickLabel : tickLabel.toFixed(s.labelPrecision.y), -5, y);
+				}
 			}
-		}
-		ctx.textAlign = "right";
-		ctx.textBaseline = "middle";
-		for( var i = 0; i <= s.plotSize.y / s.gridSize.y; i++)
-		{
-			var y = i * s.gridSize.y;
-			if (!(s.orientation=="b" || s.orientation=="c"))
-				y = s.plotSize.y - y;
-			
-			if (s.drawGrid)
-			{
-				ctx.moveTo(0, y);
-				ctx.lineTo(s.plotSize.x, y);
-			}
-			
-			if (!(i % s.labelFrequency.y) && s.labelFrequency.y > 0)
-			{
-				var tickLabel = s.range.x + i * s.unitPerTick.y;
-				ctx.fillText(s.labelPrecision.y == -1 ? tickLabel : tickLabel.toFixed(s.labelPrecision.y), -5, y);
-			}
-		}
 		ctx.stroke();
 		
 		//axis
 		ctx.strokeStyle = "#000000";
 		ctx.lineWidth = 1;
 		ctx.beginPath();
-		var axisOffset = new Point(
-		(s.zeroBoundAxis ? Math.max(0, Math.min(s.plotSize.x, ((s.orientation=="c"||s.orientation=="d") ? s.domain.y : -s.domain.x) * s.pixelPerUnit.x)) : (s.orientation=="c"||s.orientation=="d") ? s.plotSize.x : 0),
-		(s.zeroBoundAxis ? Math.min(s.plotSize.y, Math.max(0, ((s.orientation=="b"||s.orientation=="c") ? -s.range.x : s.range.y) * s.pixelPerUnit.y)) : (s.orientation=="b"||s.orientation=="c") ? 0 : s.plotSize.y));
-		ctx.moveTo(axisOffset.x, 0);
-		ctx.lineTo(axisOffset.x, s.plotSize.y);
-		ctx.moveTo(0, axisOffset.y);
-		ctx.lineTo(s.plotSize.x, axisOffset.y);
+			var axisOffset = new Point(
+			(s.zeroBoundAxis ? Math.max(0, Math.min(s.plotSize.x, ((s.orientation=="c"||s.orientation=="d") ? s.domain.y : -s.domain.x) * s.pixelPerUnit.x)) : (s.orientation=="c"||s.orientation=="d") ? s.plotSize.x : 0),
+			(s.zeroBoundAxis ? Math.min(s.plotSize.y, Math.max(0, ((s.orientation=="b"||s.orientation=="c") ? -s.range.x : s.range.y) * s.pixelPerUnit.y)) : (s.orientation=="b"||s.orientation=="c") ? 0 : s.plotSize.y));
+			ctx.moveTo(axisOffset.x, 0);
+			ctx.lineTo(axisOffset.x, s.plotSize.y);
+			ctx.moveTo(0, axisOffset.y);
+			ctx.lineTo(s.plotSize.x, axisOffset.y);
 		ctx.stroke();
 		
 		//x axis label
@@ -442,6 +455,20 @@ function createPlotter()
 			
 			return new Line(p1, p2, slope, new Point(p.x, p.y));
 		},
+
+
+		/**
+		 * Take an array of vertices and add them to the plot sequentially.
+		 * When all of them have been added, draw them on the canvas.
+		 * 
+		 * @param  {Array.<Point>} points - an array that contains all of the 
+		 * vertices of the polygon. They will be plotted in the order they are
+		 * listed in the array.
+		 * 
+		 * @param  {[boolean]} closed - a boolean value that specifies whether 
+		 * the vertices should be connected when the plot is rendered. By
+		 * default, the vertices will not be rendered.
+		 */
 		plotPoly: function(points, closed)
 		{
 			var length = Object.keys(points).length;
@@ -455,22 +482,47 @@ function createPlotter()
 			
 			app.ctx.lineCap = "round";
 			ctx.beginPath();
-			for (var i = 0; i < length - 1; i++)
-			{
-				var p = this.plotToCanvas(points[i]);
-				
-				if (i != 0)
+				for (var i = 0; i < length - 1; i++)
+				{
+					var p = this.plotToCanvas(points[i]);
+					
+					if (i != 0)
+						ctx.lineTo(p.x, p.y);
+					else
+						ctx.moveTo(p.x, p.y);
+				}
+				if (closed)
+				{
+					var p = this.plotToCanvas(points[0]);
 					ctx.lineTo(p.x, p.y);
-				else
-					ctx.moveTo(p.x, p.y);
-			}
-			if (closed)
-			{
-				var p = this.plotToCanvas(points[0]);
-				ctx.lineTo(p.x, p.y);
-			}
+				}
 			ctx.stroke();
 		},
+
+
+		/**
+		 * Given a mathematical function, render it on a plot. This function
+		 * iterates from the start value to the end value. At each point, it
+		 * calculates the point at that value using the given function.
+		 * 
+		 * @param  {Function} func - the function we want to plot on the graph.
+		 * It takes a numeric value as a parameter and returns a numeric value.
+		 * 
+		 * @param  {[boolean]} xFunc - this specifies whether the function is
+		 * to be graphed along the x-axis or the y-axis. It's default value is
+		 * true.
+		 * 
+		 * @param  {[number]} step - the value to increment by when calculating
+		 * function points. By default, it will increment by 1.
+		 * 
+		 * @param  {[number]} start - this is the value that the function will
+		 * start calculating values at. By default, it will use the start value
+		 * of the plot's domain (if an xFunc) or range (if not an xFunc)
+		 * 
+		 * @param  {[number]} end - this is the value that the function will
+		 * stop calculating values at. By default, it will use the end value
+		 * of the plot's domain (if an xFunc) or range (if not an xFunc)
+		 */
 		plotFunction: function(func, xFunc, step, start, end)
 		{
 			if (currentPlot == undefined)
@@ -501,16 +553,24 @@ function createPlotter()
 				points.push(new Point(xFunc?i:funcValue, xFunc?funcValue:i));
 			this.plotPoly(points);
 		},
+
+
+		/** 
+		 * If a plot is currently specified, draw the text at the specified
+		 * point on the plot.
+		 * @param  {string} text  - The text the user wants to write on the canvas
+		 * @param  {Point} point  - The point, in the plot's local coordinate
+		 * system, that the text will be rendered at.
+		 */
 		plotText: function(text, point)
 		{
 			if (currentPlot == undefined)
 				return;
-			
 			point = typeof point !== "undefined" ? point : new Point(currentPlot.settings.domain.x + (currentPlot.settings.domain.y - currentPlot.settings.domain.x) * 0.5, currentPlot.settings.range.x + (currentPlot.settings.range.y - currentPlot.settings.range.x) * 0.5);
-			
 			point = this.plotToCanvas(point);
 			ctx.fillText(text, point.x, point.y);
 		},
+
 
 		/**
 		 * Take a PointObject and draw it on the graph. It will plot the 
@@ -571,14 +631,15 @@ function createPlotter()
 					ctx.lineTo(p.x, p.y);
 				} else {
 					ctx.moveTo(p.x, p.y);
+					ctx.stroke();
 				}
 			}
 
 			//ctx.fill();
 			//if (strokeWeight !== 0) {
-				ctx.stroke();
 			//}
 		},
+		
 
 		/**
 		 * Print the plot data of the pointObject as CSV. The function accepts

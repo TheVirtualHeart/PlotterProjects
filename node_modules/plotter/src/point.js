@@ -6,8 +6,4 @@
 function Point(px, py) {
 	this.x = px; 
 	this.y = py;
-
-	this.points = function() {
-		return [{"x": this.x, "y":this.y}];
-	}
 }
