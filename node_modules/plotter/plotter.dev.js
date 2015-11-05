@@ -13,7 +13,9 @@ function Line(pa, pb, s, p) {
 } ;
 /**
  * Plots are what Points (and objects that consist of Points) are rendered on.
- * 
+ * Plots describe the context in which Points are drawn, holding information
+ * such as labels and a local coordinate system. Plotter uses this information
+ * when plotting points and other objects.
  */
 function Plot()
 {
@@ -31,11 +33,14 @@ function Plot()
 	var labelBleedVar = new Point(0, 0);
 	var labelPrecisionVar = new Point(-1, -1);
 	
+
 	/**
-	 * [self description]
+	 * Plot is a module. All variables enclosed are inaccesible from the 
+	 * outside. self is returned to expose some of these variables
 	 * @type {Object}
 	 */
 	var self = {	
+
 
 		/**
 		 * @property {object} settings - a collection of settings that affect
@@ -44,6 +49,59 @@ function Plot()
 		 * @property {Point} settings.offset - by default, a graph is rendered 
 		 * in the upper left corner of the canvas. This allows you to 
 		 * reposition the plot relative to this point.
+		 *
+		 * @property {Point} settings.domain - the points along the x-axis that
+		 * the plot will display
+		 *
+		 * @property {Point} settings.range - the points along the y-axis that 
+		 * the plot will display
+		 *
+		 * @property {Point} settins.pixelPerUnit - The number of pixels that 
+		 * each unit of the plot will take up
+		 *
+		 * @property {Point} settings.plotSize - (readonly) The size of the 
+		 * plot in pixels. This value is calculated by multiplying the pixels 
+		 * per unit by the number of units in the graph (domain end - domain 
+		 * start and range end - range start)
+		 *
+		 * @property {Point} settings.unitPerTick - A tick is wherever a line is drawn
+		 * on the plot. This controls how many units must pass before a tick is
+		 * drawn
+		 *
+		 * @property {Point} settings.gridSize - (readonly) The size of each block of 
+		 * ticks on the plot. Calculated by multiplying the pixelPerUnit by the
+		 * unitPerTick
+		 *
+		 * @property {Point} settings.labelFrequency - This is the rate at which labels
+		 * are drawn on the ticks. It will default to a label for every tick
+		 *
+		 * @property {Point} settings.labelSize - (readonly) The size of the 
+		 * label, where x is width and y is height, as calculated by 
+		 * calculateLabelSize()
+		 *
+		 * @property {Point} settings.labelBleed - (readonly)
+		 *
+		 * @property {Point} settings.labelPrecision - This is a point that 
+		 * determines how many decimals trail after the "." character. Values
+		 * less than 0 disable this feature.
+		 *
+		 * @property {string} settings.xAxis - the label for the x axis
+		 *
+		 * @property {string} settings.yAxis - the label for the y axis
+		 * 
+		 * @property {boolean} settings.zeroBoundAxis - determines whether a 
+		 * thick black line is drawn around the 0 axis. If false, the thick
+		 * black line will be drawn around the edges of the graph.
+		 * 
+		 * @property {boolean} settings.drawGrid - determines whether the 
+		 *
+		 * @property {boolean} settings.drawCoords - If true, the mouse
+		 * coordinates will be rendered. CURRENTLY NOT WORKING.
+		 * 
+		 * @property {string} settings.orientation - determines where the
+		 * origin of the graph is rendered. It starts at the bottom left and
+		 * goes counterclockwise. "a" is the bottom left, "b" is the top left,
+		 * "c" is the top right, "d" is the bottom right.
 		 */
 		settings:
 		{
@@ -106,6 +164,7 @@ function Plot()
 			orientation: "a"
 		},
 
+
 		/**
 		 * @property {object} mouse - a collection of settings related to the 
 		 * mouse in relation to the plot.
@@ -133,9 +192,24 @@ function Plot()
 			isDown: false,
 			isUp: true
 		},
-		reCalculateLabels: function() { calculateLabelSize(); calculateLabelBleed(); }
+
+
+		/**
+		 * [reCalculateLabels description]
+		 * @param  {[type]} ) {            calculateLabelSize(); calculateLabelBleed( [description]
+		 * @return {[type]}   [description]
+		 */
+		reCalculateLabels: function() { 
+			calculateLabelSize(); 
+			calculateLabelBleed(); 
+		}
 	}
 	
+	/**  
+	 * This initializes the Plot, merging the default settings object with the
+	 * object that was passed to the function as an argument. It then calculates
+	 * the size of the plot and the labels.
+	 */
 	for (var key in settings)
 		if (self.settings.hasOwnProperty(key))
 			self.settings[key] = settings[key];
@@ -146,6 +220,13 @@ function Plot()
 	calculateLabelSize();
 	calculateLabelBleed();
 	
+
+	/**
+	 * This function calculates padding that labels add to the graph. This is the
+	 * entire block of labels on each axis. It determines what the maximum 
+	 * length of the value labels would be on each axis and then adds padding to 
+	 * encompass the label of the axis.
+	 */
 	function calculateLabelSize()
 	{
 		var x = 0;
@@ -155,19 +236,25 @@ function Plot()
 		ctx.font = "24px Helvetica";
 		var labelPadding = ctx.measureText("M.").width;
 		
-		if (s.labelFrequency.y != 0)
+		if (s.labelFrequency.y != 0) {
 			x += Math.max(ctx.measureText(s.range.x).width, ctx.measureText(s.range.x + Math.floor(s.plotSize.y / s.gridSize.y) * s.unitPerTick.y).width);
-		else
+		}
+		else {
 			x += 6;
-		if (s.yAxis != "")
+		}
+		if (s.yAxis != "") {
 			x += labelPadding;
-		
-		if (s.labelFrequency.x != 0)
+		}
+
+		if (s.labelFrequency.x != 0) {
 			y += labelPadding;
-		else
+		}
+		else {
 			y += 6;
-		if (s.xAxis != "")
+		}
+		if (s.xAxis != "") {
 			y += labelPadding;
+		}
 		if (s.yAxis != "")
 		{
 			ctx.font = "24px Helvetica";
@@ -179,6 +266,13 @@ function Plot()
 		labelSizeVar.y = y;
 	}
 	
+
+	/**
+	 * This function calculates the "bleed" of the labels. Essentially, if a 
+	 * label value overflows, this provides a cutoff after which it will stop
+	 * rendering the text.
+	 * @return {[type]} [description]
+	 */
 	function calculateLabelBleed()
 	{
 		var s = self.settings;
@@ -187,13 +281,14 @@ function Plot()
 		
 		ctx.font = "16px Helvetica";
 		
-		if (s.labelFrequency.x != 0)
+		if (s.labelFrequency.x != 0) {
 			x =  Math.max(s.offset.x + Math.floor(s.plotSize.x / s.gridSize.x) * s.gridSize.x + ctx.measureText(s.domain.x + Math.floor(s.plotSize.x / s.gridSize.x) * s.unitPerTick.x).width * 0.5 - (s.offset.x + s.plotSize.x), 0);
+		}
 		
 		ctx.font = "24px Helvetica";
 		
-		if (x.xAxis != "")
-		{
+		if (s.xAxis != "")
+		{ 
 			var axisBleed = Math.max(((s.domain.y - s.domain.x) * s.pixelPerUnit.x * 0.5 + ctx.measureText(s.xAxis).width * 0.5) - ((s.domain.y - s.domain.x) * s.pixelPerUnit.x), 0);
 			x = x > axisBleed ? x : axisBleed;
 		}
@@ -577,19 +672,28 @@ function createPlotter()
 			else if (clipped)
 				clipped = false;
 		},
-		get ctx() { return ctx; },
+
+
+		get ctx() { 
+			return ctx; },
+
+
 		get mouse()
 		{
 			if (currentPlot == undefined)
 				return;
 			return currentPlot.mouse;
 		},
+
+
 		get settings()
 		{
 			if (currentPlot == undefined)
 				return;
 			return currentPlot.settings;
 		},
+
+
 		pointOnPlot: function(p, plot)
 		{
 			if (typeof plot === "number" && 
@@ -610,6 +714,8 @@ function createPlotter()
 			
 			return pointInBounds(p, plot);
 		},
+
+
 		plotToCanvas: function(p)
 		{
 			var s = currentPlot.settings;
@@ -617,6 +723,8 @@ function createPlotter()
 			var y = s.plotSize.y - ((((s.orientation=="b"||s.orientation=="c") ? s.range.y : 2 * p.y) - p.y - ((s.orientation=="b"||s.orientation=="c") ? 0 : s.range.x)) * s.pixelPerUnit.y) + s.offset.y;
 			return new Point(x, y);
 		},
+
+
 		plotPoint: function(p, r, fill)
 		{
 			if (currentPlot == undefined)
@@ -633,6 +741,8 @@ function createPlotter()
 			else
 				ctx.stroke();
 		},
+
+
 		plotLine: function(p1, p2)
 		{
 			if (currentPlot == undefined)
@@ -646,6 +756,8 @@ function createPlotter()
 			ctx.lineTo(p2.x, p2.y);
 			ctx.stroke();
 		},
+
+
 		plotSlope: function(p, slope)
 		{
 			if (currentPlot == undefined)
@@ -667,6 +779,7 @@ function createPlotter()
 			
 			return new Line(p1, p2, slope, new Point(p.x, p.y));
 		},
+
 
 		/**
 		 * Take an array of vertices and add them to the plot sequentially.
@@ -709,6 +822,7 @@ function createPlotter()
 				}
 			ctx.stroke();
 		},
+
 
 		/**
 		 * Given a mathematical function, render it on a plot. This function
@@ -764,6 +878,7 @@ function createPlotter()
 			this.plotPoly(points);
 		},
 
+
 		/** 
 		 * If a plot is currently specified, draw the text at the specified
 		 * point on the plot.
@@ -779,6 +894,7 @@ function createPlotter()
 			point = this.plotToCanvas(point);
 			ctx.fillText(text, point.x, point.y);
 		},
+
 
 		/**
 		 * Take a PointObject and draw it on the graph. It will plot the 
@@ -848,6 +964,7 @@ function createPlotter()
 			//}
 		},
 
+
 		/**
 		 * Print the plot data of the pointObject as CSV. The function accepts
 		 * a PointObject, retrives its points and parses the specified fields
@@ -899,8 +1016,4 @@ function createPlotter()
 function Point(px, py) {
 	this.x = px; 
 	this.y = py;
-
-	this.points = function() {
-		return [{"x": this.x, "y":this.y}];
-	}
 }

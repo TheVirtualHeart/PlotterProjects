@@ -8,7 +8,7 @@ plot: true
 	<meta charset="utf-8" />
 	<title>Noble Model</title>
 	<link href="../node_modules/plotter/plotter.css" type="text/css" rel="stylesheet" />
-	<script src="plotter.js"></script>
+	<script src="../node_modules/plotter/plotter.js"></script>
 	<script>
 
 
@@ -161,42 +161,13 @@ plot: true
 		// legend('I_{Na1}','I_{Na2}','I_{K1}','I_{K2}','I_l')
 		// legend boxoff
 
-
-
-
-
-		/**************************************************
-		 VARIABLES
-		 define global variables here
-		 **************************************************/
 		var app;
-		var debug = [];
 
-		var ueps = 250.0;
-		var eps = 1.0 / ueps;
-		var xm = 10.0;
-		var vstar = 0.64;
-		var s1 = 0.0;						// the first point to introduce voltage
-		var s2 = 300.0;						// the second point to introduce voltage
-		//var time = 5000;					// the time over which we view the function
-		var previousHeaviside = 0;
-		var currentHeaviside = 0;
-
-		//var timestep = .01;					// dt - this should be covered by x
-		var voltageHeight = 4;
-
-		var curTime = 0.0;					// t - this should be covered by x
-		var voltage = 0.0;					// Vm - the Voltage in the cell 
-		var vgate = 0.0;					// v - the Voltage gate of the cell
-
-		var vValues = [];
-		var vmValues = [];
-
-		var displayV = true;
-		var displayVm = true;
-
-
-		// Define the Point Object
+		/**
+		 * These are variables that can be modified by user input. They are 
+		 * used in the calculation of the values that will be plotted
+		 * @type {Number}
+		 */
 		var cm= 12;
 		var gan = 0.0;
 		var ean= -60;
@@ -208,6 +179,7 @@ plot: true
 		var m = 0.0;
 		var h = 1.0;
 		var n = 0.0;
+
 
 		/**
 		 * These control how how often points are graphed. The time and the 
@@ -221,195 +193,22 @@ plot: true
 		var stepSize = batchSize * timestep;
 		var steps = (time / stepSize);
 
+
+		/**
+		 * These hold the values that will be plotted. They are updated every
+		 * time calculate() is called.
+		 */
 		var vArray = [];
 		var mArray = [];
 		var hArray = [];
 		var nArray = [];
 		var count = 0;
 
-		/** 
-		 * A rounding function that more closely resembles Matlab's round() 
-		 * function.
-		 * http://www.mathworks.com/help/matlab/ref/round.html
-		 */
-		function round(val) {
-			if (val > 0) {
-				return Math.round(val);
-			} else if (val < 0) {
-				var abs = Math.abs(val);
-				var round = Math.round(abs);
-				return -round;
-			} else {
-				return 0;
-			}
-		}
 
-		var calculate = function() {
-
-			//vArray.push(v);
-			var count = 0;
-			for (var j = 0; j < steps; j++) {	
-
-				var vVal = v;
-				var mVal = m;
-				var hVal = h;
-				var nVal = n;
-
-				for (var i = 0; i < batchSize; i++) {
-
-					// if(abs(-v-48)<1e-3)
-				 //        am=0.15;
-				 //    else
-				 //        am=0.1*(-v-48)./(exp((-v-48)/15)-1);
-				 //    end
-
-				 	var am;
-				    if (Math.abs(-v - 48) < 0.001) {
-				    	am=0.15;
-				    } else {
-				    	am=0.1*(-v-48)/(Math.exp((-v-48)/15)-1);
-				    }
-
-				    //console.log(am);
-
-				    //console.log(v);
-
-				//     if(abs(v+8)<1e-3)su
-				//         bm=0.6;
-				//     else
-				//         bm=0.12*(v+8)./(exp((v+8)/5)-1);
-				//     end
-					var bm;
-					if (Math.abs(v + 8) < 0.001) {
-						bm = 0.6;
-					}
-					else {
-						bm=0.12*(v+8)/(Math.exp((v+8)/5)-1);
-					}
-					// console.log(bm);
-
-				//     ah=0.17*exp((-v-90)/20);
-				//     bh=1./(exp((-v-42)/10)+1);
-				//     if(abs(-v-50)<1e-3)
-				//         an=0.001;
-				//     else
-				//         an=0.0001*(-v-50)./(exp((-v-50)/10)-1);
-				//     end
-				//     bn=0.002*exp((-v-90)/80);
-					var ah = 0.17 * Math.exp((-v - 90)/20);
-					var bh = 1 / (Math.exp((-v - 42)/10) + 1);
-					var an;
-					if (Math.abs(-v - 50) < 0.001) {
-						an = 0.001;
-					} else {
-						an = 0.0001 * (-v - 50) / (Math.exp((-v-50)/10)-1);
-					}
-					var bn = 0.002 * Math.exp((-v-90)/80);
-
-					//console.log("ah: " + ah + " bh: " + bh + " an: " + an + " bn: " + bn);
-
-
-				// % calculate derivatives of gating variables
-				//     dm=am*(1-m)-bm*m;
-				//     dh=ah*(1-h)-bh*h;
-				//     dn=an*(1-n)-bn*n;
-					var dm = am * (1-m) - bm * m;
-					var dh = ah * (1-h) - bh * h;
-					var dn = an * (1-n) - bn * n;
-
-					//console.log("dm: " + dm + " dh: " + dh + " dn: " + dn);
-
-
-				//     % update gating variables using explicit method
-				//     m = m + dt*dm;
-				//     h = h + dt*dh;
-				//     n = n + dt*dn;
-				//     % semi-implicit
-				//     % m=(m+dt*am)/(1+dt*(am+bm));
-				//     % h=(h+dt*ah)/(1+dt*(ah+bh));
-				//     % n=(n+dt*an)/(1+dt*(an+bn));
-				//     
-					m += timestep * dm;
-					h += timestep * dh;
-					n += timestep * dn;
-
-				//     % calculate potassium current conductance values
-				//     gk1 = 1.2*exp((-v-90)/50)+0.015*exp((v+90)/60);
-				//     gk2 = 1.2*n.*n.*n.*n;
-					var gk1 = 1.2 * Math.exp((-v-90)/50) + 0.015 * Math.exp((v+90)/60);
-					var gk2 = 1.2 * Math.pow(n, 4);
-
-				//     % calculate currents
-				//     ina1=400*m.*m.*m.*h.*(v-40);
-				//     % ina2=0.13*(v-40); % this makes it not auto-oscillatory
-				//     ina2=0.14.*(v-40);
-				//     ik1=gk1.*(v+100);
-				//     ik2=gk2.*(v+100);
-				//     il=gan*(v-ean);
-					var ina1 = 400 * m * m * m * h * (v - 40);
-					var ina2 = 0.14 * (v - 40);
-
-					var ik1 = gk1 * (v + 100);
-					var ik2 = gk2 * (v + 100);
-					var il = gan * (v - ean);
-
-				//     ina=ina1+ina2;
-				//     ik=ik1+ik2;
-					var ina = ina1 + ina2;
-					var ik = ik1 + ik2;
-
-				//     istim=0;
-				//     if(mod(ntime,round(period/dt))<round(stimdur/dt))
-				//         istim=stimmag;
-				//     end
-					var istim = 0;
-					// if (count % 1000 === 0) {							// change 50 to period
-					// 	istim = stimmag;
-					// }
-					// 
-					if (count % round(period/timestep) < round(stimdur / timestep)) {
-						istim = stimmag
-					}
-
-
-				//     dv=(-ina-ik-il-istim)/cm;
-					var dv = (-ina - ik - il - istim) / cm;
-					//console.log(dv);
-
-
-				//     v = v + dt*dv;
-					v += timestep * dv;
-					count++;
-					// console.log(dv);
-					//console.log(v);
-				    
-				    //return { "x":x, "v": v, "m": m, "h": h, "n": n };
-				    //
-				    
-				    // round to the appropriate decimal place
-				    // v = round(v * 1000) / 1000;
-				    // m = round(m * 1000000) / 1000000;
-				    // h = round(h * 100000) / 100000;
-				    // n = round(n * Math.pow(10, 9)) / Math.pow(10, 9);
-			    }
-			    //count++;
-			    //console.log(count);
-			    vArray.push(normalize(vVal, new Point(-80, 40)));
-			    mArray.push(mVal);
-			    hArray.push(hVal);
-			    nArray.push(nVal);	
-			}
-			
-
-		}
-
-		/**************************************************
-		 PAGE FUNCTIONS	
-		 declare functions that initialize the page here
-		 **************************************************/
 
 		/**
-		 * Initialize the Plotter and define any graphs we want to appear on it
+		 * creates the plotter object and defines all of the plots to be
+		 * displayed.
 		 */
 		function buildGraphs() {
 			app = createPlotter(document.getElementById("plot"));
@@ -450,7 +249,7 @@ plot: true
 
 
 		/** 
-		 * Wire the form event handlers
+		 * Set up the form so that the graph can respond to user input.
 		 */
 		function buildForms() {
 			document.getElementById("update").onclick = resetGraph;
@@ -460,6 +259,159 @@ plot: true
 			document.getElementById("displayV").onclick = resetGraph;
 			document.getElementById("getData").onclick = printData;
 		}
+
+
+		/**
+		 * Calculate the values that will be plotted. This is a differential 
+		 * equation, so the values compound on each other. The values are 
+		 * stored in 4 different arrays. The calculation is divided into steps.
+		 * At each step, the function runs a batch of calculations. Once this
+		 * batch is complete, the values are stored in the arrays.
+		 * @return {[type]} [description]
+		 */
+		var calculate = function() {
+			vArray = [];
+			mArray = [];
+			hArray = [];
+			nArray = [];
+			var count = 0;
+			for (var j = 0; j < steps; j++) {	
+				var vVal = v;
+				var mVal = m;
+				var hVal = h;
+				var nVal = n;
+				for (var i = 0; i < batchSize; i++) {
+
+
+					// calculate alphas and betas for updating gating variables
+				 	var am;
+				    if (Math.abs(-v - 48) < 0.001) {
+				    	am=0.15;
+				    } else {
+				    	am=0.1*(-v-48)/(Math.exp((-v-48)/15)-1);
+				    }
+					var bm;
+					if (Math.abs(v + 8) < 0.001) {
+						bm = 0.6;
+					}
+					else {
+						bm=0.12*(v+8)/(Math.exp((v+8)/5)-1);
+					}
+					var ah = 0.17 * Math.exp((-v - 90)/20);
+					var bh = 1 / (Math.exp((-v - 42)/10) + 1);
+					var an;
+					if (Math.abs(-v - 50) < 0.001) {
+						an = 0.001;
+					} else {
+						an = 0.0001 * (-v - 50) / (Math.exp((-v-50)/10)-1);
+					}
+					var bn = 0.002 * Math.exp((-v-90)/80);
+
+
+					// calculate derivatives of gating variables
+					var dm = am * (1-m) - bm * m;
+					var dh = ah * (1-h) - bh * h;
+					var dn = an * (1-n) - bn * n;
+
+
+					// update gating variables using explicit method
+					m += timestep * dm;
+					h += timestep * dh;
+					n += timestep * dn;
+
+					// calculate potassium current conductance values
+					var gk1 = 1.2 * Math.exp((-v-90)/50) + 0.015 * Math.exp((v+90)/60);
+					var gk2 = 1.2 * Math.pow(n, 4);
+
+
+					// calculate currents
+					var ina1 = 400 * m * m * m * h * (v - 40);
+					var ina2 = 0.14 * (v - 40);
+					var ik1 = gk1 * (v + 100);
+					var ik2 = gk2 * (v + 100);
+					var il = gan * (v - ean);
+
+
+					// sum the two sodium and the two potassium currents
+					var ina = ina1 + ina2;
+					var ik = ik1 + ik2;
+
+
+					// set stimulus current periodically to be nonzero
+					var istim = 0;
+					if (count % round(period/timestep) < round(stimdur / timestep)) {
+						istim = stimmag
+					}
+
+
+					// calculate derivative of voltage 
+					var dv = (-ina - ik - il - istim) / cm;
+
+
+					// update voltage using forward Euler
+					v += timestep * dv;
+					count++;
+			    }
+			    vArray.push(normalize(vVal, new Point(-80, 40)));
+			    mArray.push(mVal);
+			    hArray.push(hVal);
+			    nArray.push(nVal);	
+			}
+		}
+
+
+		/**
+		 * Draw the plots according to the data specified in the arrays
+		 */
+		//var count = 0;
+		function update() {
+
+			app.selectPlot("Noble");
+			app.ctx.strokeStyle = "#FF0000";
+			app.ctx.lineWidth = 3;
+			app.plotFunction(function(x) {
+				var index = Math.round(x / stepSize);
+				return vArray[index];
+			}, true, stepSize, 0, time);
+
+			app.ctx.strokeStyle = "#00FF00";
+			app.ctx.lineWidth = 3;
+			app.plotFunction(function(x) {
+				var index = Math.round(x / stepSize);
+				return mArray[index];
+			}, true, stepSize, 0, time);
+
+			app.ctx.strokeStyle = "#0000FF";
+			app.ctx.lineWidth = 3;
+			app.plotFunction(function(x) {
+				var index = Math.round(x / stepSize);
+				return hArray[index];
+			}, true, stepSize, 0, time);
+
+			app.ctx.strokeStyle = "#FF00FF";
+			app.ctx.lineWidth = 3;
+			app.plotFunction(function(x) {
+				var index = Math.round(x / stepSize);
+				return nArray[index];
+			}, true, stepSize, 0, time);
+
+			requestAnimationFrame(update);
+
+			// app.plot(Noble, "v", {
+			// 	normalize: new Point(-85, -75),
+			// 	connected: true,
+			// 	radius: 0,
+			// 	strokeStyle: "green"
+			// });
+
+			// app.plot(Noble, "h", {
+			// 	normalize: new Point(0, 1),
+			// 	connected: true,
+			// 	radius: 0,
+			// 	strokeStyle: "red"
+			// });	
+		}
+
 
 		/**
 		 * print the data from plotter.
@@ -534,92 +486,20 @@ plot: true
 			// true);
 		}
 
-		/**
-		 * Update the graph and redraw all of the plots
-		 */
-		//var count = 0;
-		function update() {
-
-			//Noble.generate(0, time, timestep);
-
-			// console.log(vArray);
-			// console.log(mArray);
-			// console.log(hArray);
-			// console.log(nArray);
-
-			// console.log(time);
-			// console.log(stepSize);
-
-			app.selectPlot("Noble");
-
-			app.ctx.strokeStyle = "#FF0000";
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.round(x / stepSize);
-				//console.log(index);
-				return vArray[index];
-			}, true, stepSize, 0, time);
-
-			app.ctx.strokeStyle = "#00FF00";
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.round(x / stepSize);
-				//console.log(index);
-				return mArray[index];
-			}, true, stepSize, 0, time);
-
-			app.ctx.strokeStyle = "#0000FF";
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.round(x / stepSize);
-				//console.log(index);
-				return hArray[index];
-			}, true, stepSize, 0, time);
-
-			app.ctx.strokeStyle = "#FF00FF";
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.round(x / stepSize);
-				//console.log(index);
-				return nArray[index];
-			}, true, stepSize, 0, time);
-
-			requestAnimationFrame(update);
-
-			// app.plot(Noble, "v", {
-			// 	normalize: new Point(-85, -75),
-			// 	connected: true,
-			// 	radius: 0,
-			// 	strokeStyle: "green"
-			// });
-
-			// app.plot(Noble, "h", {
-			// 	normalize: new Point(0, 1),
-			// 	connected: true,
-			// 	radius: 0,
-			// 	strokeStyle: "red"
-			// });	
-		}
 
 		/**
-		 * Initialize the graph and attach event listeners when
-		 * the form loads
+		 * When the window loads, initialize out graph and plot the data.
 		 */
 		window.onload = function() {
-			//calculate(0);
-			//console.log(data);
-			//debug = [];
 			buildGraphs();
 		 	buildForms();
 		 	calculate();
 			requestAnimationFrame(update);
-
-			//setInterval(update, 1000/60);
-			//requestAnimationFrame(update);
 		}
 
 
 
+		// UTILITY FUNCTIONS
 		/**
 		 * The heaviside function. Return 0 if the expression is negative
 		 * and 1 otherwise
@@ -634,6 +514,35 @@ plot: true
 			}
 		}
 
+
+		/** 
+		 * A rounding function that more closely resembles Matlab's round() 
+		 * function.
+		 * http://www.mathworks.com/help/matlab/ref/round.html
+		 */
+		function round(val) {
+			if (val > 0) {
+				return Math.round(val);
+			} else if (val < 0) {
+				var abs = Math.abs(val);
+				var round = Math.round(abs);
+				return -round;
+			} else {
+				return 0;
+			}
+		}
+
+
+		/**
+		 * Return the numeric value of the input if it has one. If the value
+		 * is not a number, return zero.
+		 * 
+		 * @param  {any} value - can be any value. The function will interpret
+		 * non-numeric values as zero.
+		 * 
+		 * @return {number} - the numeric value of the input if it exists. Zero
+		 * otherwise
+		 */
 		function numericValue(value) {
 			if (!isNaN(Number(value))) {
 				return Number(value);
@@ -642,6 +551,19 @@ plot: true
 			}
 		}
 
+
+		/**
+		 * Return the normalized value as it exists within the range.
+		 * 
+		 * @param  {number} value - the value to be normalized.
+		 * 
+		 * @param  {Point} range - a Point that defines the upper and lower
+		 * bounds of the normalization. the x value is the minimum value, while
+		 * the y value is the maximum.
+		 * 
+		 * @return {number} - The normalized value. It is expressed as a number
+		 * between 0 and 1.
+		 */
 		function normalize(value, range) {
 			var norm = (value - range.x)/(range.y - range.x);
 			return norm;

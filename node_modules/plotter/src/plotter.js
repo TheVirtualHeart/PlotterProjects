@@ -365,19 +365,28 @@ function createPlotter()
 			else if (clipped)
 				clipped = false;
 		},
-		get ctx() { return ctx; },
+
+
+		get ctx() { 
+			return ctx; },
+
+
 		get mouse()
 		{
 			if (currentPlot == undefined)
 				return;
 			return currentPlot.mouse;
 		},
+
+
 		get settings()
 		{
 			if (currentPlot == undefined)
 				return;
 			return currentPlot.settings;
 		},
+
+
 		pointOnPlot: function(p, plot)
 		{
 			if (typeof plot === "number" && 
@@ -398,6 +407,8 @@ function createPlotter()
 			
 			return pointInBounds(p, plot);
 		},
+
+
 		plotToCanvas: function(p)
 		{
 			var s = currentPlot.settings;
@@ -405,6 +416,8 @@ function createPlotter()
 			var y = s.plotSize.y - ((((s.orientation=="b"||s.orientation=="c") ? s.range.y : 2 * p.y) - p.y - ((s.orientation=="b"||s.orientation=="c") ? 0 : s.range.x)) * s.pixelPerUnit.y) + s.offset.y;
 			return new Point(x, y);
 		},
+
+
 		plotPoint: function(p, r, fill)
 		{
 			if (currentPlot == undefined)
@@ -421,6 +434,8 @@ function createPlotter()
 			else
 				ctx.stroke();
 		},
+
+
 		plotLine: function(p1, p2)
 		{
 			if (currentPlot == undefined)
@@ -434,6 +449,8 @@ function createPlotter()
 			ctx.lineTo(p2.x, p2.y);
 			ctx.stroke();
 		},
+
+
 		plotSlope: function(p, slope)
 		{
 			if (currentPlot == undefined)
@@ -639,7 +656,7 @@ function createPlotter()
 			//if (strokeWeight !== 0) {
 			//}
 		},
-		
+
 
 		/**
 		 * Print the plot data of the pointObject as CSV. The function accepts
