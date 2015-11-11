@@ -164,9 +164,18 @@ plot: true
 		var app;
 
 		/**
+		 * These are default values. These are the values that will be used
+		 * when the plots are loaded and they will be used to reinitialize
+		 * the plots if the user specifies.
+		 */
+		var defaultV = -80.0;
+		var defaultM = 0.0;
+		var defaultH = 1.0;
+		var defaultN = 0.0;
+
+		/**
 		 * These are variables that can be modified by user input. They are 
-		 * used in the calculation of the values that will be plotted
-		 * @type {Number}
+		 * used in the calculation of the values that will be plotted.
 		 */
 		var cm= 12;
 		var gan = 0.0;
@@ -175,10 +184,10 @@ plot: true
 		var stimdur= 2.0;
 		var period=500.0;
 
-		var v = -80.0; 
-		var m = 0.0;
-		var h = 1.0;
-		var n = 0.0;
+		var v = defaultV; 
+		var m = defaultM;
+		var h = defaultH;
+		var n = defaultN;
 
 
 		/**
