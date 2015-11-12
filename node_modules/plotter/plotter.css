@@ -32,6 +32,66 @@
 	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
 }
 
+.plotter_inputgroup-lightblue {
+	background-color: rgb(0, 153, 255);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-orange {
+	background-color: rgb(255, 153, 0);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-gray {
+	background-color: rgb(102, 102, 102);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-pink {
+	background-color: rgb(255, 153, 255);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-purple {
+	background-color: rgb(175, 26, 235);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-yellowgreen {
+	background-color: rgb(155, 226, 17);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-indigo {
+	background-color: rgb(47, 38, 224);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-black {
+	background-color: rgb(0, 0, 0);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-yellow {
+	background-color: rgb(254, 238, 0);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
+.plotter_inputgroup-aqua {
+	background-color: rgb(29, 239, 242);
+	color: white;
+	text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+}
+
 .plotter_inputgroup label {
 	font-weight: bold;
 	padding-right: 4px;

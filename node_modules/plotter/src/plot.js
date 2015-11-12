@@ -160,7 +160,7 @@ function Plot()
 		 * coordinates where the mouse was last down.
 		 *
 		 * @property {Point} mouse.move - The point in the plot's local
-		 * coordinates where the mouse was last down.		 
+		 * coordinates where the mouse has moved to	 
 		 * 
 		 * @property {Point} mouse.up - The point in the plot's local
 		 * coordinates where the mouse was last down.
