@@ -163,6 +163,17 @@ plot: true
 
 		var app;
 
+
+		/**
+		 * These properties determine whether certain functions are displayed
+		 * on the plots
+		 */
+		var displayV = true;
+		var displayM = true;
+		var displayH = true;
+		var displayN = true;
+
+
 		/**
 		 * These are default values. These are the values that will be used
 		 * when the plots are loaded and they will be used to reinitialize
@@ -188,6 +199,10 @@ plot: true
 		var m = defaultM;
 		var h = defaultH;
 		var n = defaultN;
+
+		var ik = 0;
+		var ina = 0;
+		var il = 0;
 
 
 		/**
@@ -248,12 +263,26 @@ plot: true
 				domain: new Point(0, time),
 				range: new Point(0, 1),
 				unitPerTick: new Point(1000, .1),
-				pixelPerUnit: new Point(.1, 500),
+				pixelPerUnit: new Point(.05, 250),
 				labelFrequency: new Point(1, 1),
 				xAxis: "Time (ms)",
 				yAxis: "V (mv)",
+				labelPrecision: new Point(0, 1),
 
 			}, "Noble");
+
+			app.newPlot({
+				offset: new Point(0, 375),
+				domain: new Point(0, time),
+				range: new Point(0, 1),
+				unitPerTick: new Point(1000, .1),
+				pixelPerUnit: new Point(.05, 250),
+				labelFrequency: new Point(1, 1),
+				xAxis: "Time (ms)",
+				yAxis: "V (mv)",
+				labelPrecision: new Point(0, 1),
+
+			}, "NobleOther");
 		}
 
 
@@ -261,12 +290,29 @@ plot: true
 		 * Set up the form so that the graph can respond to user input.
 		 */
 		function buildForms() {
-			document.getElementById("update").onclick = resetGraph;
-			document.getElementById("default").onclick = setDefaults;
+			var displayVButton = document.getElementById("displayV");
+			displayVButton.addEventListener("change", function() {
+				displayV = displayVButton.checked;
+			});
+			var displayMButton = document.getElementById("displayM");
+			displayMButton.addEventListener("change", function() {
+				displayM = displayMButton.checked;
+			});
+			var displayHButton = document.getElementById("displayH");
+			displayHButton.addEventListener("change", function() {
+				displayH = displayHButton.checked;
+			});
+			var displayNButton = document.getElementById("displayN");
+			displayNButton.addEventListener("change", function() {
+				displayN = displayNButton.checked;
+			});
 
-			document.getElementById("displayVm").onclick = resetGraph;
-			document.getElementById("displayV").onclick = resetGraph;
-			document.getElementById("getData").onclick = printData;
+			// document.getElementById("update").onclick = resetGraph;
+			// document.getElementById("default").onclick = setDefaults;
+
+			// document.getElementById("displayVm").onclick = resetGraph;
+			// document.getElementById("displayV").onclick = resetGraph;
+			// document.getElementById("getData").onclick = printData;
 		}
 
 
@@ -289,6 +335,10 @@ plot: true
 				var mVal = m;
 				var hVal = h;
 				var nVal = n;
+
+				var ikVal = ik;
+				var inaVal = ina;
+				var ilVal = il;
 				for (var i = 0; i < batchSize; i++) {
 
 
@@ -338,12 +388,12 @@ plot: true
 					var ina2 = 0.14 * (v - 40);
 					var ik1 = gk1 * (v + 100);
 					var ik2 = gk2 * (v + 100);
-					var il = gan * (v - ean);
+					il = gan * (v - ean);
 
 
 					// sum the two sodium and the two potassium currents
-					var ina = ina1 + ina2;
-					var ik = ik1 + ik2;
+					ina = ina1 + ina2;
+					ik = ik1 + ik2;
 
 
 					// set stimulus current periodically to be nonzero
@@ -372,37 +422,45 @@ plot: true
 		/**
 		 * Draw the plots according to the data specified in the arrays
 		 */
-		//var count = 0;
 		function update() {
 
 			app.selectPlot("Noble");
-			app.ctx.strokeStyle = "#FF0000";
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.round(x / stepSize);
-				return vArray[index];
-			}, true, stepSize, 0, time);
 
-			app.ctx.strokeStyle = "#00FF00";
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.round(x / stepSize);
-				return mArray[index];
-			}, true, stepSize, 0, time);
+			if (displayV) {
+				app.ctx.strokeStyle = Colors.Red;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					var index = Math.round(x / stepSize);
+					return vArray[index];
+				}, true, stepSize, 0, time);
+			}
 
-			app.ctx.strokeStyle = "#0000FF";
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.round(x / stepSize);
-				return hArray[index];
-			}, true, stepSize, 0, time);
+			if (displayM) {
+				app.ctx.strokeStyle = Colors.Green;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					var index = Math.round(x / stepSize);
+					return mArray[index];
+				}, true, stepSize, 0, time);
+			}
 
-			app.ctx.strokeStyle = "#FF00FF";
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.round(x / stepSize);
-				return nArray[index];
-			}, true, stepSize, 0, time);
+			if (displayH) {
+				app.ctx.strokeStyle = Colors.LightBlue;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					var index = Math.round(x / stepSize);
+					return hArray[index];
+				}, true, stepSize, 0, time);
+			}
+
+			if (displayN) {
+				app.ctx.strokeStyle = Colors.Indigo;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					var index = Math.round(x / stepSize);
+					return nArray[index];
+				}, true, stepSize, 0, time);
+			}
 
 			requestAnimationFrame(update);
 
@@ -578,11 +636,12 @@ plot: true
 			return norm;
 		}
 
+
 		/**
 		 * An object that contains references to the different colors used by the
 		 * graph.
 		 */
-		var Colors {
+		var Colors  = {
 			Aqua: "rgb(29, 239, 242)",
 			Yellow: "rgb(254, 238, 0)",
 			Black: "rgb(0, 0, 0)",
@@ -595,7 +654,7 @@ plot: true
 			LightBlue: "rgb(0, 153, 255)",
 			Red: "rgb(255, 0, 0)",
 			Green: "rgb(19, 171, 19)",
-		}
+		};
 
 
 	</script>
@@ -617,13 +676,30 @@ plot: true
 
 		<!-- inputs -->
 		<fieldset>
-			<div class="plotter_inputgroup plotter_inputgroup-green">
+			<div class="plotter_inputgroup plotter_inputgroup-red">
 				<input id="displayV" name="displayV" type="checkbox" checked/>
 				<label for="displayV">Display V</label>
 			</div>
-			<div class="plotter_inputgroup plotter_inputgroup-red">
-				<input id="displayVm" name="displayVm" type="checkbox" checked/>
-				<label for="displayVm">Display Vm</label>
+			<div class="plotter_inputgroup plotter_inputgroup-green">
+				<input id="displayM" name="displayM" type="checkbox" checked/>
+				<label for="displayM">Display M</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-lightblue">
+				<input id="displayH" name="displayH" type="checkbox" checked/>
+				<label for="displayH">Display H</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-indigo">
+				<input id="displayN" name="displayN" type="checkbox" checked/>
+				<label for="displayN">Display N</label>
+			</div>
+			<div class="plotter_inputgroup">
+				<select id="SecondaryPlot" name="SecondaryPlot">
+					<option> -- none -- </option>
+					<option>ina</option>
+					<option>ik</option>
+					<option>il</option>
+				</select>
+				<label for="SecondaryPlot">Secondary Plot</label>
 			</div>
 		</fieldset>
 		<fieldset>
