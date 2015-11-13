@@ -214,7 +214,7 @@ plot: true
 		 */
 		var time = 5000;
 		var timestep = 0.01;
-		var batchSize = 50;
+		var batchSize = 1;
 		var stepSize = batchSize * timestep;
 		var steps = (time / stepSize);
 
@@ -223,20 +223,28 @@ plot: true
 		 * These hold the values that are calculated. They are updated every
 		 * time calculate() is called.
 		 */
-		var vArray = [];
-		var mArray = [];
-		var hArray = [];
-		var nArray = [];
+		var vArray = 	[];
+		var mArray = 	[];
+		var hArray = 	[];
+		var nArray = 	[];
 
-		var ikArray = [];
-		var inaArray = [];
-		var ilArray = [];
+		var ikArray = 	[];
+		var inaArray = 	[];
+		var ilArray = 	[];
 
 		/**
 		 * These hold the values that will be plotted. Because there are often
 		 * more values calculated than there are pixels on the screen, we will
 		 * hold the data that is to be calculated here.
 		 */
+		var vArrayGraph = 		[];		
+		var mArrayGraph = 		[];
+		var hArrayGraph = 		[];
+		var nArrayGraph = 		[];
+
+		var ikArrayGraph = 		[];
+		var inaArrayGraph = 	[];
+		var ilArrayGraph = 		[];
 
 
 		/**
@@ -437,6 +445,40 @@ plot: true
 		}
 
 
+		function analyzeData() {
+			app.selectPlot("Noble");
+			var dimensions = app.settings.plotSize;
+			var size = Math.floor(vArray.length / dimensions.x);
+
+			vArrayGraph = [];			
+			mArrayGraph = [];
+			hArrayGraph = [];
+			nArrayGraph = [];
+
+			var vTemp = 0;
+			var mTemp = 0; 
+			var hTemp = 0;
+			var nTemp = 0;
+			for (var i = 0; i < vArray.length; i++) {
+				vTemp += vArray[i];
+				mTemp += mArray[i];
+				hTemp += hArray[i];
+				nTemp += nArray[i];
+				if (i % size == 0) {
+					vArrayGraph.push(vTemp / size);
+					mArrayGraph.push(mTemp / size);
+					hArrayGraph.push(hTemp / size);
+					nArrayGraph.push(nTemp / size);
+					vTemp = 0;
+					mTemp = 0;
+					hTemp = 0;
+					nTemp = 0;
+				}
+			} 
+
+		}
+
+
 		/**
 		 * Draw the plots according to the data specified in the arrays
 		 */
@@ -445,25 +487,18 @@ plot: true
 			app.selectPlot("Noble");
 			var plotSize = app.settings.plotSize;
 			var size = Math.floor(vArray.length / plotSize.x);
+			var graphSize = Math.floor(time / plotSize.x);
 
 			// if (displayV) {
 
 			// 	//console.log(size);
-
+			// 	var count = 0;
 			// 	app.ctx.strokeStyle = Colors.Red;
 			// 	app.ctx.lineWidth = 3;
 			// 	app.plotFunction(function(x) {
-			// 		//var index = Math.round(x / stepSize);
-			// 		//var index = x * size;
-			// 		//console.log(x + ": " + index);
-			// 		// if (index < vArray.length - 1) {
-			// 		// 	return vArray[index];
-			// 		// } else {
-			// 		// 	return 0;
-			// 		// }
-			// 		index = Math.round(x / stepSize);
-			// 		return vArray[index];
-			// 	}, true, size, 0, time);
+			// 		console.log(x);
+			// 		return vArrayGraph[Math.floor((x / size) * timestep)];
+			// 	}, true, size * timestep, 0, time);
 			// }
 
 			// if (displayM) {
@@ -515,6 +550,69 @@ plot: true
 			// 	var index = Math.round(x / stepSize);
 			// 	return ilArray[index];
 			// }, true, size, 0, time);
+			// 
+			// 
+			if (displayV) {
+
+				//console.log(size);
+
+				app.ctx.strokeStyle = Colors.Red;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					var index = Math.floor(x * (size / graphSize));
+					return vArray[index];
+				}, true, graphSize, 0, time);
+			}
+
+			if (displayM) {
+				app.ctx.strokeStyle = Colors.Green;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					var index = Math.floor(x * (size / graphSize));
+					return mArray[index];
+				}, true, graphSize, 0, time);
+			}
+
+			if (displayH) {
+				app.ctx.strokeStyle = Colors.LightBlue;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					var index = Math.floor(x * (size / graphSize));
+					return hArray[index];
+				}, true, graphSize, 0, time);
+			}
+
+			if (displayN) {
+				app.ctx.strokeStyle = Colors.Indigo;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					var index = Math.floor(x * (size / graphSize));
+					return nArray[index];
+				}, true, graphSize, 0, time);
+			}
+
+			app.selectPlot("NobleOther");
+
+			app.ctx.strokeStyle = Colors.Yellow;
+			app.ctx.lineWidth = 3;
+			app.plotFunction(function(x) {
+				var index = Math.floor(x * (size / graphSize));
+				return ikArray[index];
+			}, true, graphSize, 0, time);
+
+			app.ctx.strokeStyle = Colors.Black;
+			app.ctx.lineWidth = 3;
+			app.plotFunction(function(x) {
+				var index = Math.floor(x * (size / graphSize));
+				return inaArray[index];
+			}, true, graphSize, 0, time);
+
+			app.ctx.strokeStyle = Colors.Aqua;
+			app.ctx.lineWidth = 3;
+			app.plotFunction(function(x) {
+				var index = Math.floor(x * (size / graphSize));
+				return ilArray[index];
+			}, true, graphSize, 0, time);
 
 
 			// requestAnimationFrame(update);
@@ -524,75 +622,75 @@ plot: true
 
 
 
-			// var size = Math.floor(vArray.length / plotSize.x);
-			if (displayV) {
-				//console.log(size);
+			// // var size = Math.floor(vArray.length / plotSize.x);
+			// if (displayV) {
+			// 	//console.log(size);
 
-				app.ctx.strokeStyle = Colors.Red;
-				app.ctx.lineWidth = 3;
-				app.plotFunction(function(x) {
-					//var index = Math.round(x / stepSize);
-					//var index = x * size;
-					//console.log(x + ": " + index);
-					// if (index < vArray.length - 1) {
-					// 	return vArray[index];
-					// } else {
-					// 	return 0;
-					// }
-					index = Math.round(x / stepSize);
-					return vArray[index];
-				}, true, stepSize, 0, time);
-			}
+			// 	app.ctx.strokeStyle = Colors.Red;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		//var index = Math.round(x / stepSize);
+			// 		//var index = x * size;
+			// 		//console.log(x + ": " + index);
+			// 		// if (index < vArray.length - 1) {
+			// 		// 	return vArray[index];
+			// 		// } else {
+			// 		// 	return 0;
+			// 		// }
+			// 		index = Math.round(x / stepSize);
+			// 		return vArray[index];
+			// 	}, true, stepSize, 0, time);
+			// }
 
-			if (displayM) {
-				app.ctx.strokeStyle = Colors.Green;
-				app.ctx.lineWidth = 3;
-				app.plotFunction(function(x) {
-					var index = Math.round(x / stepSize);
-					return mArray[index];
-				}, true, stepSize, 0, time);
-			}
+			// if (displayM) {
+			// 	app.ctx.strokeStyle = Colors.Green;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		var index = Math.round(x / stepSize);
+			// 		return mArray[index];
+			// 	}, true, stepSize, 0, time);
+			// }
 
-			if (displayH) {
-				app.ctx.strokeStyle = Colors.LightBlue;
-				app.ctx.lineWidth = 3;
-				app.plotFunction(function(x) {
-					var index = Math.round(x / stepSize);
-					return hArray[index];
-				}, true, stepSize, 0, time);
-			}
+			// if (displayH) {
+			// 	app.ctx.strokeStyle = Colors.LightBlue;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		var index = Math.round(x / stepSize);
+			// 		return hArray[index];
+			// 	}, true, stepSize, 0, time);
+			// }
 
-			if (displayN) {
-				app.ctx.strokeStyle = Colors.Indigo;
-				app.ctx.lineWidth = 3;
-				app.plotFunction(function(x) {
-					var index = Math.round(x / stepSize);
-					return nArray[index];
-				}, true, stepSize, 0, time);
-			}
+			// if (displayN) {
+			// 	app.ctx.strokeStyle = Colors.Indigo;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		var index = Math.round(x / stepSize);
+			// 		return nArray[index];
+			// 	}, true, stepSize, 0, time);
+			// }
 
-			app.selectPlot("NobleOther");
+			// app.selectPlot("NobleOther");
 
-			app.ctx.strokeStyle = Colors.Yellow;
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.round(x / stepSize);
-				return ikArray[index];
-			}, true, stepSize, 0, time);
+			// app.ctx.strokeStyle = Colors.Yellow;
+			// app.ctx.lineWidth = 3;
+			// app.plotFunction(function(x) {
+			// 	var index = Math.round(x / stepSize);
+			// 	return ikArray[index];
+			// }, true, stepSize, 0, time);
 
-			app.ctx.strokeStyle = Colors.Black;
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.round(x / stepSize);
-				return inaArray[index];
-			}, true, stepSize, 0, time);
+			// app.ctx.strokeStyle = Colors.Black;
+			// app.ctx.lineWidth = 3;
+			// app.plotFunction(function(x) {
+			// 	var index = Math.round(x / stepSize);
+			// 	return inaArray[index];
+			// }, true, stepSize, 0, time);
 
-			app.ctx.strokeStyle = Colors.Aqua;
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.round(x / stepSize);
-				return ilArray[index];
-			}, true, stepSize, 0, time);
+			// app.ctx.strokeStyle = Colors.Aqua;
+			// app.ctx.lineWidth = 3;
+			// app.plotFunction(function(x) {
+			// 	var index = Math.round(x / stepSize);
+			// 	return ilArray[index];
+			// }, true, stepSize, 0, time);
 
 
 			requestAnimationFrame(update);
@@ -682,6 +780,7 @@ plot: true
 			buildGraphs();
 		 	buildForms();
 		 	calculate();
+		 	analyzeData();
 			requestAnimationFrame(update);
 		}
 
