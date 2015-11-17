@@ -10,158 +10,6 @@ plot: true
 	<link href="../node_modules/plotter/plotter.css" type="text/css" rel="stylesheet" />
 	<script src="../node_modules/plotter/plotter.js"></script>
 	<script>
-
-
-		//% Noble model in 0d
-
-		//% parameter values
-		//cm=12;          % membrane capacitance
-		//% vary gan e.g. 0, 0.075, 0.18, 0.4
-		//gan=0.0;         % conductance of leak current; higher values promote auto-oscillation
-		// ean=-60;        % leak current reversal potential
-
-		//% stimulus (this will be a periodic square pulse)
-		//% threshold is about -53; double this
-		// stimmag=-106;   % magnitude of stimulus in units of current (\muA?)
-		// stimdur=2.0;    % duration of stimulus in ms
-		// period=500.0;   % period of stimulus in ms (270 shows alternans, 500 does not)
-		// % note that slowing the period too much will allow the cell to stimulate 
-		// % itself without an external stimulus, although it still can respond to it
-
-		// % initial values 
-		// v = -80.0;      % initial value of membrane potential in mV
-		// m = 0.0;        % initial value of m-gate (sodium activation gate)
-		// h = 1.0;        % initial value of h-gate (sodium inactivation gate)
-		// n = 0.0;        % initial value of n-gate (potassium activation gate)
-
-		// % numerical parameters
-		// dt = 0.01;      % time step in ms
-		// endtime = 5000; % duration of simulation in ms
-		// nsteps=ceil(endtime/dt);    % number of time steps for whole simulation
-
-		// % vectors for saving data to plot
-		// vsave = zeros(nsteps+1,1);
-		// msave = zeros(nsteps+1,1);
-		// hsave = zeros(nsteps+1,1);
-		// nsave = zeros(nsteps+1,1);
-		// vsave(1,1) = v;
-		// msave(1,1) = m;
-		// hsave(1,1) = h;
-		// nsave(1,1) = n;
-
-		// ina1save = zeros(nsteps+1,1);
-		// ina2save = zeros(nsteps+1,1);
-		// ik1save = zeros(nsteps+1,1);
-		// ik2save = zeros(nsteps+1,1);
-		// ilsave = zeros(nsteps+1,1);
-		// inasave(1,1) = 0;
-		// iksave(1,1) = 0;
-		// ilsave(1,1) = 0;
-		// t = 0:dt:endtime;       % time vector
-
-		// for ntime=0:nsteps-1
-
-		//     % calculate alphas and betas for updating gating variables
-		//     if(abs(-v-48)<1e-3)
-		//         am=0.15;
-		//     else
-		//         am=0.1*(-v-48)./(exp((-v-48)/15)-1);
-		//     end
-		//     
-		//     if(abs(v+8)<1e-3)
-		//         bm=0.6;
-		//     else
-		//         bm=0.12*(v+8)./(exp((v+8)/5)-1);
-		//     end
-
-		    
-		//     ah=0.17*exp((-v-90)/20);
-		//     bh=1./(exp((-v-42)/10)+1);
-		//     if(abs(-v-50)<1e-3)
-		//         an=0.001;
-		//     else
-		//         an=0.0001*(-v-50)./(exp((-v-50)/10)-1);
-		//     end
-		//     bn=0.002*exp((-v-90)/80);
-
-		//     % calculate derivatives of gating variables
-		//     dm=am*(1-m)-bm*m;
-		//     dh=ah*(1-h)-bh*h;
-		//     dn=an*(1-n)-bn*n;
-
-		//     % update gating variables using explicit method
-		//     m = m + dt*dm;
-		//     h = h + dt*dh;
-		//     n = n + dt*dn;
-		//     % semi-implicit
-		//     % m=(m+dt*am)/(1+dt*(am+bm));
-		//     % h=(h+dt*ah)/(1+dt*(ah+bh));
-		//     % n=(n+dt*an)/(1+dt*(an+bn));
-
-		//     % calculate potassium current conductance values
-		//     gk1 = 1.2*exp((-v-90)/50)+0.015*exp((v+90)/60);
-		//     gk2 = 1.2*n.*n.*n.*n;
-
-		//     % calculate currents
-		//     ina1=400*m.*m.*m.*h.*(v-40);
-		//     % ina2=0.13*(v-40); % this makes it not auto-oscillatory
-		//     ina2=0.14.*(v-40);
-		//     ik1=gk1.*(v+100);
-		//     ik2=gk2.*(v+100);
-		//     il=gan*(v-ean);
-
-		//     % sum the two sodium and the two potassium currents
-		//     ina=ina1+ina2;
-		//     ik=ik1+ik2;
-
-		//     % set stimulus current periodically to be nonzero
-		//     istim=0;
-		//     if(mod(ntime,round(period/dt))<round(stimdur/dt))
-		//         istim=stimmag;
-		//     end
-
-		//     % calculate derivative of voltage 
-		//     dv=(-ina-ik-il-istim)/cm;
-
-		//     % update voltage using forward Euler
-		//     v = v + dt*dv;
-
-		//     % save voltage, gating variables, and currents for plotting
-		//     % note that we update location ntime+2, because the loop starts at
-		//     % index 0 and we also save one initial value outside the loop, and
-		//     % Matlab starts indexing at 1
-		//     vsave(ntime+2,1) = v;
-		//     msave(ntime+2,1) = m;
-		//     hsave(ntime+2,1) = h;
-		//     nsave(ntime+2,1) = n;
-
-		//     ina1save(ntime+2,1) = ina1;
-		//     ina2save(ntime+2,1) = ina2;
-		//     ik1save(ntime+2,1) = ik1;
-		//     ik2save(ntime+2,1) = ik2;
-		//     ilsave(ntime+2,1) = il;
-
-		// end
-
-		// % plot the voltage in top subplot and the three gating variables below
-		// figure(1)
-		// subplot(2,1,1)
-		// plot(t,vsave,'k','linewidth',2)
-		// ylabel('V_m')
-		// subplot(2,1,2)
-		// plot(t,msave,'b',t,hsave,'g',t,nsave,'r','linewidth',2)
-		// xlabel('Time')
-		// legend('m','h','n')
-		// legend boxoff
-
-		// % plot the currents in a separate plot
-		// figure(2)
-		// plot(t,ina1save,'r',t,ina2save,'g',t,ik1save,'b',t,ik2save,'c',t,ilsave,'m','linewidth',2)
-		// xlabel('Time')
-		// legend('I_{Na1}','I_{Na2}','I_{K1}','I_{K2}','I_l')
-		// legend boxoff
-
-
 		var app;
 
 
@@ -173,6 +21,7 @@ plot: true
 		var displayM = true;
 		var displayH = true;
 		var displayN = true;
+		var secondaryPlot = "";
 
 
 		/**
@@ -184,6 +33,10 @@ plot: true
 		var defaultM = 0.0;
 		var defaultH = 1.0;
 		var defaultN = 0.0;
+
+		var defaultGna1 = 400;
+		var defaultGna2 = .14;
+
 
 		/**
 		 * These are variables that can be modified by user input. They are 
@@ -204,6 +57,9 @@ plot: true
 		var ik = 0;
 		var ina = 0;
 		var il = 0;
+
+		var gna1 = defaultGna1;
+		var gna2 = defaultGna2;
 
 
 		/**
@@ -231,6 +87,7 @@ plot: true
 		var ikArray = 	[];
 		var inaArray = 	[];
 		var ilArray = 	[];
+
 
 		/**
 		 * These hold the values that will be plotted. Because there are often
@@ -285,7 +142,6 @@ plot: true
 				xAxis: "Time (ms)",
 				yAxis: "V (mv)",
 				labelPrecision: new Point(0, 1),
-
 			}, "Noble");
 
 			app.newPlot({
@@ -298,7 +154,6 @@ plot: true
 				xAxis: "Time (ms)",
 				yAxis: "V (mv)",
 				labelPrecision: new Point(0, 1),
-
 			}, "NobleOther");
 		}
 
@@ -324,6 +179,46 @@ plot: true
 				displayN = displayNButton.checked;
 			});
 
+			var secondaryPlotSelect = document.getElementById("secondaryPlot");
+			secondaryPlotSelect.addEventListener("change", function() {
+				secondaryPlot = secondaryPlotSelect.options[secondaryPlotSelect.selectedIndex].value;
+				console.log(secondaryPlot);
+
+				// if (secondaryPlot === "il") {
+				// 	app.editPlot("NobleOther", {
+				// 		range: new Point(0, .01),
+				// 		unitPerTick: new Point(1000, .1),
+				// 		pixelPerUnit: new Point(.05, 20000),
+				// 		labelFrequency: new Point(1, 1),
+				// 		xAxis: "Time (ms)",
+				// 		yAxis: "V (mv)",
+				// 		labelPrecision: new Point(0, 1)
+				// 	});
+				// }
+				// else {
+				// 	app.editPlot("NobleOther", {
+				// 		range: new Point(-100, 100),
+				// 		unitPerTick: new Point(1000, 20),
+				// 		pixelPerUnit: new Point(.05, 1),
+				// 		labelFrequency: new Point(1, 1),
+				// 		xAxis: "Time (ms)",
+				// 		yAxis: "V (mv)",
+				// 		labelPrecision: new Point(0, 1)
+				// 	});
+				// }
+			});
+
+			var gna1Input = document.getElementsByName("gna1")[0];
+			gna1Input.addEventListener("change", function() {
+				gna1 = numericValue(gna1Input.value);
+				calculate();
+			});
+
+			var gna2Input = document.getElementsByName("gna2")[0];
+			gna2Input.addEventListener("change", function() {
+				gna2 = numericValue(gna2Input.value);
+				calculate();
+			});
 			// document.getElementById("update").onclick = resetGraph;
 			// document.getElementById("default").onclick = setDefaults;
 
@@ -350,6 +245,11 @@ plot: true
 			ikArray = [];
 			inaArray = [];
 			ilArray = [];
+
+			v = defaultV;
+			m = defaultM;
+			h = defaultH;
+			n = defaultN;
 
 			var count = 0;
 			for (var j = 0; j < steps; j++) {	
@@ -406,8 +306,8 @@ plot: true
 
 
 					// calculate currents
-					var ina1 = 400 * m * m * m * h * (v - 40);
-					var ina2 = 0.14 * (v - 40);
+					var ina1 = gna1 * m * m * m * h * (v - 40);
+					var ina2 = gna2 * (v - 40);
 					var ik1 = gk1 * (v + 100);
 					var ik2 = gk2 * (v + 100);
 					il = gan * (v - ean);
@@ -592,27 +492,33 @@ plot: true
 			}
 
 			app.selectPlot("NobleOther");
+			switch(secondaryPlot) {
+				case "ik":
+					app.ctx.strokeStyle = Colors.Yellow;
+					app.ctx.lineWidth = 3;
+					app.plotFunction(function(x) {
+						var index = Math.floor(x * (size / graphSize));
+						return ikArray[index];
+					}, true, graphSize, 0, time);
+					break;
+				case "ina":			
+					app.ctx.strokeStyle = Colors.Black;
+					app.ctx.lineWidth = 3;
+					app.plotFunction(function(x) {
+						var index = Math.floor(x * (size / graphSize));
+						return inaArray[index];
+					}, true, graphSize, 0, time);
+					break;
+				case "il":			
+					app.ctx.strokeStyle = Colors.Aqua;
+					app.ctx.lineWidth = 3;
+					app.plotFunction(function(x) {
+						var index = Math.floor(x * (size / graphSize));
+						return ilArray[index];
+					}, true, graphSize, 0, time);
+					break;
+			}
 
-			app.ctx.strokeStyle = Colors.Yellow;
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.floor(x * (size / graphSize));
-				return ikArray[index];
-			}, true, graphSize, 0, time);
-
-			app.ctx.strokeStyle = Colors.Black;
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.floor(x * (size / graphSize));
-				return inaArray[index];
-			}, true, graphSize, 0, time);
-
-			app.ctx.strokeStyle = Colors.Aqua;
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				var index = Math.floor(x * (size / graphSize));
-				return ilArray[index];
-			}, true, graphSize, 0, time);
 
 
 			// requestAnimationFrame(update);
@@ -702,7 +608,6 @@ plot: true
 		 */
 		function printData() {
 			app.printPlotData(Noble);
-			//window.open("data:text/csv;charset=utf-8," + encodeURIComponent(csv));
 		}
 
 
@@ -884,7 +789,7 @@ plot: true
 	<div id="app">
 		<canvas id="plot">hello</canvas>
 	</div>
-	<div id="controls" class="plotter_form">
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-650px;margin-left:360px;">
 
 		<!-- Formulas -->
 <!-- 		<fieldset>
@@ -913,39 +818,23 @@ plot: true
 				<label for="displayN">Display N</label>
 			</div>
 			<div class="plotter_inputgroup">
-				<select id="SecondaryPlot" name="SecondaryPlot">
-					<option> -- none -- </option>
-					<option>ina</option>
-					<option>ik</option>
-					<option>il</option>
+				<select id="secondaryPlot" name="secondaryPlot">
+					<option value=""> -- none -- </option>
+					<option id="displayIna" value="ina">ina</option>
+					<option id="displayIk" value="ik">ik</option>
+					<option id="displayIl" value-"il">il</option>
 				</select>
-				<label for="SecondaryPlot">Secondary Plot</label>
+				<label for="secondaryPlot">Secondary Plot</label>
 			</div>
 		</fieldset>
 		<fieldset>
 			<div class="plotter_inputgroup">
-				<label for="vstar">VStar</label>
-				<input type="text" name="vstar" value="0.64" />
+				<label for="gna1">gna1</label>
+				<input type="text" name="gna1" value="400" />
 			</div>
 			<div class="plotter_inputgroup">
-				<label for="xm">xm</label>
-				<input type="text" name="xm" value="10.0" />
-			</div>
-			<div class="plotter_inputgroup">
-				<label for="ueps">1/eps</label>
-				<input type="text" name="ueps" value="250" />
-			</div>
-			<div class="plotter_inputgroup">
-				<label for="s1">S1</label>
-				<input type="text" name="s1" value="0.0"/>
-			</div>
-			<div class="plotter_inputgroup">
-				<label for="s2">S2</label>
-				<input type="text" name="s2" value="300.0" />
-			</div>
-			<div class="plotter_inputgroup">
-				<label for="time">time</label>
-				<input type="text" name="time" value="500.0" />
+				<label for="gna2">xm</label>
+				<input type="text" name="gna2" value=".14" />
 			</div>
 		</fieldset>
 
