@@ -183,29 +183,39 @@ plot: true
 			secondaryPlotSelect.addEventListener("change", function() {
 				secondaryPlot = secondaryPlotSelect.options[secondaryPlotSelect.selectedIndex].value;
 				console.log(secondaryPlot);
-
-				// if (secondaryPlot === "il") {
-				// 	app.editPlot("NobleOther", {
-				// 		range: new Point(0, .01),
-				// 		unitPerTick: new Point(1000, .1),
-				// 		pixelPerUnit: new Point(.05, 20000),
-				// 		labelFrequency: new Point(1, 1),
-				// 		xAxis: "Time (ms)",
-				// 		yAxis: "V (mv)",
-				// 		labelPrecision: new Point(0, 1)
-				// 	});
-				// }
-				// else {
-				// 	app.editPlot("NobleOther", {
-				// 		range: new Point(-100, 100),
-				// 		unitPerTick: new Point(1000, 20),
-				// 		pixelPerUnit: new Point(.05, 1),
-				// 		labelFrequency: new Point(1, 1),
-				// 		xAxis: "Time (ms)",
-				// 		yAxis: "V (mv)",
-				// 		labelPrecision: new Point(0, 1)
-				// 	});
-				// }
+				if (secondaryPlot === "ina") {
+					app.editPlot("NobleOther", {
+						range: new Point(-60, -10),
+						unitPerTick: new Point(1000, 5),
+						pixelPerUnit: new Point(.05, 4),
+						labelFrequency: new Point(1, 1),
+						xAxis: "Time (ms)",
+						yAxis: "V (mv)",
+						labelPrecision: new Point(0, 1)
+					});
+				}
+				else if (secondaryPlot === "ik") {
+					app.editPlot("NobleOther", {
+						range: new Point(10, 60),
+						unitPerTick: new Point(1000, 5),
+						pixelPerUnit: new Point(.05, 4),
+						labelFrequency: new Point(1, 1),
+						xAxis: "Time (ms)",
+						yAxis: "V (mv)",
+						labelPrecision: new Point(0, 1)
+					});
+				}
+				else {
+					app.editPlot("NobleOther", {
+						range: new Point(-100, 100),
+						unitPerTick: new Point(1000, 20),
+						pixelPerUnit: new Point(.05, 1),
+						labelFrequency: new Point(1, 1),
+						xAxis: "Time (ms)",
+						yAxis: "V (mv)",
+						labelPrecision: new Point(0, 1)
+					});
+				}
 			});
 
 			var gna1Input = document.getElementsByName("gna1")[0];
