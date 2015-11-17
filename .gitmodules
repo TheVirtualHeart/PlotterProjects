@@ -1,0 +1,3 @@
+[submodule "Plotter"]
+	path = Plotter
+	url = https://github.com/TheVirtualHeart/Plotter.git

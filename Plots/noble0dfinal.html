@@ -182,7 +182,6 @@ plot: true
 			var secondaryPlotSelect = document.getElementById("secondaryPlot");
 			secondaryPlotSelect.addEventListener("change", function() {
 				secondaryPlot = secondaryPlotSelect.options[secondaryPlotSelect.selectedIndex].value;
-				console.log(secondaryPlot);
 				if (secondaryPlot === "ina") {
 					app.editPlot("NobleOther", {
 						range: new Point(-60, -10),
