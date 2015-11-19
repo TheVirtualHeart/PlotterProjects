@@ -8,7 +8,7 @@ plot: true
 	<meta charset="utf-8" />
 	<title>Noble Model</title>
 	<link href="../node_modules/plotter/plotter.css" type="text/css" rel="stylesheet" />
-	<script src="../node_modules/plotter/plotter.js"></script>
+	<script src="../Plotter/plotter.dev.js"></script>
 	<script>
 		var app;
 
@@ -459,8 +459,11 @@ plot: true
 			// 	var index = Math.round(x / stepSize);
 			// 	return ilArray[index];
 			// }, true, size, 0, time);
-			// 
-			// 
+			 
+			
+			/**
+			 * Display Filtered Results
+			 */
 			if (displayV) {
 
 				//console.log(size);
@@ -527,7 +530,75 @@ plot: true
 					}, true, graphSize, 0, time);
 					break;
 			}
+			 
 
+			/** Display unfiltered results */
+			// if (displayV) {
+
+			// 	//console.log(size);
+
+			// 	app.ctx.strokeStyle = Colors.Red;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		var index = Math.floor(x / timestep);
+			// 		return vArray[index];
+			// 	}, true, timestep, 0, time);
+			// }
+
+			// if (displayM) {
+			// 	app.ctx.strokeStyle = Colors.Green;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		var index = Math.floor(x / timestep);
+			// 		return mArray[index];
+			// 	}, true, timestep, 0, time);
+			// }
+
+			// if (displayH) {
+			// 	app.ctx.strokeStyle = Colors.LightBlue;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		var index = Math.floor(x / timestep);
+			// 		return hArray[index];
+			// 	}, true, timestep, 0, time);
+			// }
+
+			// if (displayN) {
+			// 	app.ctx.strokeStyle = Colors.Indigo;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		var index = Math.floor(x / timestep);
+			// 		return nArray[index];
+			// 	}, true, timestep, 0, time);
+			// }
+
+			// app.selectPlot("NobleOther");
+			// switch(secondaryPlot) {
+			// 	case "ik":
+			// 		app.ctx.strokeStyle = Colors.Yellow;
+			// 		app.ctx.lineWidth = 3;
+			// 		app.plotFunction(function(x) {
+			// 			var index = Math.floor(x / timestep);
+			// 			return ikArray[index];
+			// 		}, true, timestep, 0, time);
+			// 		break;
+			// 	case "ina":			
+			// 		app.ctx.strokeStyle = Colors.Black;
+			// 		app.ctx.lineWidth = 3;
+			// 		app.plotFunction(function(x) {
+			// 			var index = Math.floor(x / timestep);
+			// 			return inaArray[index];
+			// 		}, true, timestep, 0, time);
+			// 		break;
+			// 	case "il":			
+			// 		app.ctx.strokeStyle = Colors.Aqua;
+			// 		app.ctx.lineWidth = 3;
+			// 		app.plotFunction(function(x) {
+			// 			var index = Math.floor(x / timestep);
+			// 			return ilArray[index];
+			// 		}, true, timestep, 0, time);
+			// 		break;
+			// }
 
 
 			// requestAnimationFrame(update);
@@ -828,8 +899,8 @@ plot: true
 			</div>
 			<div class="plotter_inputgroup">
 				<select id="secondaryPlot" name="secondaryPlot">
-					<option value=""> -- none -- </option>
 					<option id="displayIna" value="ina">ina</option>
+					<option value=""> -- none -- </option>
 					<option id="displayIk" value="ik">ik</option>
 					<option id="displayIl" value-"il">il</option>
 				</select>
