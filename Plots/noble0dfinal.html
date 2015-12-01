@@ -7,7 +7,7 @@ plot: true
 <head>
 	<meta charset="utf-8" />
 	<title>Noble Model</title>
-	<link href="../node_modules/plotter/plotter.css" type="text/css" rel="stylesheet" />
+	<link href="../Plotter/plotter.css" type="text/css" rel="stylesheet" />
 	<script src="../Plotter/plotter.dev.js"></script>
 	<script>
 		var app;
@@ -37,6 +37,10 @@ plot: true
 		var defaultGna1 = 400;
 		var defaultGna2 = .14;
 
+		var defaultS1 = 0;
+		var defaultNS1 = 5;
+		var defaultS2 = 2000;
+
 
 		/**
 		 * These are variables that can be modified by user input. They are 
@@ -47,7 +51,7 @@ plot: true
 		var ean= -60;
 		var stimmag= -106;
 		var stimdur= 2.0;
-		var period=500.0;
+		var period= 50.0;
 
 		var v = defaultV; 
 		var m = defaultM;
@@ -60,6 +64,9 @@ plot: true
 
 		var gna1 = defaultGna1;
 		var gna2 = defaultGna2;
+		var s1 = defaultS1;
+		var ns1 = defaultNS1;
+		var s2 = defaultS2;
 
 
 		/**
@@ -70,7 +77,7 @@ plot: true
 		 */
 		var time = 5000;
 		var timestep = 0.01;
-		var batchSize = 1;
+		var batchSize = 1000;
 		var stepSize = batchSize * timestep;
 		var steps = (time / stepSize);
 
@@ -222,10 +229,29 @@ plot: true
 				gna1 = numericValue(gna1Input.value);
 				calculate();
 			});
-
 			var gna2Input = document.getElementsByName("gna2")[0];
 			gna2Input.addEventListener("change", function() {
 				gna2 = numericValue(gna2Input.value);
+				calculate();
+			});
+			var periodInput = document.getElementsByName("period")[0];
+			periodInput.addEventListener("change", function() {
+				period = numericValue(periodInput.value);
+				calculate();
+			});
+			var s1Input = document.getElementsByName("s1")[0];
+			s1Input.addEventListener("change", function() {
+				s1 = numericValue(s1Input.value);
+				calculate();
+			});
+			var ns1Input = document.getElementsByName("ns1")[0];
+			ns1Input.addEventListener("change", function() {
+				ns1 = numericValue(ns1Input.value);
+				calculate();
+			});
+			var s2Input = document.getElementsByName("s2")[0];
+			s2Input.addEventListener("change", function() {
+				s2 = numericValue(s2Input.value);
 				calculate();
 			});
 			// document.getElementById("update").onclick = resetGraph;
@@ -242,7 +268,7 @@ plot: true
 		 * equation, so the values compound on each other. The values are 
 		 * stored in 4 different arrays. The calculation is divided into steps.
 		 * At each step, the function runs a batch of calculations. Once this
-		 * batch is complete, the values are stored in the arrays.
+		 * batch is complete, the values are averaged and stored in the arrays.
 		 * @return {[type]} [description]
 		 */
 		var calculate = function() {
@@ -260,16 +286,33 @@ plot: true
 			h = defaultH;
 			n = defaultN;
 
+			vArray.push(normalize(v, new Point(-80, 40)));
+		    mArray.push(m);
+		    hArray.push(h);
+		    nArray.push(n);
+		    ikArray.push(ik);
+		    inaArray.push(ina);
+		    ilArray.push(il);
+
 			var count = 0;
 			for (var j = 0; j < steps; j++) {	
-				var vVal = v;
-				var mVal = m;
-				var hVal = h;
-				var nVal = n;
+				// var vVal = v;
+				// var mVal = m;
+				// var hVal = h;
+				// var nVal = n;
 
-				var ikVal = ik;
-				var inaVal = ina;
-				var ilVal = il;
+				// var ikVal = ik;
+				// var inaVal = ina;
+				// var ilVal = il;
+				console.log(steps);
+				var vAvg = v;
+				var mAvg = m;
+				var hAvg = h;
+				var nAvg = n;
+
+				var ikAvg = ik;
+				var inaAvg = ina;
+				var ilAvg = il;
 				for (var i = 0; i < batchSize; i++) {
 
 
@@ -329,8 +372,20 @@ plot: true
 
 					// set stimulus current periodically to be nonzero
 					var istim = 0;
-					if (count % round(period/timestep) < round(stimdur / timestep)) {
-						istim = stimmag
+					// if (count % round(period/timestep) < round(stimdur / timestep)) {
+					// 	istim = stimmag
+					// }
+					var s1Count = round(s1/timestep);
+					var periodCount = round(period/timestep);
+
+					if ((count - s1Count > 0) && 
+						((count - s1Count) % periodCount === 0)) 
+					{
+						//console.log(count);
+						//console.log(s1/timestep);
+						console.log(periodCount);
+						console.log(s1Count);
+						istim = stimmag;
 					}
 
 
@@ -340,16 +395,35 @@ plot: true
 
 					// update voltage using forward Euler
 					v += timestep * dv;
+
+
+					mAvg 	+= m;
+					hAvg 	+= h;
+					nAvg 	+= n;
+					vAvg 	+= v;
+					ikAvg 	+= ik;
+					inaAvg 	+= ina;
+					ilAvg 	+= il;
+
 					count++;
 			    }
-			    vArray.push(normalize(vVal, new Point(-80, 40)));
-			    mArray.push(mVal);
-			    hArray.push(hVal);
-			    nArray.push(nVal);
 
-			    ikArray.push(ikVal);
-			    inaArray.push(inaVal);
-			    ilArray.push(ilVal);	
+			    mAvg 	/= batchSize;
+			    hAvg 	/= batchSize;
+			    nAvg 	/= batchSize;
+			    vAvg 	/= batchSize;
+			    ikAvg 	/= batchSize;
+			    inaAvg 	/= batchSize;
+			    ilAvg 	/= batchSize;
+
+			    vArray.push(normalize(vAvg, new Point(-80, 40)));
+			    mArray.push(mAvg);
+			    hArray.push(hAvg);
+			    nArray.push(nAvg);
+
+			    ikArray.push(ikAvg);
+			    inaArray.push(inaAvg);
+			    ilArray.push(ilAvg);	
 			}
 		}
 
@@ -464,75 +538,77 @@ plot: true
 			/**
 			 * Display Filtered Results
 			 */
-			if (displayV) {
+			// if (displayV) {
 
-				//console.log(size);
+			// 	//console.log(size);
 
-				app.ctx.strokeStyle = Colors.Red;
-				app.ctx.lineWidth = 3;
-				app.plotFunction(function(x) {
-					var index = Math.floor(x * (size / graphSize));
-					return vArray[index];
-				}, true, graphSize, 0, time);
-			}
+			// 	app.ctx.strokeStyle = Colors.Red;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		var index = Math.floor(x * (size / graphSize));
+			// 		return vArray[index];
+			// 	}, true, graphSize, 0, time);
+			// }
 
-			if (displayM) {
-				app.ctx.strokeStyle = Colors.Green;
-				app.ctx.lineWidth = 3;
-				app.plotFunction(function(x) {
-					var index = Math.floor(x * (size / graphSize));
-					return mArray[index];
-				}, true, graphSize, 0, time);
-			}
+			// if (displayM) {
+			// 	app.ctx.strokeStyle = Colors.Green;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		var index = Math.floor(x * (size / graphSize));
+			// 		return mArray[index];
+			// 	}, true, graphSize, 0, time);
+			// }
 
-			if (displayH) {
-				app.ctx.strokeStyle = Colors.LightBlue;
-				app.ctx.lineWidth = 3;
-				app.plotFunction(function(x) {
-					var index = Math.floor(x * (size / graphSize));
-					return hArray[index];
-				}, true, graphSize, 0, time);
-			}
+			// if (displayH) {
+			// 	app.ctx.strokeStyle = Colors.LightBlue;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		var index = Math.floor(x * (size / graphSize));
+			// 		return hArray[index];
+			// 	}, true, graphSize, 0, time);
+			// }
 
-			if (displayN) {
-				app.ctx.strokeStyle = Colors.Indigo;
-				app.ctx.lineWidth = 3;
-				app.plotFunction(function(x) {
-					var index = Math.floor(x * (size / graphSize));
-					return nArray[index];
-				}, true, graphSize, 0, time);
-			}
+			// if (displayN) {
+			// 	app.ctx.strokeStyle = Colors.Indigo;
+			// 	app.ctx.lineWidth = 3;
+			// 	app.plotFunction(function(x) {
+			// 		var index = Math.floor(x * (size / graphSize));
+			// 		return nArray[index];
+			// 	}, true, graphSize, 0, time);
+			// }
 
-			app.selectPlot("NobleOther");
-			switch(secondaryPlot) {
-				case "ik":
-					app.ctx.strokeStyle = Colors.Yellow;
-					app.ctx.lineWidth = 3;
-					app.plotFunction(function(x) {
-						var index = Math.floor(x * (size / graphSize));
-						return ikArray[index];
-					}, true, graphSize, 0, time);
-					break;
-				case "ina":			
-					app.ctx.strokeStyle = Colors.Black;
-					app.ctx.lineWidth = 3;
-					app.plotFunction(function(x) {
-						var index = Math.floor(x * (size / graphSize));
-						return inaArray[index];
-					}, true, graphSize, 0, time);
-					break;
-				case "il":			
-					app.ctx.strokeStyle = Colors.Aqua;
-					app.ctx.lineWidth = 3;
-					app.plotFunction(function(x) {
-						var index = Math.floor(x * (size / graphSize));
-						return ilArray[index];
-					}, true, graphSize, 0, time);
-					break;
-			}
+			// app.selectPlot("NobleOther");
+			// switch(secondaryPlot) {
+			// 	case "ik":
+			// 		app.ctx.strokeStyle = Colors.Yellow;
+			// 		app.ctx.lineWidth = 3;
+			// 		app.plotFunction(function(x) {
+			// 			var index = Math.floor(x * (size / graphSize));
+			// 			return ikArray[index];
+			// 		}, true, graphSize, 0, time);
+			// 		break;
+			// 	case "ina":			
+			// 		app.ctx.strokeStyle = Colors.Black;
+			// 		app.ctx.lineWidth = 3;
+			// 		app.plotFunction(function(x) {
+			// 			var index = Math.floor(x * (size / graphSize));
+			// 			return inaArray[index];
+			// 		}, true, graphSize, 0, time);
+			// 		break;
+			// 	case "il":			
+			// 		app.ctx.strokeStyle = Colors.Aqua;
+			// 		app.ctx.lineWidth = 3;
+			// 		app.plotFunction(function(x) {
+			// 			var index = Math.floor(x * (size / graphSize));
+			// 			return ilArray[index];
+			// 		}, true, graphSize, 0, time);
+			// 		break;
+			// }
 			 
 
-			/** Display unfiltered results */
+			/** 
+			 * Display unfiltered results
+			 */
 			// if (displayV) {
 
 			// 	//console.log(size);
@@ -609,53 +685,82 @@ plot: true
 
 
 			// // var size = Math.floor(vArray.length / plotSize.x);
-			// if (displayV) {
-			// 	//console.log(size);
+			if (displayV) {
+				//console.log(size);
 
-			// 	app.ctx.strokeStyle = Colors.Red;
-			// 	app.ctx.lineWidth = 3;
-			// 	app.plotFunction(function(x) {
-			// 		//var index = Math.round(x / stepSize);
-			// 		//var index = x * size;
-			// 		//console.log(x + ": " + index);
-			// 		// if (index < vArray.length - 1) {
-			// 		// 	return vArray[index];
-			// 		// } else {
-			// 		// 	return 0;
-			// 		// }
-			// 		index = Math.round(x / stepSize);
-			// 		return vArray[index];
-			// 	}, true, stepSize, 0, time);
-			// }
+				app.ctx.strokeStyle = Colors.Red;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					//var index = Math.round(x / stepSize);
+					//var index = x * size;
+					//console.log(x + ": " + index);
+					// if (index < vArray.length - 1) {
+					// 	return vArray[index];
+					// } else {
+					// 	return 0;
+					// }
+					index = Math.round(x / stepSize);
+					return vArray[index];
+				}, true, stepSize, 0, time);
+			}
 
-			// if (displayM) {
-			// 	app.ctx.strokeStyle = Colors.Green;
-			// 	app.ctx.lineWidth = 3;
-			// 	app.plotFunction(function(x) {
-			// 		var index = Math.round(x / stepSize);
-			// 		return mArray[index];
-			// 	}, true, stepSize, 0, time);
-			// }
+			if (displayM) {
+				app.ctx.strokeStyle = Colors.Green;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					var index = Math.round(x / stepSize);
+					return mArray[index];
+				}, true, stepSize, 0, time);
+			}
 
-			// if (displayH) {
-			// 	app.ctx.strokeStyle = Colors.LightBlue;
-			// 	app.ctx.lineWidth = 3;
-			// 	app.plotFunction(function(x) {
-			// 		var index = Math.round(x / stepSize);
-			// 		return hArray[index];
-			// 	}, true, stepSize, 0, time);
-			// }
+			if (displayH) {
+				app.ctx.strokeStyle = Colors.LightBlue;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					var index = Math.round(x / stepSize);
+					return hArray[index];
+				}, true, stepSize, 0, time);
+			}
 
-			// if (displayN) {
-			// 	app.ctx.strokeStyle = Colors.Indigo;
-			// 	app.ctx.lineWidth = 3;
-			// 	app.plotFunction(function(x) {
-			// 		var index = Math.round(x / stepSize);
-			// 		return nArray[index];
-			// 	}, true, stepSize, 0, time);
-			// }
+			if (displayN) {
+				app.ctx.strokeStyle = Colors.Indigo;
+				app.ctx.lineWidth = 3;
+				app.plotFunction(function(x) {
+					var index = Math.round(x / stepSize);
+					return nArray[index];
+				}, true, stepSize, 0, time);
+			}
 
-			// app.selectPlot("NobleOther");
+			app.selectPlot("NobleOther");
+
+			switch(secondaryPlot) {
+				case "ik":
+					app.ctx.strokeStyle = Colors.Yellow;
+					app.ctx.lineWidth = 3;
+					app.plotFunction(function(x) {
+						var index = Math.floor(x / stepSize);
+						return ikArray[index];
+					}, true, stepSize, 0, time);
+					break;
+				case "ina":			
+					app.ctx.strokeStyle = Colors.Black;
+					app.ctx.lineWidth = 3;
+					app.plotFunction(function(x) {
+						var index = Math.floor(x / stepSize);
+						return inaArray[index];
+					}, true, stepSize, 0, time);
+					break;
+				case "il":			
+					app.ctx.strokeStyle = Colors.Aqua;
+					app.ctx.lineWidth = 3;
+					app.plotFunction(function(x) {
+						var index = Math.floor(x / stepSize);
+						return ilArray[index];
+					}, true, stepSize, 0, time);
+					break;
+			}
+
+
 
 			// app.ctx.strokeStyle = Colors.Yellow;
 			// app.ctx.lineWidth = 3;
@@ -899,8 +1004,8 @@ plot: true
 			</div>
 			<div class="plotter_inputgroup">
 				<select id="secondaryPlot" name="secondaryPlot">
-					<option id="displayIna" value="ina">ina</option>
 					<option value=""> -- none -- </option>
+					<option id="displayIna" value="ina">ina</option>
 					<option id="displayIk" value="ik">ik</option>
 					<option id="displayIl" value-"il">il</option>
 				</select>
@@ -916,8 +1021,23 @@ plot: true
 				<label for="gna2">xm</label>
 				<input type="text" name="gna2" value=".14" />
 			</div>
+			<div class="plotter_inputgroup">
+				<label for="period">period</label>
+				<input type="text" name="period" value="500" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s1">s1</label>
+				<input type="text" name="s1" value="0"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1">n</label>
+				<input type="text" name="ns1" value="4"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">s2</label>
+				<input type="text" name="s2" value="2000"/>
+			</div>
 		</fieldset>
-
 		<!-- Buttons -->
 		<fieldset>
 			<div class="plotter_inputgroup">
