@@ -40,6 +40,7 @@ plot: true
 		var defaultS1 = 0;
 		var defaultNS1 = 4;
 		var defaultS2 = 2000;
+		var defaultPeriod = 500.0;
 
 
 		/**
@@ -51,7 +52,6 @@ plot: true
 		var ean= -60;
 		var stimmag= -106;
 		var stimdur= 2.0;
-		var period= 500.0;
 
 		var v = defaultV; 
 		var m = defaultM;
@@ -67,6 +67,7 @@ plot: true
 		var s1 = defaultS1;
 		var ns1 = defaultNS1;
 		var s2 = defaultS2;
+		var period= defaultPeriod;
 
 
 		/**
@@ -255,7 +256,8 @@ plot: true
 				calculate();
 			});
 			// document.getElementById("update").onclick = resetGraph;
-			// document.getElementById("default").onclick = setDefaults;
+			var defaultButton = document.getElementById("default");
+			defaultButton.addEventListener("click", setDefaults);
 
 			// document.getElementById("displayVm").onclick = resetGraph;
 			// document.getElementById("displayV").onclick = resetGraph;
@@ -859,33 +861,32 @@ plot: true
 		 * Reset the form with the default values
 		 */
 		function setDefaults() {
-			ueps = 250.0;
-			eps = 1.0 / ueps;
-			xm = 10.0;
-			vstar = 0.64;
-			s1 = 0.0;						// the first point to introduce voltage
-			s2 = 300.0;						// the second point to introduce voltage
-			time = 500.0;					// the time over which we view the function
-			previousHeaviside = 0;
-			currentHeaviside = 0;
+			gna1 = defaultGna1;
+			gna2 = defaultGna2;
+			s1 = defaultS1;
+			ns1 = defaultNS1;
+			s2 = defaultS2;
+			period= defaultPeriod;
 
-			timestep = .25;					// dt - this should be covered by x
-			startTime = 0;
+			var gna1Input = document.getElementsByName("gna1")[0];
+			gna1Input.value = gna1			
 
-			curTime = 0.0;					// t - this should be covered by x
-			voltage = 0.0;					// Vm - the Voltage in the cell 
-			vgate = 0.0;
+			var gna2Input = document.getElementsByName("gna2")[0];
+			gna2Input.value = gna2;
 
-			// update the form to reflect the changes
-			document.getElementsByName("vstar")[0].value = vstar;
-			document.getElementsByName("xm")[0].value = xm;
-			document.getElementsByName("ueps")[0].value = ueps;
-			document.getElementsByName("s1")[0].value = s1;
-			document.getElementsByName("s2")[0].value = s2;
-			document.getElementsByName("time")[0].value = time;
+			var periodInput = document.getElementsByName("period")[0];
+			periodInput.value = period;
 
-			app.clearPlot();
-			update();
+			var s1Input = document.getElementsByName("s1")[0];
+			s1Input.value = s1;
+
+			var ns1Input = document.getElementsByName("ns1")[0];
+			ns1Input.value = ns1;
+
+			var s2Input = document.getElementsByName("s2")[0];
+			s2Input.value = s2;
+
+			calculate();
 		}
 
 		function refitPlot() {
