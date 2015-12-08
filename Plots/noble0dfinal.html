@@ -113,6 +113,11 @@ plot: true
 
 
 		/**
+		 * 
+		 */
+
+
+		/**
 		 * creates the plotter object and defines all of the plots to be
 		 * displayed.
 		 */
@@ -145,7 +150,7 @@ plot: true
 				domain: new Point(0, time),
 				range: new Point(0, 1),
 				unitPerTick: new Point(1000, .1),
-				pixelPerUnit: new Point(.05, 250),
+				pixelPerUnit: new Point(.0875, 300),
 				labelFrequency: new Point(1, 1),
 				xAxis: "Time (ms)",
 				yAxis: "V (mv)",
@@ -157,7 +162,7 @@ plot: true
 				domain: new Point(0, time),
 				range: new Point(-100, 100),
 				unitPerTick: new Point(1000, 20),
-				pixelPerUnit: new Point(.05, 1),
+				pixelPerUnit: new Point(.0875, 1.2),
 				labelFrequency: new Point(1, 1),
 				xAxis: "Time (ms)",
 				yAxis: "V (mv)",
@@ -194,7 +199,7 @@ plot: true
 					app.editPlot("NobleOther", {
 						range: new Point(-60, -10),
 						unitPerTick: new Point(1000, 5),
-						pixelPerUnit: new Point(.05, 4),
+						pixelPerUnit: new Point(.0875, 4.8),
 						labelFrequency: new Point(1, 1),
 						xAxis: "Time (ms)",
 						yAxis: "V (mv)",
@@ -205,7 +210,7 @@ plot: true
 					app.editPlot("NobleOther", {
 						range: new Point(10, 60),
 						unitPerTick: new Point(1000, 5),
-						pixelPerUnit: new Point(.05, 4),
+						pixelPerUnit: new Point(.0875, 4.8),
 						labelFrequency: new Point(1, 1),
 						xAxis: "Time (ms)",
 						yAxis: "V (mv)",
@@ -216,7 +221,7 @@ plot: true
 					app.editPlot("NobleOther", {
 						range: new Point(-100, 100),
 						unitPerTick: new Point(1000, 20),
-						pixelPerUnit: new Point(.05, 1),
+						pixelPerUnit: new Point(.0875, 1.2),
 						labelFrequency: new Point(1, 1),
 						xAxis: "Time (ms)",
 						yAxis: "V (mv)",
@@ -258,6 +263,12 @@ plot: true
 			// document.getElementById("update").onclick = resetGraph;
 			var defaultButton = document.getElementById("default");
 			defaultButton.addEventListener("click", setDefaults);
+
+			var updateButton = document.getElementById("update");
+			updateButton.addEventListener("click", updateGraph);
+
+			var printButton = document.getElementById("print");
+			printButton.addEventListener("click", printData);
 
 			// document.getElementById("displayVm").onclick = resetGraph;
 			// document.getElementById("displayV").onclick = resetGraph;
@@ -377,7 +388,7 @@ plot: true
 					var s2Count = round(s2/timestep);
 					var periodCount = round(period/timestep);
 					var stimdurCount = round(stimdur/timestep);
-					var istim = s1s2Protocol(count, 
+					var istim = s1s2Stimulus(count, 
 											 s1Count, 
 											 s2Count, 
 											 periodCount,
@@ -445,7 +456,7 @@ plot: true
 		 * 
 		 * @return {number} - The stimulus that will be applied.
 		 */
-		function s1s2Protocol(count, s1, s2, period, stimdur) {
+		function s1s2Stimulus(count, s1, s2, period, stimdur) {
 			// var s1Count = round(s1/timestep);
 			// var s2Count = round(s2/timestep);
 			// var periodCount = round(period/timestep);
@@ -835,25 +846,11 @@ plot: true
 
 
 		/**
-		 * Reset the graph with the given form values
+		 * Get the values of the form and update the graph
 		 */
-		function resetGraph() {
-			vstar = numericValue(document.getElementsByName("vstar")[0].value);
-			xm = numericValue(document.getElementsByName("xm")[0].value);
-			ueps = numericValue(document.getElementsByName("ueps")[0].value);
-			eps = 1/ueps;
-			s1 = numericValue(document.getElementsByName("s1")[0].value);
-			s2 = numericValue(document.getElementsByName("s2")[0].value);
-			time = numericValue(document.getElementsByName("time")[0].value);
-
-			displayVm = document.getElementsByName("displayVm")[0].checked;
-			displayV = document.getElementsByName("displayV")[0].checked;
-
-			Karma.voltage = 0.0;
-			Karma.vgate = 0.0;
-			Karma.points = [];
-
-			update();
+		function updateGraph() {
+			console.log("update");
+			calculate();
 		}
 
 
@@ -1011,7 +1008,7 @@ plot: true
 	<div id="app">
 		<canvas id="plot">hello</canvas>
 	</div>
-	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-650px;margin-left:360px;">
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-650px;margin-left:550px;">
 
 		<!-- Formulas -->
 <!-- 		<fieldset>
@@ -1080,7 +1077,7 @@ plot: true
 			<div class="plotter_inputgroup">
 				<button id="update">Update</button>
 				<button id="default">Defaults</button>
-				<button id="getData">Print Data</button>
+				<button id="print">Print Data</button>
 			</div>
 		</fieldset>
 	</div>
