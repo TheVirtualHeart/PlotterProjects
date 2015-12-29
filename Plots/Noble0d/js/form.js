@@ -28,6 +28,10 @@ function NobleForm() {
 	 * Reference variables for the DOM elements of the form.
 	 */
 	var controls = {
+		displayV: 		document.getElementById("displayV"), 
+		displayM: 		document.getElementById("displayM"), 
+		displayH: 		document.getElementById("displayH"), 
+		displayN: 		document.getElementById("displayN"), 
 		gna1: 			document.getElementsByName("gna1")[0],
 		gna2: 			document.getElementsByName("gna2")[0],
 		s1: 			document.getElementsByName("s1")[0],
@@ -53,6 +57,11 @@ function NobleForm() {
 		controls.ns1.addEventListener("change", updatePage);
 		controls.s2.addEventListener("change", updatePage);
 		controls.period.addEventListener("change", updatePage);
+
+		controls.displayV.addEventListener("change", toggleDisplayV);
+		controls.displayM.addEventListener("change", toggleDisplayM);
+		controls.displayH.addEventListener("change", toggleDisplayH);
+		controls.displayN.addEventListener("change", toggleDisplayN);
 	}
 
 
@@ -84,15 +93,40 @@ function NobleForm() {
 	 * the controls, recalculate, and call the update function.
 	 */
 	function updatePage() {
-		gna1 	= controls.gna1.value
-		gna2 	= controls.gna2.value 
-		s1 		= controls.s1.value 
-		ns1 	= controls.ns1.value
-		s2 		= controls.s2.value 
-		period 	= controls.period.value
-
+		gna1 	= controls.gna1.value;
+		gna2 	= controls.gna2.value;
+		s1 		= controls.s1.value;
+		ns1 	= controls.ns1.value;
+		s2 		= controls.s2.value; 
+		period 	= controls.period.value;
 		calculate();
 		update();
+	}
+
+
+	/** 
+	 * Toggle the displayV variable
+	 */
+	function toggleDisplayV() {
+		displayV = controls.displayV.checked;
+	}
+	/** 
+	 * Toggle the displayM variable
+	 */
+	function toggleDisplayM() {
+		displayM = controls.displayM.checked;
+	}
+	/** 
+	 * Toggle the displayH variable
+	 */
+	function toggleDisplayH() {
+		displayH = controls.displayH.checked;
+	}
+	/** 
+	 * Toggle the displayN variable
+	 */
+	function toggleDisplayN() {
+		displayN = controls.displayN.checked;
 	}
 
 
