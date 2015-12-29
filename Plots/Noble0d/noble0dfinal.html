@@ -7,9 +7,8 @@ plot: true
 <head>
 	<meta charset="utf-8" />
 	<title>Noble Model</title>
-	<link href="../Plotter/plotter.css" type="text/css" rel="stylesheet" />
-	<script src="../Plotter/plotter.dev.js"></script>
-	<script>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet"/>
+	<scrit>
 		var app;
 
 
@@ -48,7 +47,7 @@ plot: true
 		 * used in the calculation of the values that will be plotted.
 		 */
 		var cm= 12;
-		var gan = 0.0;
+		var gan = 0.0; // TODO: Make Form element (gl?)
 		var ean= -60;
 		var stimmag= -106;
 		var stimdur= 2.0;
@@ -366,11 +365,13 @@ plot: true
 					n += timestep * dn;
 
 					// calculate potassium current conductance values
+					// TODO: Make 1.2 an editable value
 					var gk1 = 1.2 * Math.exp((-v-90)/50) + 0.015 * Math.exp((v+90)/60);
 					var gk2 = 1.2 * Math.pow(n, 4);
 
 
 					// calculate currents
+					// TODO: Make gan an editable value
 					var ina1 = gna1 * m * m * m * h * (v - 40);
 					var ina2 = gna2 * (v - 40);
 					var ik1 = gk1 * (v + 100);
@@ -438,7 +439,7 @@ plot: true
 			    inaAvg 	/= batchSize;
 			    ilAvg 	/= batchSize;
 
-			    vArray.push(normalize(vAvg, new Point(-80, 40)));
+			    vArray.push(normalize(vAvg, new Point(-160, 40)));
 			    mArray.push(mAvg);
 			    hArray.push(hAvg);
 			    nArray.push(nAvg);
@@ -1052,7 +1053,7 @@ plot: true
 				<input type="text" name="gna1" value="400" />
 			</div>
 			<div class="plotter_inputgroup">
-				<label for="gna2">xm</label>
+				<label for="gna2">gna2</label>
 				<input type="text" name="gna2" value=".14" />
 			</div>
 			<div class="plotter_inputgroup">
@@ -1081,5 +1082,8 @@ plot: true
 			</div>
 		</fieldset>
 	</div>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script src="js/form.js"></script>
+	<script src="js/main.js"></script>
 </body>
 </html>
