@@ -4,7 +4,29 @@
  * variables and returns them after each calculation. These variables can also
  * be reset. 
  */
-function NobleCalculator(initialSettings) {
+function NobleCalculator() {
+
+	var v;
+	var m;
+	var h;
+	var n;
+
+	var ik;
+	var ina;
+	var il;
+
+	var cm;
+	var gan;
+	var ean;
+	var stimmag;
+	var stimdur;
+	var gna1;
+	var gna2;
+	var s1;
+	var s2;
+	var ns1;
+	var period;
+
 	/**
 	 * The Calculator is initialized with certain default settings. These will
 	 * be overwritten by any settings specified in the initialSettings
@@ -33,11 +55,63 @@ function NobleCalculator(initialSettings) {
 		ns1: 4,
 		period: 500.0,
 	};
-	for (var attrname in initialSettings) { 
-		settings.initial[attrname] = initialSettings[attrname]; 
-	};
 
-	return settings;
+	/**
+	 * This function initializes the Calculator. It is functionally the same as
+	 * the reset function. This wrapper function provides a more semantic way to
+	 * present that functionality.
+	 * 
+	 * @param  {Object} newSettings - the settings that will be used when
+	 * calculating Noble. The object is initialized with default values. These
+	 * settings will override any existing ones.
+	 */
+	function initialize(newSettings) {		
+		reset(newSettings);
+	}
+
+	/**
+	 * This function resets the Calculator with the initial values. If any
+	 * values are specified in newSettings, they will overwrite the existing
+	 * values in settings.initial.
+	 * 
+	 * @param  {Object} newSettings - the settings that will be used when
+	 * calculating Noble. The object is initialized with default values. These
+	 * settings will override any existing ones.
+	 */
+	function reset(newSettings) {
+
+		var overwrite = newSettings || {};
+		for (var attrname in overwrite) { 
+			settings.initial[attrname] = overwrite[attrname]; 
+		};
+		v = settings.initial.v;
+		m = settings.initial.m;
+		h = settings.initial.h;
+		n = settings.initial.n;
+
+		ik = settings.initial.ik;
+		ina = settings.initial.ina;
+		il = settings.initial.il;
+
+		cm = settings.initial.cm;
+		gan = settings.initial.gan;
+		ean = settings.initial.ean;
+		stimmag = settings.initial.stimmag;
+		stimdur = settings.initial.stimdur;
+		gna1 = settings.initial.gna1;
+		gna2 = settings.initial.gna2;
+		s1 = settings.initial.s1;
+		s2 = settings.initial.s2;
+		ns1 = settings.initial.ns1;
+		period = settings.initial.period;
+	}
+
+	var api = {
+		settings: settings,
+		initialize: initialize,
+		reset: reset,
+	};
+	return api;
 }
 
 /**
