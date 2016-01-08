@@ -32,6 +32,7 @@ function NobleForm() {
 		displayM: 		document.getElementById("displayM"), 
 		displayH: 		document.getElementById("displayH"), 
 		displayN: 		document.getElementById("displayN"), 
+		secondaryPlot:  document.getElementById("secondaryPlot"), 
 		gna1: 			document.getElementsByName("gna1")[0],
 		gna2: 			document.getElementsByName("gna2")[0],
 		s1: 			document.getElementsByName("s1")[0],
@@ -62,6 +63,8 @@ function NobleForm() {
 		controls.displayM.addEventListener("change", toggleDisplayM);
 		controls.displayH.addEventListener("change", toggleDisplayH);
 		controls.displayN.addEventListener("change", toggleDisplayN);
+
+		controls.secondaryPlot.addEventListener("change", getSecondaryDisplay);
 	}
 
 
@@ -101,6 +104,18 @@ function NobleForm() {
 		period 	= controls.period.value;
 		calculate();
 		update();
+	}
+
+
+	/**
+	 * get the value of the secondaryPlot select box
+	 * @return {String} - a string containing the current value of the 
+	 * secondary plot.
+	 */
+	function getSecondaryDisplay() {
+		var value = controls.secondaryPlot.options[controls.secondaryPlot.selectedIndex].value;
+		//console.log(value);
+		secondaryPlot = value;
 	}
 
 
