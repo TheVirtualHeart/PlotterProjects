@@ -6,6 +6,15 @@
  */
 function NobleCalculator() {
 
+
+	/**
+	 * Displays the current iteration of the count
+	 */
+	var count = 0;
+
+	/**
+	 * These variables are used in the calculations of Noble.
+	 */
 	var v;
 	var m;
 	var h;
@@ -26,6 +35,8 @@ function NobleCalculator() {
 	var s2;
 	var ns1;
 	var period;
+	var timestep;
+
 
 	/**
 	 * The Calculator is initialized with certain default settings. These will
@@ -54,7 +65,9 @@ function NobleCalculator() {
 		s2: 2000,
 		ns1: 4,
 		period: 500.0,
+		timestep: 0.01,
 	};
+
 
 	/**
 	 * This function initializes the Calculator. It is functionally the same as
@@ -68,6 +81,7 @@ function NobleCalculator() {
 	function initialize(newSettings) {		
 		reset(newSettings);
 	}
+
 
 	/**
 	 * This function resets the Calculator with the initial values. If any
@@ -104,11 +118,141 @@ function NobleCalculator() {
 		s2 = settings.initial.s2;
 		ns1 = settings.initial.ns1;
 		period = settings.initial.period;
+		timestep = settings.initial.timestep;
+
+		count = 0;
 	}
 
+
+	/**
+	 * This gets the points from the current iteration of NobleCalculator.
+	 * 
+	 * @return {Object} - an object containing the values that the 
+	 */
+	function getPoints() {
+		return {
+			v: v,
+			m: m,
+			h: h,
+			n: n,
+
+			ik: ik,
+			ina: ina,
+			il: il,
+		};
+	}
+
+
+	/**
+	 * Performs a differential calculations and increments the values that will
+	 * be returned by getPoints().
+	 */
+	function calculateNext() {
+
+		// calculate alphas and betas for updating gating variables
+	 	var am;
+	    if (Math.abs(-v - 48) < 0.001) {
+	    	am=0.15;
+	    } else {
+	    	am=0.1*(-v-48)/(Math.exp((-v-48)/15)-1);
+	    }
+		var bm;
+		if (Math.abs(v + 8) < 0.001) {
+			bm = 0.6;
+		}
+		else {
+			bm=0.12*(v+8)/(Math.exp((v+8)/5)-1);
+		}
+		var ah = 0.17 * Math.exp((-v - 90)/20);
+		var bh = 1 / (Math.exp((-v - 42)/10) + 1);
+		var an;
+		if (Math.abs(-v - 50) < 0.001) {
+			an = 0.001;
+		} else {
+			an = 0.0001 * (-v - 50) / (Math.exp((-v-50)/10)-1);
+		}
+		var bn = 0.002 * Math.exp((-v-90)/80);
+
+
+		// calculate derivatives of gating variables
+		var dm = am * (1-m) - bm * m;
+		var dh = ah * (1-h) - bh * h;
+		var dn = an * (1-n) - bn * n;
+
+		console.log(dm);
+		console.log(timestep * dm);
+
+		// update gating variables using explicit method
+		m += timestep * dm;
+		h += timestep * dh;
+		n += timestep * dn;
+
+		// calculate potassium current conductance values
+		// TODO: Make 1.2 an editable value
+		var gk1 = 1.2 * Math.exp((-v-90)/50) + 0.015 * Math.exp((v+90)/60);
+		var gk2 = 1.2 * Math.pow(n, 4);
+
+
+		// calculate currents
+		// TODO: Make gan an editable value
+		var ina1 = gna1 * m * m * m * h * (v - 40);
+		var ina2 = gna2 * (v - 40);
+		var ik1 = gk1 * (v + 100);
+		var ik2 = gk2 * (v + 100);
+		il = gan * (v - ean);
+
+
+		// sum the two sodium and the two potassium currents
+		ina = ina1 + ina2;
+		ik = ik1 + ik2;
+
+
+		// set stimulus current periodically to be nonzero
+		var s1Count = round(s1/timestep);
+		var s2Count = round(s2/timestep);
+		var periodCount = round(period/timestep);
+		var stimdurCount = round(stimdur/timestep);
+		var istim = s1s2Stimulus(count, 
+								 s1Count, 
+								 s2Count, 
+								 periodCount,
+								 stimdurCount);
+		count++;
+	}
+
+
+	/**
+	 * This function calculates the stimulus according to the 
+	 * S1-S2 Protocol. 
+	 * 
+	 * @return {number} - The stimulus that will be applied.
+	 */
+	function s1s2Stimulus(count, s1, s2, period, stimdur) {
+		var stim = 0;
+		for (var i = 0; i < ns1; i++) {
+			var curPeriod = i * period + s1;
+			var endPeriod = curPeriod + stimdur;
+			if ((count >= curPeriod) && (count < endPeriod)) {
+				stim = stimmag;
+			}
+		}
+		if ((count >= s2) && (count < s2 + stimdur)) {
+			stim = stimmag;
+		}
+		return stim;
+
+	}
+ 
+
+	/**
+	 * This is the api that is returned by NobleCalculator. It contains the
+	 * properties and functions that are accessible from the outside.
+	 */
 	var api = {
 		settings: settings,
 		initialize: initialize,
+		getPoints: getPoints,
+		calculateNext: calculateNext,
 		reset: reset,
 	};
 	return api;
