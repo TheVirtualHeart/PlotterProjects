@@ -179,8 +179,6 @@ function NobleCalculator() {
 		var dh = ah * (1-h) - bh * h;
 		var dn = an * (1-n) - bn * n;
 
-		console.log(dm);
-		console.log(timestep * dm);
 
 		// update gating variables using explicit method
 		m += timestep * dm;
@@ -217,6 +215,17 @@ function NobleCalculator() {
 								 s2Count, 
 								 periodCount,
 								 stimdurCount);
+
+
+		// calculate derivative of voltage 
+		var dv = (-ina - ik - il - istim) / cm;
+
+
+		// update voltage using forward Euler
+		v += timestep * dv;
+
+
+		// iterate the count
 		count++;
 	}
 

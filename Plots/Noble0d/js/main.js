@@ -380,6 +380,69 @@ function analyzeData() {
 
 
 /**
+ * Temporary function. Uses the NobleCalculator to get every 1000th point and hold
+ * it in the array.
+ */
+function calculate() {
+
+	vArray = [];
+	mArray = [];
+	hArray = [];
+	nArray = [];
+
+	ikArray = [];
+	inaArray = [];
+	ilArray = [];
+
+	var vAvg = 0;
+	var mAvg = 0;
+	var hAvg = 0;
+	var nAvg = 0;
+	
+	var ikAvg = 0;
+	var inaAvg = 0;
+	var ilAvg = 0;
+
+
+	for (var i = 0; i < Math.round(time / timestep); i++) {
+		calculator.calculateNext();
+		var points = calculator.getPoints();
+
+		vAvg += points.v;
+		mAvg += points.m;
+		hAvg += points.h;
+		nAvg += points.n;
+		ikAvg += points.ik;
+		inaAvg += points.ina;
+		ilAvg += points.il;
+
+		var vAvg 
+		if (i % 1000 === 0) {
+			var points = calculator.getPoints();
+			vArray.push(normalize(vAvg / 1000, new Point(-160, 40)));
+			mArray.push(mAvg / 1000);
+			hArray.push(hAvg / 1000);
+			nArray.push(nAvg / 1000);
+			ikArray.push(ikAvg / 1000);
+			inaArray.push(inaAvg / 1000);
+			ilArray.push(ilAvg / 1000);
+
+			vAvg = 0;
+			mAvg = 0;
+			hAvg = 0;
+			nAvg = 0;
+			
+			ikAvg = 0;
+			inaAvg = 0;
+			ilAvg = 0;
+		}
+	}
+
+	calculator.reset();
+}
+
+
+/**
  * Draw the plots according to the data specified in the arrays
  */
 function update() {
@@ -839,6 +902,7 @@ var Colors  = {
 window.addEventListener("load", function loadForm() {
 	buildGraphs();
 	calculator = NobleCalculator();
+	calculator.initialize();
 	form = NobleForm();
 	calculate();
 	analyzeData();
