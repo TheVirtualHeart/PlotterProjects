@@ -45,13 +45,14 @@ function NoblePointBuffer(calculator, iterations, numPoints, aggregateMethod) {
 	 */
 	function calculate() {
 
+		reset();
 		var bufferSize = Math.floor(iterations/numPoints);
 
 		for (var i = 0; i < iterations; i++) {
 			calculator.calculateNext();
 			if (i % bufferSize === 0) {
 				var points = calculator.getPoints();
-				variables.v.push(points.v);
+				variables.v.push(normalize(points.v, new Point(-160, 40)));
 				variables.m.push(points.m);
 				variables.h.push(points.h);
 				variables.n.push(points.n);
@@ -60,6 +61,8 @@ function NoblePointBuffer(calculator, iterations, numPoints, aggregateMethod) {
 				variables.il.push(points.il);
 			}
 		}
+
+		//reset();
 
 
 		// vArray = [];

@@ -51,6 +51,7 @@ var time = 5000;
 var timestep = 0.01;
 var batchSize = 1200;
 var stepSize = batchSize * timestep;
+console.log(stepSize);
 var steps = (time / stepSize);
 
 
@@ -680,36 +681,40 @@ function update() {
 			// } else {
 			// 	return 0;
 			// }
-			index = Math.round(x / stepSize);
-			return vArray[index];
-		}, true, stepSize, 0, time);
+			// index = Math.round(x / stepSize);
+			// return buffer.variables.v[index];
+			return buffer.variables.v[x];
+		}, true, 1, 0, time);
 	}
 
 	if (displayM) {
 		app.ctx.strokeStyle = Colors.Green;
 		app.ctx.lineWidth = 3;
 		app.plotFunction(function(x) {
-			var index = Math.round(x / stepSize);
-			return mArray[index];
-		}, true, stepSize, 0, time);
+			// var index = Math.round(x / stepSize);
+			// return buffer.variables.m[index];
+			return buffer.variables.m[x];
+		}, true, 1, 0, time);
 	}
 
 	if (displayH) {
 		app.ctx.strokeStyle = Colors.LightBlue;
 		app.ctx.lineWidth = 3;
 		app.plotFunction(function(x) {
-			var index = Math.round(x / stepSize);
-			return hArray[index];
-		}, true, stepSize, 0, time);
+			// var index = Math.round(x / stepSize);
+			// return buffer.variables.h[index];
+			return buffer.variables.h[x];
+		}, true, 1, 0, time);
 	}
 
 	if (displayN) {
 		app.ctx.strokeStyle = Colors.Indigo;
 		app.ctx.lineWidth = 3;
 		app.plotFunction(function(x) {
-			var index = Math.round(x / stepSize);
-			return nArray[index];
-		}, true, stepSize, 0, time);
+			// var index = Math.round(x / stepSize);
+			// return buffer.variables.n[index];
+			return buffer.variables.n[x];
+		}, true, 1, 0, time);
 	}
 
 	app.selectPlot("NobleOther");
@@ -719,25 +724,28 @@ function update() {
 			app.ctx.strokeStyle = Colors.Yellow;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
-				var index = Math.floor(x / stepSize);
-				return ikArray[index];
-			}, true, stepSize, 0, time);
+				// var index = Math.floor(x / stepSize);
+				// return buffer.variables.ik[index];
+				return buffer.variables.ik[x];
+			}, true, 1, 0, time);
 			break;
 		case "ina":			
 			app.ctx.strokeStyle = Colors.Black;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
-				var index = Math.floor(x / stepSize);
-				return inaArray[index];
-			}, true, stepSize, 0, time);
+				// var index = Math.floor(x / stepSize);
+				// return buffer.variables.ina[index];
+				return buffer.variables.ina[x];
+			}, true, 1, 0, time);
 			break;
 		case "il":			
 			app.ctx.strokeStyle = Colors.Aqua;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
-				var index = Math.floor(x / stepSize);
-				return ilArray[index];
-			}, true, stepSize, 0, time);
+				// var index = Math.floor(x / stepSize);
+				// return buffer.variables.il[index];
+				return buffer.variables.il[x];
+			}, true, 1, 0, time);
 			break;
 	}
 
@@ -907,7 +915,7 @@ window.addEventListener("load", function loadForm() {
 	calculator.initialize();
 	form = NobleForm();
 	buffer = NoblePointBuffer(calculator, 500000, 5000);
-	calculate();
+	buffer.calculate();
 	analyzeData();
 	requestAnimationFrame(update);
 });
