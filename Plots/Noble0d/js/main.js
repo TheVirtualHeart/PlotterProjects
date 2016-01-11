@@ -1,6 +1,7 @@
 var app;
 var form;
 var calculator;
+var buffer;
 
 /**
  * These properties determine whether certain functions are displayed
@@ -899,11 +900,13 @@ var Colors  = {
 	Green: "rgb(19, 171, 19)",
 };
 
+
 window.addEventListener("load", function loadForm() {
 	buildGraphs();
 	calculator = NobleCalculator();
 	calculator.initialize();
 	form = NobleForm();
+	buffer = NoblePointBuffer(calculator, 500000, 5000);
 	calculate();
 	analyzeData();
 	requestAnimationFrame(update);

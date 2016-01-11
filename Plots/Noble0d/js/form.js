@@ -102,7 +102,7 @@ function NobleForm() {
 		ns1 	= controls.ns1.value;
 		s2 		= controls.s2.value; 
 		period 	= controls.period.value;
-		calculate();
+		buffer.calculate();
 		update();
 	}
 
