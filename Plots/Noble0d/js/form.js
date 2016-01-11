@@ -20,7 +20,7 @@ function NobleForm() {
 		s1: 		0,
 		ns1: 		4,
 		s2: 		2000,
-		period: 	500.0
+		period: 	500
 	};
 
 
