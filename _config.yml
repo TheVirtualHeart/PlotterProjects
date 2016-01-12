@@ -6,6 +6,7 @@ description: > # this means to ignore newlines until "baseurl:"
 baseurl: "/PlotterProjects" # the subpath of your site, e.g. /blog/
 url: "http://yourdomain.com" # the base hostname & protocol for your site
 github_username:  TheVirtualHeart
+exclude: ["Plotter/node_modules"]
 
 # Build settings
 markdown: kramdown

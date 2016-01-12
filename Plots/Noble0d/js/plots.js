@@ -31,6 +31,7 @@ function NoblePlots() {
 	};
 	var ikPlot = {
 		offset: new Point(0, 375),
+		domain: new Point(0, 5000),
 		range: new Point(10, 60),
 		unitPerTick: new Point(1000, 5),
 		pixelPerUnit: new Point(.0875, 4),
