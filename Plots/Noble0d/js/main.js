@@ -2,6 +2,8 @@ var app;
 var form;
 var calculator;
 var buffer;
+var plots;
+
 
 /**
  * These properties determine whether certain functions are displayed
@@ -119,6 +121,7 @@ function buildGraphs() {
 	// }, "Noble");
 
 	app.newPlot({
+		offset: new Point(0, 0),
 		domain: new Point(0, time),
 		range: new Point(0, 1),
 		unitPerTick: new Point(1000, .1),
@@ -444,337 +447,337 @@ function calculate() {
 }
 
 
-/**
- * Draw the plots according to the data specified in the arrays
- */
-function update() {
+// /**
+//  * Draw the plots according to the data specified in the arrays
+//  */
+// function update() {
 
-	app.selectPlot("Noble");
-	var plotSize = app.settings.plotSize;
-	var size = Math.floor(vArray.length / plotSize.x);
-	var graphSize = Math.floor(time / plotSize.x);
+// 	app.selectPlot("Noble");
+// 	var plotSize = app.settings.plotSize;
+// 	var size = Math.floor(vArray.length / plotSize.x);
+// 	var graphSize = Math.floor(time / plotSize.x);
 
-	// if (displayV) {
+// 	// if (displayV) {
 
-	// 	//console.log(size);
-	// 	var count = 0;
-	// 	app.ctx.strokeStyle = Colors.Red;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		console.log(x);
-	// 		return vArrayGraph[Math.floor((x / size) * timestep)];
-	// 	}, true, size * timestep, 0, time);
-	// }
+// 	// 	//console.log(size);
+// 	// 	var count = 0;
+// 	// 	app.ctx.strokeStyle = Colors.Red;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		console.log(x);
+// 	// 		return vArrayGraph[Math.floor((x / size) * timestep)];
+// 	// 	}, true, size * timestep, 0, time);
+// 	// }
 
-	// if (displayM) {
-	// 	app.ctx.strokeStyle = Colors.Green;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		var index = Math.round(x / stepSize);
-	// 		return mArray[index];
-	// 	}, true, size, 0, time);
-	// }
+// 	// if (displayM) {
+// 	// 	app.ctx.strokeStyle = Colors.Green;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		var index = Math.round(x / stepSize);
+// 	// 		return mArray[index];
+// 	// 	}, true, size, 0, time);
+// 	// }
 
-	// if (displayH) {
-	// 	app.ctx.strokeStyle = Colors.LightBlue;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		var index = Math.round(x / stepSize);
-	// 		return hArray[index];
-	// 	}, true, size, 0, time);
-	// }
+// 	// if (displayH) {
+// 	// 	app.ctx.strokeStyle = Colors.LightBlue;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		var index = Math.round(x / stepSize);
+// 	// 		return hArray[index];
+// 	// 	}, true, size, 0, time);
+// 	// }
 
-	// if (displayN) {
-	// 	app.ctx.strokeStyle = Colors.Indigo;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		var index = Math.round(x / stepSize);
-	// 		return nArray[index];
-	// 	}, true, size, 0, time);
-	// }
+// 	// if (displayN) {
+// 	// 	app.ctx.strokeStyle = Colors.Indigo;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		var index = Math.round(x / stepSize);
+// 	// 		return nArray[index];
+// 	// 	}, true, size, 0, time);
+// 	// }
 
-	// app.selectPlot("NobleOther");
+// 	// app.selectPlot("NobleOther");
 
-	// app.ctx.strokeStyle = Colors.Yellow;
-	// app.ctx.lineWidth = 3;
-	// app.plotFunction(function(x) {
-	// 	var index = Math.round(x / stepSize);
-	// 	return ikArray[index];
-	// }, true, size, 0, time);
+// 	// app.ctx.strokeStyle = Colors.Yellow;
+// 	// app.ctx.lineWidth = 3;
+// 	// app.plotFunction(function(x) {
+// 	// 	var index = Math.round(x / stepSize);
+// 	// 	return ikArray[index];
+// 	// }, true, size, 0, time);
 
-	// app.ctx.strokeStyle = Colors.Black;
-	// app.ctx.lineWidth = 3;
-	// app.plotFunction(function(x) {
-	// 	var index = Math.round(x / stepSize);
-	// 	return inaArray[index];
-	// }, true, size, 0, time);
+// 	// app.ctx.strokeStyle = Colors.Black;
+// 	// app.ctx.lineWidth = 3;
+// 	// app.plotFunction(function(x) {
+// 	// 	var index = Math.round(x / stepSize);
+// 	// 	return inaArray[index];
+// 	// }, true, size, 0, time);
 
-	// app.ctx.strokeStyle = Colors.Aqua;
-	// app.ctx.lineWidth = 3;
-	// app.plotFunction(function(x) {
-	// 	var index = Math.round(x / stepSize);
-	// 	return ilArray[index];
-	// }, true, size, 0, time);
+// 	// app.ctx.strokeStyle = Colors.Aqua;
+// 	// app.ctx.lineWidth = 3;
+// 	// app.plotFunction(function(x) {
+// 	// 	var index = Math.round(x / stepSize);
+// 	// 	return ilArray[index];
+// 	// }, true, size, 0, time);
 	 
 	
-	/**
-	 * Display Filtered Results
-	 */
-	// if (displayV) {
+// 	/**
+// 	 * Display Filtered Results
+// 	 */
+// 	// if (displayV) {
 
-	// 	//console.log(size);
+// 	// 	//console.log(size);
 
-	// 	app.ctx.strokeStyle = Colors.Red;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		var index = Math.floor(x * (size / graphSize));
-	// 		return vArray[index];
-	// 	}, true, graphSize, 0, time);
-	// }
+// 	// 	app.ctx.strokeStyle = Colors.Red;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		var index = Math.floor(x * (size / graphSize));
+// 	// 		return vArray[index];
+// 	// 	}, true, graphSize, 0, time);
+// 	// }
 
-	// if (displayM) {
-	// 	app.ctx.strokeStyle = Colors.Green;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		var index = Math.floor(x * (size / graphSize));
-	// 		return mArray[index];
-	// 	}, true, graphSize, 0, time);
-	// }
+// 	// if (displayM) {
+// 	// 	app.ctx.strokeStyle = Colors.Green;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		var index = Math.floor(x * (size / graphSize));
+// 	// 		return mArray[index];
+// 	// 	}, true, graphSize, 0, time);
+// 	// }
 
-	// if (displayH) {
-	// 	app.ctx.strokeStyle = Colors.LightBlue;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		var index = Math.floor(x * (size / graphSize));
-	// 		return hArray[index];
-	// 	}, true, graphSize, 0, time);
-	// }
+// 	// if (displayH) {
+// 	// 	app.ctx.strokeStyle = Colors.LightBlue;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		var index = Math.floor(x * (size / graphSize));
+// 	// 		return hArray[index];
+// 	// 	}, true, graphSize, 0, time);
+// 	// }
 
-	// if (displayN) {
-	// 	app.ctx.strokeStyle = Colors.Indigo;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		var index = Math.floor(x * (size / graphSize));
-	// 		return nArray[index];
-	// 	}, true, graphSize, 0, time);
-	// }
+// 	// if (displayN) {
+// 	// 	app.ctx.strokeStyle = Colors.Indigo;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		var index = Math.floor(x * (size / graphSize));
+// 	// 		return nArray[index];
+// 	// 	}, true, graphSize, 0, time);
+// 	// }
 
-	// app.selectPlot("NobleOther");
-	// switch(secondaryPlot) {
-	// 	case "ik":
-	// 		app.ctx.strokeStyle = Colors.Yellow;
-	// 		app.ctx.lineWidth = 3;
-	// 		app.plotFunction(function(x) {
-	// 			var index = Math.floor(x * (size / graphSize));
-	// 			return ikArray[index];
-	// 		}, true, graphSize, 0, time);
-	// 		break;
-	// 	case "ina":			
-	// 		app.ctx.strokeStyle = Colors.Black;
-	// 		app.ctx.lineWidth = 3;
-	// 		app.plotFunction(function(x) {
-	// 			var index = Math.floor(x * (size / graphSize));
-	// 			return inaArray[index];
-	// 		}, true, graphSize, 0, time);
-	// 		break;
-	// 	case "il":			
-	// 		app.ctx.strokeStyle = Colors.Aqua;
-	// 		app.ctx.lineWidth = 3;
-	// 		app.plotFunction(function(x) {
-	// 			var index = Math.floor(x * (size / graphSize));
-	// 			return ilArray[index];
-	// 		}, true, graphSize, 0, time);
-	// 		break;
-	// }
+// 	// app.selectPlot("NobleOther");
+// 	// switch(secondaryPlot) {
+// 	// 	case "ik":
+// 	// 		app.ctx.strokeStyle = Colors.Yellow;
+// 	// 		app.ctx.lineWidth = 3;
+// 	// 		app.plotFunction(function(x) {
+// 	// 			var index = Math.floor(x * (size / graphSize));
+// 	// 			return ikArray[index];
+// 	// 		}, true, graphSize, 0, time);
+// 	// 		break;
+// 	// 	case "ina":			
+// 	// 		app.ctx.strokeStyle = Colors.Black;
+// 	// 		app.ctx.lineWidth = 3;
+// 	// 		app.plotFunction(function(x) {
+// 	// 			var index = Math.floor(x * (size / graphSize));
+// 	// 			return inaArray[index];
+// 	// 		}, true, graphSize, 0, time);
+// 	// 		break;
+// 	// 	case "il":			
+// 	// 		app.ctx.strokeStyle = Colors.Aqua;
+// 	// 		app.ctx.lineWidth = 3;
+// 	// 		app.plotFunction(function(x) {
+// 	// 			var index = Math.floor(x * (size / graphSize));
+// 	// 			return ilArray[index];
+// 	// 		}, true, graphSize, 0, time);
+// 	// 		break;
+// 	// }
 	 
 
-	/** 
-	 * Display unfiltered results
-	 */
-	// if (displayV) {
+// 	/** 
+// 	 * Display unfiltered results
+// 	 */
+// 	// if (displayV) {
 
-	// 	//console.log(size);
+// 	// 	//console.log(size);
 
-	// 	app.ctx.strokeStyle = Colors.Red;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		var index = Math.floor(x / timestep);
-	// 		return vArray[index];
-	// 	}, true, timestep, 0, time);
-	// }
+// 	// 	app.ctx.strokeStyle = Colors.Red;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		var index = Math.floor(x / timestep);
+// 	// 		return vArray[index];
+// 	// 	}, true, timestep, 0, time);
+// 	// }
 
-	// if (displayM) {
-	// 	app.ctx.strokeStyle = Colors.Green;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		var index = Math.floor(x / timestep);
-	// 		return mArray[index];
-	// 	}, true, timestep, 0, time);
-	// }
+// 	// if (displayM) {
+// 	// 	app.ctx.strokeStyle = Colors.Green;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		var index = Math.floor(x / timestep);
+// 	// 		return mArray[index];
+// 	// 	}, true, timestep, 0, time);
+// 	// }
 
-	// if (displayH) {
-	// 	app.ctx.strokeStyle = Colors.LightBlue;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		var index = Math.floor(x / timestep);
-	// 		return hArray[index];
-	// 	}, true, timestep, 0, time);
-	// }
+// 	// if (displayH) {
+// 	// 	app.ctx.strokeStyle = Colors.LightBlue;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		var index = Math.floor(x / timestep);
+// 	// 		return hArray[index];
+// 	// 	}, true, timestep, 0, time);
+// 	// }
 
-	// if (displayN) {
-	// 	app.ctx.strokeStyle = Colors.Indigo;
-	// 	app.ctx.lineWidth = 3;
-	// 	app.plotFunction(function(x) {
-	// 		var index = Math.floor(x / timestep);
-	// 		return nArray[index];
-	// 	}, true, timestep, 0, time);
-	// }
+// 	// if (displayN) {
+// 	// 	app.ctx.strokeStyle = Colors.Indigo;
+// 	// 	app.ctx.lineWidth = 3;
+// 	// 	app.plotFunction(function(x) {
+// 	// 		var index = Math.floor(x / timestep);
+// 	// 		return nArray[index];
+// 	// 	}, true, timestep, 0, time);
+// 	// }
 
-	// app.selectPlot("NobleOther");
-	// switch(secondaryPlot) {
-	// 	case "ik":
-	// 		app.ctx.strokeStyle = Colors.Yellow;
-	// 		app.ctx.lineWidth = 3;
-	// 		app.plotFunction(function(x) {
-	// 			var index = Math.floor(x / timestep);
-	// 			return ikArray[index];
-	// 		}, true, timestep, 0, time);
-	// 		break;
-	// 	case "ina":			
-	// 		app.ctx.strokeStyle = Colors.Black;
-	// 		app.ctx.lineWidth = 3;
-	// 		app.plotFunction(function(x) {
-	// 			var index = Math.floor(x / timestep);
-	// 			return inaArray[index];
-	// 		}, true, timestep, 0, time);
-	// 		break;
-	// 	case "il":			
-	// 		app.ctx.strokeStyle = Colors.Aqua;
-	// 		app.ctx.lineWidth = 3;
-	// 		app.plotFunction(function(x) {
-	// 			var index = Math.floor(x / timestep);
-	// 			return ilArray[index];
-	// 		}, true, timestep, 0, time);
-	// 		break;
-	// }
-
-
-	// requestAnimationFrame(update);
+// 	// app.selectPlot("NobleOther");
+// 	// switch(secondaryPlot) {
+// 	// 	case "ik":
+// 	// 		app.ctx.strokeStyle = Colors.Yellow;
+// 	// 		app.ctx.lineWidth = 3;
+// 	// 		app.plotFunction(function(x) {
+// 	// 			var index = Math.floor(x / timestep);
+// 	// 			return ikArray[index];
+// 	// 		}, true, timestep, 0, time);
+// 	// 		break;
+// 	// 	case "ina":			
+// 	// 		app.ctx.strokeStyle = Colors.Black;
+// 	// 		app.ctx.lineWidth = 3;
+// 	// 		app.plotFunction(function(x) {
+// 	// 			var index = Math.floor(x / timestep);
+// 	// 			return inaArray[index];
+// 	// 		}, true, timestep, 0, time);
+// 	// 		break;
+// 	// 	case "il":			
+// 	// 		app.ctx.strokeStyle = Colors.Aqua;
+// 	// 		app.ctx.lineWidth = 3;
+// 	// 		app.plotFunction(function(x) {
+// 	// 			var index = Math.floor(x / timestep);
+// 	// 			return ilArray[index];
+// 	// 		}, true, timestep, 0, time);
+// 	// 		break;
+// 	// }
 
 
+// 	// requestAnimationFrame(update);
 
 
 
 
-	// // var size = Math.floor(vArray.length / plotSize.x);
-	if (displayV) {
-		//console.log(size);
-
-		app.ctx.strokeStyle = Colors.Red;
-		app.ctx.lineWidth = 3;
-		app.plotFunction(function(x) {
-			//var index = Math.round(x / stepSize);
-			//var index = x * size;
-			//console.log(x + ": " + index);
-			// if (index < vArray.length - 1) {
-			// 	return vArray[index];
-			// } else {
-			// 	return 0;
-			// }
-			// index = Math.round(x / stepSize);
-			// return buffer.variables.v[index];
-			return buffer.variables.v[x];
-		}, true, 1, 0, time);
-	}
-
-	if (displayM) {
-		app.ctx.strokeStyle = Colors.Green;
-		app.ctx.lineWidth = 3;
-		app.plotFunction(function(x) {
-			// var index = Math.round(x / stepSize);
-			// return buffer.variables.m[index];
-			return buffer.variables.m[x];
-		}, true, 1, 0, time);
-	}
-
-	if (displayH) {
-		app.ctx.strokeStyle = Colors.LightBlue;
-		app.ctx.lineWidth = 3;
-		app.plotFunction(function(x) {
-			// var index = Math.round(x / stepSize);
-			// return buffer.variables.h[index];
-			return buffer.variables.h[x];
-		}, true, 1, 0, time);
-	}
-
-	if (displayN) {
-		app.ctx.strokeStyle = Colors.Indigo;
-		app.ctx.lineWidth = 3;
-		app.plotFunction(function(x) {
-			// var index = Math.round(x / stepSize);
-			// return buffer.variables.n[index];
-			return buffer.variables.n[x];
-		}, true, 1, 0, time);
-	}
-
-	app.selectPlot("NobleOther");
-
-	switch(secondaryPlot) {
-		case "ik":
-			app.ctx.strokeStyle = Colors.Yellow;
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				// var index = Math.floor(x / stepSize);
-				// return buffer.variables.ik[index];
-				return buffer.variables.ik[x];
-			}, true, 1, 0, time);
-			break;
-		case "ina":			
-			app.ctx.strokeStyle = Colors.Black;
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				// var index = Math.floor(x / stepSize);
-				// return buffer.variables.ina[index];
-				return buffer.variables.ina[x];
-			}, true, 1, 0, time);
-			break;
-		case "il":			
-			app.ctx.strokeStyle = Colors.Aqua;
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				// var index = Math.floor(x / stepSize);
-				// return buffer.variables.il[index];
-				return buffer.variables.il[x];
-			}, true, 1, 0, time);
-			break;
-	}
 
 
+// 	// // var size = Math.floor(vArray.length / plotSize.x);
+// 	if (displayV) {
+// 		//console.log(size);
 
-	// app.ctx.strokeStyle = Colors.Yellow;
-	// app.ctx.lineWidth = 3;
-	// app.plotFunction(function(x) {
-	// 	var index = Math.round(x / stepSize);
-	// 	return ikArray[index];
-	// }, true, stepSize, 0, time);
+// 		app.ctx.strokeStyle = Colors.Red;
+// 		app.ctx.lineWidth = 3;
+// 		app.plotFunction(function(x) {
+// 			//var index = Math.round(x / stepSize);
+// 			//var index = x * size;
+// 			//console.log(x + ": " + index);
+// 			// if (index < vArray.length - 1) {
+// 			// 	return vArray[index];
+// 			// } else {
+// 			// 	return 0;
+// 			// }
+// 			// index = Math.round(x / stepSize);
+// 			// return buffer.variables.v[index];
+// 			return buffer.variables.v[x];
+// 		}, true, 1, 0, time);
+// 	}
 
-	// app.ctx.strokeStyle = Colors.Black;
-	// app.ctx.lineWidth = 3;
-	// app.plotFunction(function(x) {
-	// 	var index = Math.round(x / stepSize);
-	// 	return inaArray[index];
-	// }, true, stepSize, 0, time);
+// 	if (displayM) {
+// 		app.ctx.strokeStyle = Colors.Green;
+// 		app.ctx.lineWidth = 3;
+// 		app.plotFunction(function(x) {
+// 			// var index = Math.round(x / stepSize);
+// 			// return buffer.variables.m[index];
+// 			return buffer.variables.m[x];
+// 		}, true, 1, 0, time);
+// 	}
 
-	// app.ctx.strokeStyle = Colors.Aqua;
-	// app.ctx.lineWidth = 3;
-	// app.plotFunction(function(x) {
-	// 	var index = Math.round(x / stepSize);
-	// 	return ilArray[index];
-	// }, true, stepSize, 0, time);
+// 	if (displayH) {
+// 		app.ctx.strokeStyle = Colors.LightBlue;
+// 		app.ctx.lineWidth = 3;
+// 		app.plotFunction(function(x) {
+// 			// var index = Math.round(x / stepSize);
+// 			// return buffer.variables.h[index];
+// 			return buffer.variables.h[x];
+// 		}, true, 1, 0, time);
+// 	}
+
+// 	if (displayN) {
+// 		app.ctx.strokeStyle = Colors.Indigo;
+// 		app.ctx.lineWidth = 3;
+// 		app.plotFunction(function(x) {
+// 			// var index = Math.round(x / stepSize);
+// 			// return buffer.variables.n[index];
+// 			return buffer.variables.n[x];
+// 		}, true, 1, 0, time);
+// 	}
+
+// 	app.selectPlot("NobleOther");
+
+// 	switch(secondaryPlot) {
+// 		case "ik":
+// 			app.ctx.strokeStyle = Colors.Yellow;
+// 			app.ctx.lineWidth = 3;
+// 			app.plotFunction(function(x) {
+// 				// var index = Math.floor(x / stepSize);
+// 				// return buffer.variables.ik[index];
+// 				return buffer.variables.ik[x];
+// 			}, true, 1, 0, time);
+// 			break;
+// 		case "ina":			
+// 			app.ctx.strokeStyle = Colors.Black;
+// 			app.ctx.lineWidth = 3;
+// 			app.plotFunction(function(x) {
+// 				// var index = Math.floor(x / stepSize);
+// 				// return buffer.variables.ina[index];
+// 				return buffer.variables.ina[x];
+// 			}, true, 1, 0, time);
+// 			break;
+// 		case "il":			
+// 			app.ctx.strokeStyle = Colors.Aqua;
+// 			app.ctx.lineWidth = 3;
+// 			app.plotFunction(function(x) {
+// 				// var index = Math.floor(x / stepSize);
+// 				// return buffer.variables.il[index];
+// 				return buffer.variables.il[x];
+// 			}, true, 1, 0, time);
+// 			break;
+// 	}
 
 
-	requestAnimationFrame(update);
-}
+
+// 	// app.ctx.strokeStyle = Colors.Yellow;
+// 	// app.ctx.lineWidth = 3;
+// 	// app.plotFunction(function(x) {
+// 	// 	var index = Math.round(x / stepSize);
+// 	// 	return ikArray[index];
+// 	// }, true, stepSize, 0, time);
+
+// 	// app.ctx.strokeStyle = Colors.Black;
+// 	// app.ctx.lineWidth = 3;
+// 	// app.plotFunction(function(x) {
+// 	// 	var index = Math.round(x / stepSize);
+// 	// 	return inaArray[index];
+// 	// }, true, stepSize, 0, time);
+
+// 	// app.ctx.strokeStyle = Colors.Aqua;
+// 	// app.ctx.lineWidth = 3;
+// 	// app.plotFunction(function(x) {
+// 	// 	var index = Math.round(x / stepSize);
+// 	// 	return ilArray[index];
+// 	// }, true, stepSize, 0, time);
+
+
+// 	requestAnimationFrame(update);
+// }
 
 
 /**
@@ -916,6 +919,11 @@ window.addEventListener("load", function loadForm() {
 	form = NobleForm();
 	buffer = NoblePointBuffer(calculator, 500000, 5000);
 	buffer.calculate();
+	plots = NoblePlots();
+	plots.initialize();
 	analyzeData();
-	requestAnimationFrame(update);
+	requestAnimationFrame(function update() {
+		plots.update(buffer.variables);
+		requestAnimationFrame(update);
+	});
 });
