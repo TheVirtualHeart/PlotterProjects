@@ -1,11 +1,10 @@
-var mediator = NobleMediator;
-var utils = NobleUtilities;
 /**
  * This module describes the Form element. This form can alter the appearance
  * of the plot, describing what variables are plotted and how the Noble 
  * differential equation is calculated.
  */
-var NobleForm = (function NobleForm(mediator, utils) {
+define(["mediator","utility"],
+function NobleForm(mediator, utils) {
 	"use strict";
 
 	mediator.initialize();
@@ -165,5 +164,4 @@ var NobleForm = (function NobleForm(mediator, utils) {
 
 	bindUIActions();
 	return api;
-
-})(mediator, utils);
+});

@@ -1,7 +1,7 @@
 /**
  * A module to provide common utility functions for the
  */
-var NobleUtilities = (function NobleUtilities() {
+define(function NobleUtilities() {
 	"use strict";
 	
 	/**
@@ -108,6 +108,11 @@ var NobleUtilities = (function NobleUtilities() {
 		Green: "rgb(19, 171, 19)",
 	};
 
+	/**
+	 * This api contains the functions and properties that the user can interact
+	 * with when using this module.
+	 * @type {Object}
+	 */
 	var api = {
 		heaviside: heaviside,
 		round: round,
@@ -117,5 +122,4 @@ var NobleUtilities = (function NobleUtilities() {
 		colors: Colors,
 	};
 	return api;
-
-})();
+});

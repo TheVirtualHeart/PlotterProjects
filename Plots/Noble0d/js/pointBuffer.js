@@ -1,4 +1,3 @@
-var utils = NobleUtilities;
 /**
  * This module is used to generate point values. Point values are generated
  * using a calculator object and stored in arrays. The User can also specify the
@@ -17,15 +16,9 @@ var utils = NobleUtilities;
  * @return {Object} - Returns the NoblePointBuffer api, which includes functions
  * for resetting the buffer, updating settings, and accessing point arrays.
  */
-var NoblePointBuffer = (function NoblePointBuffer(utils) {
+define(["utility"],
+function NoblePointBuffer(utils) {
 	"use strict";
-
-	// var calculator = calculator;
-	// var iterations = iterations;
-	// var numPoints = numPoints;
-	// var aggregateMethod = aggregateMethod;
-
-	// calculator.initialize();
 
 	/**
 	 * These are the variable arrays that are used to store the points as they
@@ -73,7 +66,6 @@ var NoblePointBuffer = (function NoblePointBuffer(utils) {
 	 * variables array.
 	 */
 	function reset() {
-		calculator.reset();
 		variables.v = [];
 		variables.m = [];
 		variables.h = [];
@@ -94,4 +86,4 @@ var NoblePointBuffer = (function NoblePointBuffer(utils) {
 		calculate: calculate,
 	};
 	return api;
-})(utils);
+});

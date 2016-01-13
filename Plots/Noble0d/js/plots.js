@@ -1,10 +1,10 @@
-var utils = NobleUtilities;
 /**
  * This module wraps some of the functionality of the main Plotter module. It
  * provides a more convenient way for the form to interact with the graphs and
  * wraps some complex behavior into more convenient functions.
  */
-var NoblePlots = (function NoblePlots(utils) {
+define(["utility"],
+function NoblePlots(utils) {
 	"use strict";
 
 	var app;
@@ -152,6 +152,7 @@ var NoblePlots = (function NoblePlots(utils) {
 		}
 	}
 
+
 	/**
 	 * Update the plots with the given values.
 	 * 
@@ -228,4 +229,4 @@ var NoblePlots = (function NoblePlots(utils) {
 		update: update,
 	}
 	return api;
-})(utils);
+});

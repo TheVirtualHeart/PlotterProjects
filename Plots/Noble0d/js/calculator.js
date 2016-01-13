@@ -1,12 +1,11 @@
-var utils = NobleUtilities;
-
 /**
  * This module is responsible for performing the differential equation
  * calculation for Noble0d. The object maintains the state of the different
  * variables and returns them after each calculation. These variables can also
  * be reset. 
  */
-var NobleCalculator = (function NobleCalculator(utils) {
+define(["utility"],
+function NobleCalculator(utils) {
 	"use strict";
 
 	/**
@@ -266,4 +265,4 @@ var NobleCalculator = (function NobleCalculator(utils) {
 		reset: reset,
 	};
 	return api;
-})(utils);
+});
