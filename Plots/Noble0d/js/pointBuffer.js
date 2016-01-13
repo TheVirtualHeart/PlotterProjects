@@ -1,3 +1,4 @@
+var utils = NobleUtilities;
 /**
  * This module is used to generate point values. Point values are generated
  * using a calculator object and stored in arrays. The User can also specify the
@@ -16,12 +17,14 @@
  * @return {Object} - Returns the NoblePointBuffer api, which includes functions
  * for resetting the buffer, updating settings, and accessing point arrays.
  */
-function NoblePointBuffer(calculator, iterations, numPoints, aggregateMethod) {
+var NoblePointBuffer = (function NoblePointBuffer(utils) {
 
-	var calculator = calculator;
-	var interations = iterations;
-	var numPoints = numPoints;
-	var aggregateMethod = aggregateMethod;
+	// var calculator = calculator;
+	// var iterations = iterations;
+	// var numPoints = numPoints;
+	// var aggregateMethod = aggregateMethod;
+
+	// calculator.initialize();
 
 	/**
 	 * These are the variable arrays that are used to store the points as they
@@ -43,7 +46,7 @@ function NoblePointBuffer(calculator, iterations, numPoints, aggregateMethod) {
 	 * Temporary function. Uses the NobleCalculator to get every 1000th point and hold
 	 * it in the array.
 	 */
-	function calculate() {
+	function calculate(calculator, iterations, numPoints) {
 
 		reset();
 		var bufferSize = Math.floor(iterations/numPoints);
@@ -52,7 +55,7 @@ function NoblePointBuffer(calculator, iterations, numPoints, aggregateMethod) {
 			calculator.calculateNext();
 			if (i % bufferSize === 0) {
 				var points = calculator.getPoints();
-				variables.v.push(normalize(points.v, new Point(-160, 40)));
+				variables.v.push(utils.normalize(points.v, new Point(-160, 40)));
 				variables.m.push(points.m);
 				variables.h.push(points.h);
 				variables.n.push(points.n);
@@ -61,64 +64,6 @@ function NoblePointBuffer(calculator, iterations, numPoints, aggregateMethod) {
 				variables.il.push(points.il);
 			}
 		}
-
-		//reset();
-
-
-		// vArray = [];
-		// mArray = [];
-		// hArray = [];
-		// nArray = [];
-
-		// ikArray = [];
-		// inaArray = [];
-		// ilArray = [];
-
-		// var vAvg = 0;
-		// var mAvg = 0;
-		// var hAvg = 0;
-		// var nAvg = 0;
-		
-		// var ikAvg = 0;
-		// var inaAvg = 0;
-		// var ilAvg = 0;
-
-
-		// for (var i = 0; i < Math.round(time / timestep); i++) {
-		// 	calculator.calculateNext();
-		// 	var points = calculator.getPoints();
-
-		// 	vAvg += points.v;
-		// 	mAvg += points.m;
-		// 	hAvg += points.h;
-		// 	nAvg += points.n;
-		// 	ikAvg += points.ik;
-		// 	inaAvg += points.ina;
-		// 	ilAvg += points.il;
-
-		// 	var vAvg 
-		// 	if (i % 1000 === 0) {
-		// 		var points = calculator.getPoints();
-		// 		vArray.push(normalize(vAvg / 1000, new Point(-160, 40)));
-		// 		mArray.push(mAvg / 1000);
-		// 		hArray.push(hAvg / 1000);
-		// 		nArray.push(nAvg / 1000);
-		// 		ikArray.push(ikAvg / 1000);
-		// 		inaArray.push(inaAvg / 1000);
-		// 		ilArray.push(ilAvg / 1000);
-
-		// 		vAvg = 0;
-		// 		mAvg = 0;
-		// 		hAvg = 0;
-		// 		nAvg = 0;
-				
-		// 		ikAvg = 0;
-		// 		inaAvg = 0;
-		// 		ilAvg = 0;
-		// 	}
-		// }
-
-		// calculator.reset();
 	}
 
 
@@ -148,4 +93,4 @@ function NoblePointBuffer(calculator, iterations, numPoints, aggregateMethod) {
 		calculate: calculate,
 	};
 	return api;
-}
+})(utils);

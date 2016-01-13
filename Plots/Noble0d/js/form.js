@@ -1,10 +1,13 @@
+var mediator = NobleMediator;
+var utils = NobleUtilities;
 /**
  * This module describes the Form element. This form can alter the appearance
  * of the plot, describing what variables are plotted and how the Noble 
  * differential equation is calculated.
  */
-function NobleForm() {
+var NobleForm = (function NobleForm(mediator, utils) {
 
+	mediator.initialize();
 
 	/**
 	 * This object describes the settings for the form.
@@ -73,7 +76,6 @@ function NobleForm() {
 	 * other objects on the page, such as the graph.
 	 */
 	function reset() {
-		console.log("resetting");
 		resetForm();
 		updatePage();
 	}
@@ -96,14 +98,17 @@ function NobleForm() {
 	 * the controls, recalculate, and call the update function.
 	 */
 	function updatePage() {
-		gna1 	= controls.gna1.value;
-		gna2 	= controls.gna2.value;
-		s1 		= controls.s1.value;
-		ns1 	= controls.ns1.value;
-		s2 		= controls.s2.value; 
-		period 	= controls.period.value;
-		buffer.calculate();
-		update();
+		var newSettings = {
+			gna1: 	utils.numericValue(controls.gna1.value),
+			gna2: 	utils.numericValue(controls.gna2.value),
+			s1:   	utils.numericValue(controls.s1.value),
+			ns1:  	utils.numericValue(controls.ns1.value),
+			s2:   	utils.numericValue(controls.s2.value),
+			period: utils.numericValue(controls.period.value),
+		};
+		mediator.updateGraph(newSettings);
+		//NoblePointBuffer.calculate();
+		//update();
 	}
 
 
@@ -114,8 +119,7 @@ function NobleForm() {
 	 */
 	function getSecondaryDisplay() {
 		var value = controls.secondaryPlot.options[controls.secondaryPlot.selectedIndex].value;
-		//console.log(value);
-		secondaryPlot = value;
+		//secondaryPlot = value;
 	}
 
 
@@ -157,4 +161,5 @@ function NobleForm() {
 
 	bindUIActions();
 	return api;
-}
+
+})(mediator, utils);

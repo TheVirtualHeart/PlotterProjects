@@ -1,9 +1,10 @@
+var utils = NobleUtilities
 /**
  * This module wraps some of the functionality of the main Plotter module. It
  * provides a more convenient way for the form to interact with the graphs and
  * wraps some complex behavior into more convenient functions.
  */
-function NoblePlots() {
+var NoblePlots = (function NoblePlots(utils) {
 
 	var app;
 
@@ -106,6 +107,7 @@ function NoblePlots() {
 
 	/**
 	 * Update the plots with the given values.
+	 * 
 	 * @param  {Object} values - an object containing the values that will be
 	 * plotted.
 	 */
@@ -113,28 +115,28 @@ function NoblePlots() {
 
 		app.selectPlot("Noble");
 		if (displayV) {
-			app.ctx.strokeStyle = Colors.Red;
+			app.ctx.strokeStyle = utils.colors.Red;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
 				return values.v[x];
 			}, true, 1, 0, 5000);
 		}
 		if (displayM) {
-			app.ctx.strokeStyle = Colors.Green;
+			app.ctx.strokeStyle = utils.colors.Green;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
 				return values.m[x];
 			}, true, 1, 0, 5000);
 		}
 		if (displayH) {
-			app.ctx.strokeStyle = Colors.LightBlue;
+			app.ctx.strokeStyle = utils.colors.LightBlue;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
 				return values.h[x];
 			}, true, 1, 0, 5000);
 		}
 		if (displayN) {
-			app.ctx.strokeStyle = Colors.Indigo;
+			app.ctx.strokeStyle = utils.colors.Indigo;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
 				return values.n[x];
@@ -144,30 +146,28 @@ function NoblePlots() {
 		app.selectPlot("NobleOther");
 		switch(secondaryPlot) {
 			case "ik":
-				app.ctx.strokeStyle = Colors.Yellow;
+				app.ctx.strokeStyle = utils.colors.Yellow;
 				app.ctx.lineWidth = 3;
 				app.plotFunction(function(x) {
 					return values.ik[x];
-				}, true, 1, 0, time);
+				}, true, 1, 0, 5000);
 				break;
 			case "ina":			
-				app.ctx.strokeStyle = Colors.Black;
+				app.ctx.strokeStyle = utils.colors.Black;
 				app.ctx.lineWidth = 3;
 				app.plotFunction(function(x) {
 					return values.ina[x];
-				}, true, 1, 0, time);
+				}, true, 1, 0, 5000);
 				break;
 			case "il":			
-				app.ctx.strokeStyle = Colors.Aqua;
+				app.ctx.strokeStyle = utils.colors.Aqua;
 				app.ctx.lineWidth = 3;
 				app.plotFunction(function(x) {
 					return values.il[x];
-				}, true, 1, 0, time);
+				}, true, 1, 0, 5000);
 				break;
 		}
 	}
-
-
 
 
 	/**
@@ -180,4 +180,4 @@ function NoblePlots() {
 		update: update,
 	}
 	return api;
-}
+})(utils);
