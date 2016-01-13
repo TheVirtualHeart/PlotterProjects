@@ -120,7 +120,10 @@ var NobleForm = (function NobleForm(mediator, utils) {
 	 */
 	function getSecondaryDisplay() {
 		var value = controls.secondaryPlot.options[controls.secondaryPlot.selectedIndex].value;
-		//secondaryPlot = value;
+		if (value === "") {
+			value = null;
+		}
+		mediator.setSecondaryPlot(value);
 	}
 
 
@@ -128,25 +131,25 @@ var NobleForm = (function NobleForm(mediator, utils) {
 	 * Toggle the displayV variable
 	 */
 	function toggleDisplayV() {
-		displayV = controls.displayV.checked;
+		mediator.displayVariable("v", controls.displayV.checked);
 	}
 	/** 
 	 * Toggle the displayM variable
 	 */
 	function toggleDisplayM() {
-		displayM = controls.displayM.checked;
+		mediator.displayVariable("m", controls.displayM.checked);
 	}
 	/** 
 	 * Toggle the displayH variable
 	 */
 	function toggleDisplayH() {
-		displayH = controls.displayH.checked;
+		mediator.displayVariable("h", controls.displayH.checked);
 	}
 	/** 
 	 * Toggle the displayN variable
 	 */
 	function toggleDisplayN() {
-		displayN = controls.displayN.checked;
+		mediator.displayVariable("n", controls.displayN.checked);
 	}
 
 

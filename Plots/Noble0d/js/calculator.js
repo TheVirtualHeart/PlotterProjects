@@ -7,7 +7,7 @@ var utils = NobleUtilities;
  * be reset. 
  */
 var NobleCalculator = (function NobleCalculator(utils) {
-
+	"use strict";
 
 	/**
 	 * Displays the current iteration of the count

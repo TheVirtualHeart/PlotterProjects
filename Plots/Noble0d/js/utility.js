@@ -56,6 +56,20 @@ var NobleUtilities = (function NobleUtilities() {
 	}
 
 
+	/** 
+	 * Checks to see if the given value is a boolean. Taken from adeneo in this
+	 * stackoverflow thread: 
+	 * http://stackoverflow.com/questions/28814585/how-to-check-if-type-is-boolean
+	 * 
+	 * @param  {} bool - the value that we want to determine is a boolean
+	 * @return {boolean} - true if the value is a boolean, false otherwise.
+	 */
+	function checkBool(bool) {
+    	return typeof bool === 'boolean' || 
+          	(typeof bool === 'object' && typeof bool.valueOf() === 'boolean');
+	}
+
+
 	/**
 	 * Return the normalized value as it exists within the range.
 	 * 
@@ -98,6 +112,7 @@ var NobleUtilities = (function NobleUtilities() {
 		heaviside: heaviside,
 		round: round,
 		numericValue: numericValue,
+		checkBool: checkBool,
 		normalize: normalize,
 		colors: Colors,
 	};

@@ -1,4 +1,4 @@
-var utils = NobleUtilities
+var utils = NobleUtilities;
 /**
  * This module wraps some of the functionality of the main Plotter module. It
  * provides a more convenient way for the form to interact with the graphs and
@@ -78,8 +78,10 @@ var NoblePlots = (function NoblePlots(utils) {
 
 
 	/**
-	 * This function sets the secondary plot to the name of the given name. If the name given doesn't 
-	 * @param {[type]} plotName [description]
+	 * This function sets the secondary plot to the name of the given name. If
+	 * the name given is not one of the valid names, an error is thrown.
+	 * 
+	 * @param {string} plotName - the name of the secondary plot to display
 	 */
 	function setSecondaryPlot(plotName) {
 		switch(plotName) {
@@ -88,23 +90,67 @@ var NoblePlots = (function NoblePlots(utils) {
 					secondaryPlot = "ik";
 					app.editPlot("NobleOther", ikPlot);
 				}
+				break;
 			case "ina":
 				if (secondaryPlot !== "ina") {
 					secondaryPlot = "ina";
 					app.editPlot("NobleOther", inaPlot);
 				}
+				break;
 			case "il":
 				if (secondaryPlot !== "il") {
 					secondaryPlot = "il";
 					app.editPlot("NobleOther", ilPlot);
 				}
+				break;
 			case null:
 				secondaryPlot = null;
+				break;
 			default:
-				throw new Error("Not a valid plot name");
+				throw new Error("'" + plotName + "' is not a valid plot name");
 		}
 	}
 
+	/**
+	 * Toggle whether or not the given variable should be displayed. Will throw
+	 * an error if the given variable is not being drawn.
+	 * 
+	 * @param  {string} name - the name of the variable to display.
+	 * @param  {boolean} value - the value to set the display property to
+	 */
+	function toggleDisplay(name, value) {
+		if (name === "v") {
+			if (utils.checkBool(value)) {
+				displayV = value;
+			} else {
+				throw new Error("the given value is not valid");
+			}
+		}
+		else if (name === "m") {
+			if (utils.checkBool(value)) {
+				displayM = value;
+			} else {
+				throw new Error("the given value is not valid");
+			}
+		}
+		else if (name === "h") {
+			if (utils.checkBool(value)) {
+				displayH = value;
+			} else {
+				throw new Error("the given value is not valid");
+			}
+		}
+		else if (name === "n") {
+			if (utils.checkBool(value)) {
+				displayN = value;
+			} else {
+				throw new Error("the given value is not valid");
+			}
+		}
+		else {
+			throw new Error("'" + name + "'' is not a variable that can be displayed");
+		}
+	}
 
 	/**
 	 * Update the plots with the given values.
@@ -177,6 +223,7 @@ var NoblePlots = (function NoblePlots(utils) {
 	 */
 	var api = {
 		initialize: initialize,
+		toggleDisplay: toggleDisplay,
 		setSecondaryPlot: setSecondaryPlot,
 		update: update,
 	}
