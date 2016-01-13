@@ -1,8 +1,12 @@
 {
-  "name": "plotterproject",
-  "version": "0.2.0",
-  "description": "a port of the virtual heart website using the plotter.js library",
+  "name": "plotterprojectsite",
+  "version": "1.0.0",
+  "description": "The site built to create plots using the plotter library",
   "main": "index.js",
+  "dependencies": {
+    "requirejs": "^2.1.22"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,10 +14,10 @@
     "type": "git",
     "url": "git+https://github.com/TheVirtualHeart/PlotterProjects.git"
   },
-  "author": "David Foxworthy, Ben Wilcox",
-  "license": "ISC",
-  "homepage": "http://thevirtualheart.github.io/PlotterProjects/",
-  "dependencies": {
-    "plotter": "thevirtualheart/Plotter"
-  }
+  "author": "Ben Wilcox, David Foxworthy",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/TheVirtualHeart/PlotterProjects/issues"
+  },
+  "homepage": "https://github.com/TheVirtualHeart/PlotterProjects#readme"
 }
