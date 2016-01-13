@@ -5,6 +5,7 @@ var utils = NobleUtilities
  * wraps some complex behavior into more convenient functions.
  */
 var NoblePlots = (function NoblePlots(utils) {
+	"use strict";
 
 	var app;
 

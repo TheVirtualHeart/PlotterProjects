@@ -7,6 +7,7 @@ var plots = NoblePlots;
  * pointBuffer, and the plots.
  */
 var NobleMediator = (function NobleMediator(calculator, pointBuffer, plots) {
+	"use strict";
 
 	var points;
 

@@ -18,6 +18,7 @@ var utils = NobleUtilities;
  * for resetting the buffer, updating settings, and accessing point arrays.
  */
 var NoblePointBuffer = (function NoblePointBuffer(utils) {
+	"use strict";
 
 	// var calculator = calculator;
 	// var iterations = iterations;

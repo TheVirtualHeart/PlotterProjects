@@ -6,6 +6,7 @@ var utils = NobleUtilities;
  * differential equation is calculated.
  */
 var NobleForm = (function NobleForm(mediator, utils) {
+	"use strict";
 
 	mediator.initialize();
 

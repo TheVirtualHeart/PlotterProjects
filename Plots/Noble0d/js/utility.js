@@ -2,6 +2,7 @@
  * A module to provide common utility functions for the
  */
 var NobleUtilities = (function NobleUtilities() {
+	"use strict";
 	
 	/**
 	 * The heaviside function. Return 0 if the expression is negative
