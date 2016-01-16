@@ -22,41 +22,42 @@ function NoblePlots(utils) {
 	 * These are the settings for the plots that will be used when rendering
 	 * @type {Object}
 	 */
+	var secondaryOffset = new Point(0, 325);
 	var mainPlot = {
 		offset: new Point(0, 0),
 		domain: new Point(0, timeperiod),
-		range: new Point(0, 1),
+		range: new Point(-0.1, 1.1),
 		unitPerTick: new Point(1000, .1),
-		pixelPerUnit: new Point(.0875, 300),
+		pixelPerUnit: new Point(.0875, 200),
 		labelFrequency: new Point(1, 1),
 		xAxis: "Time (ms)",
 		yAxis: "V (mv)",
 		labelPrecision: new Point(0, 1),
 	};
 	var ikPlot = {
-		offset: new Point(0, 375),
+		offset: secondaryOffset,
 		domain: new Point(0, timeperiod),
-		range: new Point(0, 100),
-		unitPerTick: new Point(1000, 20),
-		pixelPerUnit: new Point(.0875, 2.4),
+		range: new Point(10, 60),
+		unitPerTick: new Point(1000, 10),
+		pixelPerUnit: new Point(.0875, 4.8),
 		labelFrequency: new Point(1, 1),
 		xAxis: "Time (ms)",
 		yAxis: "ik",
 		labelPrecision: new Point(0, 1)
 	};
 	var inaPlot = {
-		offset: new Point(0, 375),
+		offset: secondaryOffset,
 		domain: new Point(0, timeperiod),
-		range: new Point(-100, 100),
-		unitPerTick: new Point(1000, 20),
-		pixelPerUnit: new Point(.0875, 1.2),
+		range: new Point(-60, 0),
+		unitPerTick: new Point(1000, 5),
+		pixelPerUnit: new Point(.0875, 4),
 		labelFrequency: new Point(1, 1),
 		xAxis: "Time (ms)",
 		yAxis: "ina",
 		labelPrecision: new Point(0, 1),
 	};
 	var ilPlot = {
-		offset: new Point(0, 375),
+		offset: secondaryOffset,
 		domain: new Point(0, timeperiod),
 		range: new Point(-100, 100),
 		unitPerTick: new Point(1000, 20),
