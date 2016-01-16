@@ -62,7 +62,7 @@ function NobleCalculator(utils) {
 		stimdur: 2.0,
 		gna1: 400.0,
 		gna2: 0.14,
-		s1: 0,
+		s1: 250,
 		s2: 2000,
 		ns1: 4,
 		period: 500.0,

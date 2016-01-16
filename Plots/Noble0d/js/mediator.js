@@ -2,11 +2,14 @@
  * provide a series of functions to easily mediate between the calculator, the
  * pointBuffer, and the plots.
  */
-define(["calculator", "pointBuffer", "plots"],
-function NobleMediator(calculator, pointBuffer, plots) {
+define(["pointBuffer"],
+function NobleMediator(pointBuffer) {
 	"use strict";
 
-	var points;
+	var calculator;
+	var plots;
+
+	var points = [];
 	var numPoints = 1500;
 	var numCalculations = 500000;
 
@@ -16,11 +19,13 @@ function NobleMediator(calculator, pointBuffer, plots) {
 	 * components that the mediator will use.
 	 * @return {[type]} [description]
 	 */
-	function initialize() {
-		calculator.initialize();
-		plots.initialize();
+	function initialize(pcalculator, pplots) {
+		calculator = pcalculator;
+		plots = pplots;
+
 		pointBuffer.calculate(calculator, numCalculations, numPoints);
 		points = pointBuffer.variables;
+
 		requestAnimationFrame(update)
 	}
 
@@ -70,8 +75,8 @@ function NobleMediator(calculator, pointBuffer, plots) {
 
 
 	/** 
-	 * Update the plots with the given point values and 
-	 * @return {[type]} [description]
+	 * Update the plots with the given point values. Recursively call self using
+	 * requestAnimationFrame.
 	 */
 	function update() {
 		plots.update(points);

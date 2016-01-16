@@ -3,11 +3,11 @@
  * of the plot, describing what variables are plotted and how the Noble 
  * differential equation is calculated.
  */
-define(["mediator","utility"],
-function NobleForm(mediator, utils) {
+define(["utility"],
+function NobleForm(utils) {
 	"use strict";
 
-	mediator.initialize();
+	var mediator;
 
 	/**
 	 * This object describes the settings for the form.
@@ -20,11 +20,26 @@ function NobleForm(mediator, utils) {
 		n: 			0.0,
 		gna1: 		400,
 		gna2: 		0.14,
-		s1: 		0,
+		s1: 		250,
 		ns1: 		4,
 		s2: 		2000,
 		period: 	500
 	};
+
+
+	/**
+	 * Initialize the form. Define the initial settings of the form and define
+	 * the interface that the form will interact with. After that, bind the UI
+	 * compenents to specific actions.
+	 */
+	function initialize(pmediator, newSettings) {
+		var overwrite = newSettings || {};
+		for (var attrname in overwrite) { 
+			settings.defaults[attrname] = overwrite[attrname]; 
+		};
+		mediator = pmediator;
+		bindUIActions();
+	}
 
 
 	/**
@@ -98,14 +113,7 @@ function NobleForm(mediator, utils) {
 	 * the controls, recalculate, and call the update function.
 	 */
 	function updatePage() {
-		var newSettings = {
-			gna1: 	utils.numericValue(controls.gna1.value),
-			gna2: 	utils.numericValue(controls.gna2.value),
-			s1:   	utils.numericValue(controls.s1.value),
-			ns1:  	utils.numericValue(controls.ns1.value),
-			s2:   	utils.numericValue(controls.s2.value),
-			period: utils.numericValue(controls.period.value),
-		};
+		var newSettings = exportValues();
 		mediator.updateGraph(newSettings);
 		//NoblePointBuffer.calculate();
 		//update();
@@ -153,15 +161,32 @@ function NobleForm(mediator, utils) {
 
 
 	/**
+	 * Get the values from the form and export them as an object
+	 * 
+	 * @return {Object} - an object where the key is the name of the form
+	 * element and the value is the value of that form element.
+	 */
+	function exportValues() {
+		var settings = {
+			gna1: 	utils.numericValue(controls.gna1.value),
+			gna2: 	utils.numericValue(controls.gna2.value),
+			s1:   	utils.numericValue(controls.s1.value),
+			ns1:  	utils.numericValue(controls.ns1.value),
+			s2:   	utils.numericValue(controls.s2.value),
+			period: utils.numericValue(controls.period.value),
+		};
+		return settings;
+	}
+
+
+	/**
 	 * This is the object that will be returned by the function. These are the
 	 * only things that will be publicly accessible after the form is
 	 * initialized.
 	 */
 	var api = {
-		controls: controls
+		initialize: initialize,
+		exportValues: exportValues,
 	};
-
-
-	bindUIActions();
 	return api;
 });
