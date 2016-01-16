@@ -15,6 +15,8 @@ function NoblePlots(utils) {
 	var displayN = true;
 	var secondaryPlot = null;
 
+	var timeperiod = 5000;
+
 
 	/**
 	 * These are the settings for the plots that will be used when rendering
@@ -22,7 +24,7 @@ function NoblePlots(utils) {
 	 */
 	var mainPlot = {
 		offset: new Point(0, 0),
-		domain: new Point(0, 5000),
+		domain: new Point(0, timeperiod),
 		range: new Point(0, 1),
 		unitPerTick: new Point(1000, .1),
 		pixelPerUnit: new Point(.0875, 300),
@@ -33,10 +35,10 @@ function NoblePlots(utils) {
 	};
 	var ikPlot = {
 		offset: new Point(0, 375),
-		domain: new Point(0, 5000),
-		range: new Point(10, 60),
-		unitPerTick: new Point(1000, 5),
-		pixelPerUnit: new Point(.0875, 4),
+		domain: new Point(0, timeperiod),
+		range: new Point(0, 100),
+		unitPerTick: new Point(1000, 20),
+		pixelPerUnit: new Point(.0875, 2.4),
 		labelFrequency: new Point(1, 1),
 		xAxis: "Time (ms)",
 		yAxis: "ik",
@@ -44,7 +46,7 @@ function NoblePlots(utils) {
 	};
 	var inaPlot = {
 		offset: new Point(0, 375),
-		domain: new Point(0, 5000),
+		domain: new Point(0, timeperiod),
 		range: new Point(-100, 100),
 		unitPerTick: new Point(1000, 20),
 		pixelPerUnit: new Point(.0875, 1.2),
@@ -55,7 +57,7 @@ function NoblePlots(utils) {
 	};
 	var ilPlot = {
 		offset: new Point(0, 375),
-		domain: new Point(0, 5000),
+		domain: new Point(0, timeperiod),
 		range: new Point(-100, 100),
 		unitPerTick: new Point(1000, 20),
 		pixelPerUnit: new Point(.0875, 1.2),
@@ -111,6 +113,7 @@ function NoblePlots(utils) {
 		}
 	}
 
+
 	/**
 	 * Toggle whether or not the given variable should be displayed. Will throw
 	 * an error if the given variable is not being drawn.
@@ -154,6 +157,17 @@ function NoblePlots(utils) {
 
 
 	/**
+	 * Given the current time and the timestep, return the index value for the
+	 * array.
+	 * @return {number} - the value of the array for the current time.
+	 */
+	function arrayAtTime(currentTime, timestep, array) {
+		var index = Math.floor(currentTime/timestep);
+		return array[index];
+	}
+
+
+	/**
 	 * Update the plots with the given values.
 	 * 
 	 * @param  {Object} values - an object containing the values that will be
@@ -161,58 +175,67 @@ function NoblePlots(utils) {
 	 */
 	function update(values) {
 
+		var timestep;
+
 		app.selectPlot("Noble");
 		if (displayV) {
+			timestep = timeperiod / values.v.length
 			app.ctx.strokeStyle = utils.colors.Red;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
-				return values.v[x];
-			}, true, 1, 0, 5000);
+				return arrayAtTime(x, timestep, values.v);
+			}, true, timestep, 0, timeperiod);
 		}
 		if (displayM) {
+			timestep = timeperiod / values.m.length;
 			app.ctx.strokeStyle = utils.colors.Green;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
-				return values.m[x];
-			}, true, 1, 0, 5000);
+				return arrayAtTime(x, timestep, values.m);
+			}, true, timestep, 0, timeperiod);
 		}
 		if (displayH) {
+			timestep = timeperiod / values.h.length;
 			app.ctx.strokeStyle = utils.colors.LightBlue;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
-				return values.h[x];
-			}, true, 1, 0, 5000);
+				return arrayAtTime(x, timestep, values.h);
+			}, true, timestep, 0, timeperiod);
 		}
 		if (displayN) {
+			timestep = timeperiod / values.n.length;
 			app.ctx.strokeStyle = utils.colors.Indigo;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
-				return values.n[x];
-			}, true, 1, 0, 5000);
+				return arrayAtTime(x, timestep, values.n);
+			}, true, timestep, 0, timeperiod);
 		}
 
 		app.selectPlot("NobleOther");
 		switch(secondaryPlot) {
 			case "ik":
+				timestep = timeperiod / values.ik.length;
 				app.ctx.strokeStyle = utils.colors.Yellow;
 				app.ctx.lineWidth = 3;
 				app.plotFunction(function(x) {
-					return values.ik[x];
-				}, true, 1, 0, 5000);
+					return arrayAtTime(x, timestep, values.ik);
+				}, true, timestep, 0, timeperiod);
 				break;
-			case "ina":			
+			case "ina":
+				timestep = timeperiod / values.ina.length;
 				app.ctx.strokeStyle = utils.colors.Black;
 				app.ctx.lineWidth = 3;
 				app.plotFunction(function(x) {
-					return values.ina[x];
-				}, true, 1, 0, 5000);
+					return arrayAtTime(x, timestep, values.ina);
+				}, true, timestep, 0, timeperiod);
 				break;
-			case "il":			
+			case "il":
+				timestep = timeperiod / values.il.length;
 				app.ctx.strokeStyle = utils.colors.Aqua;
 				app.ctx.lineWidth = 3;
 				app.plotFunction(function(x) {
-					return values.il[x];
-				}, true, 1, 0, 5000);
+					return arrayAtTime(x, timestep, values.il);
+				}, true, timestep, 0, timeperiod);
 				break;
 		}
 	}

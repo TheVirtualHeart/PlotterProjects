@@ -7,7 +7,7 @@ function NobleMediator(calculator, pointBuffer, plots) {
 	"use strict";
 
 	var points;
-	var numPoints = 1250;
+	var numPoints = 1500;
 	var numCalculations = 500000;
 
 

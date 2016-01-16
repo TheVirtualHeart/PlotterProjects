@@ -44,6 +44,7 @@ function NoblePointBuffer(utils) {
 
 		reset();
 		var bufferSize = Math.floor(iterations/numPoints);
+		console.log(bufferSize);
 
 		for (var i = 0; i < iterations; i++) {
 			calculator.calculateNext();
