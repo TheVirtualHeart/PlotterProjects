@@ -8,6 +8,7 @@ function NobleForm(utils) {
 	"use strict";
 
 	var mediator;
+	var controls;
 
 	/**
 	 * This object describes the settings for the form.
@@ -20,7 +21,6 @@ function NobleForm(utils) {
 		n: 			0.0,
 		gna1: 		400,
 		gna2: 		0.14,
-		s1: 		250,
 		ns1: 		4,
 		s2: 		2000,
 		period: 	500
@@ -34,33 +34,55 @@ function NobleForm(utils) {
 	 */
 	function initialize(pmediator, newSettings) {
 		var overwrite = newSettings || {};
+
 		for (var attrname in overwrite) { 
-			settings.defaults[attrname] = overwrite[attrname]; 
+			if (settings.defaults.hasOwnProperty(attrname)) {
+				settings.defaults[attrname] = overwrite[attrname];
+			} 
 		};
+
+
 		mediator = pmediator;
+		setControls();
+		setControlValues(settings.defaults);
 		bindUIActions();
 	}
 
 
 	/**
-	 * Reference variables for the DOM elements of the form.
+	 * A function called during initialization to set the control references to
+	 * their respective DOM element.
 	 */
-	var controls = {
-		displayV: 		document.getElementById("displayV"), 
-		displayM: 		document.getElementById("displayM"), 
-		displayH: 		document.getElementById("displayH"), 
-		displayN: 		document.getElementById("displayN"), 
-		secondaryPlot:  document.getElementById("secondaryPlot"), 
-		gna1: 			document.getElementsByName("gna1")[0],
-		gna2: 			document.getElementsByName("gna2")[0],
-		s1: 			document.getElementsByName("s1")[0],
-		ns1: 			document.getElementsByName("ns1")[0],
-		s2: 			document.getElementsByName("s2")[0],
-		period: 		document.getElementsByName("period")[0],
-		updateButton: 	document.getElementById("update"),
-		resetButton: 	document.getElementById("default"),
-		printButton: 	document.getElementById("print")
-	};
+	function setControls() {
+		controls = {
+			displayV: 		document.getElementById("displayV"), 
+			displayM: 		document.getElementById("displayM"), 
+			displayH: 		document.getElementById("displayH"), 
+			displayN: 		document.getElementById("displayN"), 
+			secondaryPlot:  document.getElementById("secondaryPlot"), 
+			gna1: 			document.getElementsByName("gna1")[0],
+			gna2: 			document.getElementsByName("gna2")[0],
+			ns1: 			document.getElementsByName("ns1")[0],
+			s2: 			document.getElementsByName("s2")[0],
+			period: 		document.getElementsByName("period")[0],
+			updateButton: 	document.getElementById("update"),
+			resetButton: 	document.getElementById("default"),
+			printButton: 	document.getElementById("print"),
+		};
+	}
+
+
+	/**
+	 * Set the values of the control elements to the ones specified in the
+	 * default settings.
+	 */
+	function setControlValues(values) {
+		controls.s2.value = values.s2;
+		controls.ns1.value = values.ns1;
+		controls.period.value = values.period;
+		controls.gna1.value = values.gna1;
+		controls.gna2.value = values.gna2;
+	}
 
 
 	/**
@@ -72,7 +94,6 @@ function NobleForm(utils) {
 
 		controls.gna1.addEventListener("change", updatePage);
 		controls.gna2.addEventListener("change", updatePage);
-		controls.s1.addEventListener("change", updatePage);
 		controls.ns1.addEventListener("change", updatePage);
 		controls.s2.addEventListener("change", updatePage);
 		controls.period.addEventListener("change", updatePage);
@@ -101,7 +122,6 @@ function NobleForm(utils) {
 	function resetForm() {
 		controls.gna1.value 	= settings.defaults.gna1;
 		controls.gna2.value 	= settings.defaults.gna2;
-		controls.s1.value 		= settings.defaults.s1;
 		controls.ns1.value 		= settings.defaults.ns1;                        
 		controls.s2.value 		= settings.defaults.s2;
 		controls.period.value 	= settings.defaults.period;
@@ -115,8 +135,6 @@ function NobleForm(utils) {
 	function updatePage() {
 		var newSettings = exportValues();
 		mediator.updateGraph(newSettings);
-		//NoblePointBuffer.calculate();
-		//update();
 	}
 
 
@@ -170,7 +188,6 @@ function NobleForm(utils) {
 		var settings = {
 			gna1: 	utils.numericValue(controls.gna1.value),
 			gna2: 	utils.numericValue(controls.gna2.value),
-			s1:   	utils.numericValue(controls.s1.value),
 			ns1:  	utils.numericValue(controls.ns1.value),
 			s2:   	utils.numericValue(controls.s2.value),
 			period: utils.numericValue(controls.period.value),
