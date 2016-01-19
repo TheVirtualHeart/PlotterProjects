@@ -33,6 +33,7 @@ function NoblePlots(utils) {
 		xAxis: "Time (ms)",
 		yAxis: "V (mv)",
 		labelPrecision: new Point(0, 1),
+		labelSize: new Point(0, 0),
 	};
 	var ikPlot = {
 		offset: secondaryOffset,
@@ -43,7 +44,7 @@ function NoblePlots(utils) {
 		labelFrequency: new Point(1, 1),
 		xAxis: "Time (ms)",
 		yAxis: "ik",
-		labelPrecision: new Point(0, 1)
+		labelPrecision: new Point(0, 0),
 	};
 	var inaPlot = {
 		offset: secondaryOffset,
@@ -54,7 +55,7 @@ function NoblePlots(utils) {
 		labelFrequency: new Point(1, 1),
 		xAxis: "Time (ms)",
 		yAxis: "ina",
-		labelPrecision: new Point(0, 1),
+		labelPrecision: new Point(0, 0),
 	};
 	var ilPlot = {
 		offset: secondaryOffset,
@@ -65,7 +66,7 @@ function NoblePlots(utils) {
 		labelFrequency: new Point(1, 1),
 		xAxis: "Time (ms)",
 		yAxis: "il",
-		labelPrecision: new Point(0, 1),
+		labelPrecision: new Point(0, 0),
 	};
 
 
@@ -76,7 +77,7 @@ function NoblePlots(utils) {
 	function initialize() {
 		app = createPlotter(document.getElementById("plot"));
 		app.newPlot(mainPlot, "Noble");
-		app.newPlot(ikPlot, "NobleOther");
+		app.newPlot(ilPlot, "NobleOther");
 	}
 
 
@@ -91,19 +92,19 @@ function NoblePlots(utils) {
 			case "ik":
 				if (secondaryPlot !== "ik") {
 					secondaryPlot = "ik";
-					app.editPlot("NobleOther", ikPlot);
+					app.editPlot("NobleOther", ikPlot, true, true);
 				}
 				break;
 			case "ina":
 				if (secondaryPlot !== "ina") {
 					secondaryPlot = "ina";
-					app.editPlot("NobleOther", inaPlot);
+					app.editPlot("NobleOther", inaPlot, true, true);
 				}
 				break;
 			case "il":
 				if (secondaryPlot !== "il") {
 					secondaryPlot = "il";
-					app.editPlot("NobleOther", ilPlot);
+					app.editPlot("NobleOther", ilPlot, true, true);
 				}
 				break;
 			case null:

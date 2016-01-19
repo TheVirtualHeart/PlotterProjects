@@ -216,6 +216,7 @@ function NobleCalculator(utils) {
 								 s2Count, 
 								 periodCount,
 								 stimdurCount);
+		//var istim = 0;
 
 
 		// calculate derivative of voltage 
