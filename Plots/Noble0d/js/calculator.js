@@ -145,6 +145,24 @@ function NobleCalculator(utils) {
 
 
 	/**
+	 * Calculate the locations of the different stimuli according to the S1-S2
+	 * Protocol.
+	 * @return {Object} - A JavaScript Object containing an array of s1 values
+	 * and a single value for s2.
+	 */
+	function getStimuliLocations() {
+		var stimuli = {};
+		stimuli.s1 = [];
+		for (var i = 0; i < ns1; i++) {
+			stimuli.s1.push(i * period + s1);
+		}
+		var lastPeriod = s1 + (period * (ns1 - 1));
+		stimuli.s2 = lastPeriod + s2;
+		return stimuli;
+	}
+
+
+	/**
 	 * Performs a differential calculations and increments the values that will
 	 * be returned by getPoints().
 	 */
@@ -207,16 +225,17 @@ function NobleCalculator(utils) {
 
 
 		// set stimulus current periodically to be nonzero
-		var s1Count = utils.round(s1/timestep);
-		var s2Count = utils.round(s2/timestep);
-		var periodCount = utils.round(period/timestep);
-		var stimdurCount = utils.round(stimdur/timestep);
-		var istim = s1s2Stimulus(count, 
-								 s1Count, 
-								 s2Count, 
-								 periodCount,
-								 stimdurCount);
-		//var istim = 0;
+		// var s1Count = utils.round(s1/timestep);
+		// var s2Count = utils.round(s2/timestep);
+		// var periodCount = utils.round(period/timestep);
+		// var stimdurCount = utils.round(stimdur/timestep);
+		// var istim = s1s2Stimulus(count, 
+		// 						 s1Count,
+		// 						 ns1, 
+		// 						 s2Count, 
+		// 						 periodCount,
+		// 						 stimdurCount);
+		var istim = s1s2Stimulus(count);
 
 
 		// calculate derivative of voltage 
@@ -238,20 +257,33 @@ function NobleCalculator(utils) {
 	 * 
 	 * @return {number} - The stimulus that will be applied.
 	 */
-	function s1s2Stimulus(count, s1, s2, period, stimdur) {
+	function s1s2Stimulus(count) {
 		var stim = 0;
-		for (var i = 0; i < ns1; i++) {
-			var curPeriod = i * period + s1;
-			var endPeriod = curPeriod + stimdur;
-			if ((count >= curPeriod) && (count < endPeriod)) {
+		// for (var i = 0; i < ns1; i++) {
+		// 	var curPeriod = i * period + s1;
+		// 	var endPeriod = curPeriod + stimdur;
+		// 	if ((count >= curPeriod) && (count < endPeriod)) {
+		// 		stim = stimmag;
+		// 	}
+		// }
+		// var lastPeriod = s1 + (period * ns1-1);
+		// if ((count >= s2 + lastPeriod) && (count < s2 + lastPeriod + stimdur)) {
+		// 	stim = stimmag;
+		// }
+		var stimuli = getStimuliLocations();
+		var dur = utils.round(stimdur / timestep);
+		var periods = stimuli.s1;
+		for (var i = 0; i < periods.length; i++) {
+			var periodX = utils.round(periods[i] / timestep);
+			if ((count >= periodX) && (count < periodX + dur)) {
 				stim = stimmag;
 			}
 		}
-		if ((count >= s2) && (count < s2 + stimdur)) {
-			stim = stimmag;
-		}
+		var lastPeriodX = utils.round(stimuli.s2 / timestep);
+		if ((count >= lastPeriodX) && (count < lastPeriodX + dur)) {
+				stim = stimmag;
+		}		
 		return stim;
-
 	}
  
 
@@ -263,6 +295,7 @@ function NobleCalculator(utils) {
 		initialize: initialize,
 		getPoints: getPoints,
 		calculateNext: calculateNext,
+		getStimuliLocations: getStimuliLocations,
 		reset: reset,
 	};
 	return api;

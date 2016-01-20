@@ -10,6 +10,7 @@ function NobleMediator(pointBuffer) {
 	var plots;
 
 	var points = [];
+	var overlay = {};
 	var numPoints = 1500;
 	var numCalculations = 500000;
 
@@ -25,6 +26,7 @@ function NobleMediator(pointBuffer) {
 
 		pointBuffer.calculate(calculator, numCalculations, numPoints);
 		points = pointBuffer.variables;
+		overlay = calculator.getStimuliLocations();
 
 		requestAnimationFrame(update)
 	}
@@ -35,22 +37,13 @@ function NobleMediator(pointBuffer) {
 	 * points, and update the plots.
 	 * 
 	 * @param  {Object} settings - the settings that will be used to update the
-	 * @return {[type]}          [description]
 	 */
 	function updateGraph(settings) {
 		calculator.reset(settings);
 		pointBuffer.calculate(calculator, numCalculations, numPoints);
 		points = pointBuffer.variables;
+		overlay = calculator.getStimuliLocations();
 	}
-
-
-	/** 
-	 * Reset the calculator and the Point Buffer to their default values and
-	 * update the graph to reflect the changes
-	 */
-	// function resetGraph() {
-
-	// }
 
 
 	/**
@@ -79,7 +72,8 @@ function NobleMediator(pointBuffer) {
 	 * requestAnimationFrame.
 	 */
 	function update() {
-		plots.update(points);
+		plots.drawPlots(points);
+		plots.drawOverlay(overlay);
 		requestAnimationFrame(update);
 	}
 

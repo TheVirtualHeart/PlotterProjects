@@ -18,6 +18,12 @@ function NoblePlots(utils) {
 	var timeperiod = 5000;
 
 
+	var s1 = 0;
+	var s2 = 0;
+	var ns1 = 0;
+	var period = 0;
+
+
 	/**
 	 * These are the settings for the plots that will be used when rendering
 	 * @type {Object}
@@ -74,7 +80,14 @@ function NoblePlots(utils) {
 	 * Initialize the plots. Attach the Plotter object to the appropriate DOM
 	 * element and define the initial plots.
 	 */
-	function initialize() {
+	function initialize(newSettings) {
+		var overwrite = newSettings || {};
+		for (var attrname in overwrite) { 
+			if (settings.defaults.hasOwnProperty(attrname)) {
+				settings.defaults[attrname] = overwrite[attrname];
+			} 
+		};
+
 		app = createPlotter(document.getElementById("plot"));
 		app.newPlot(mainPlot, "Noble");
 		app.newPlot(ilPlot, "NobleOther");
@@ -169,13 +182,27 @@ function NoblePlots(utils) {
 	}
 
 
+	function drawStimuliOnPlot(plotName) {
+		app.selectPlot(plotName);
+		var range = new Point(-0.1, 1.1);//app.settings.range;
+		app.ctx.strokeStyle = utils.colors.Black;
+		app.ctx.lineWidth = 3;
+		for (var i = 0; i < ns1; i++) {
+			var x = s1 + (i * period);
+			app.plotLine(new Point(x, range.x), new Point(x, range.y));
+		}
+		var lastPeriod = s1 + (period * ns1);
+		app.plotLine(new Point(s2 + lastPeriod, range.x), new Point(s2 + lastPeriod, range.y));
+	}
+
+
 	/**
 	 * Update the plots with the given values.
 	 * 
 	 * @param  {Object} values - an object containing the values that will be
 	 * plotted.
 	 */
-	function update(values) {
+	function drawPlots(values) {
 
 		var timestep;
 
@@ -244,6 +271,51 @@ function NoblePlots(utils) {
 
 
 	/**
+	 * Draw the Overlay on the plot
+	 * @return {[type]} [description]
+	 */
+	function drawOverlay(values) {
+		var xLoc;
+		var range;
+
+		// draw the s1 overlays
+		for (var i = 0; i < values.s1.length; i++) {
+
+			app.selectPlot("Noble", false);
+			xLoc = values.s1[i];
+			range = app.settings.range;
+			app.ctx.strokeStyle = utils.colors.Black;
+			app.ctx.lineWidth = 1;
+			app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
+
+			if (secondaryPlot !== null) {
+				app.selectPlot("NobleOther", false);
+				range = app.settings.range;
+				app.ctx.strokeStyle = utils.colors.Black;
+				app.ctx.lineWidth = 1;
+				app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
+			}
+		}
+
+		// draw the s2 overlays
+		app.selectPlot("Noble", false);
+		xLoc = values.s2;
+		range = app.settings.range;
+		app.ctx.strokeStyle = utils.colors.Black;
+		app.ctx.lineWidth = 1;
+		app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
+
+		if (secondaryPlot !== null) {
+			app.selectPlot("NobleOther", false);
+			range = app.settings.range;
+			app.ctx.strokeStyle = utils.colors.Black;
+			app.ctx.lineWidth = 1;
+			app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
+		}
+	}
+
+
+	/**
 	 * This is the api that is returned by NoblePlots. It contains the
 	 * properties and functions that the user can interact with.
 	 */
@@ -251,7 +323,8 @@ function NoblePlots(utils) {
 		initialize: initialize,
 		toggleDisplay: toggleDisplay,
 		setSecondaryPlot: setSecondaryPlot,
-		update: update,
+		drawPlots: drawPlots,
+		drawOverlay: drawOverlay,
 	}
 	return api;
 });
