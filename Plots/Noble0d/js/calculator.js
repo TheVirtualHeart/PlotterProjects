@@ -26,6 +26,7 @@ function NobleCalculator(utils) {
 	var il;
 
 	var cm;
+	var gkMod;
 	var gan;
 	var ean;
 	var stimmag;
@@ -57,6 +58,7 @@ function NobleCalculator(utils) {
 
 		cm: 12,
 		gan: 0.0,
+		gkMod: 1.2,
 		ean: -60,
 		stimmag: -106,
 		stimdur: 2.0,
@@ -110,6 +112,8 @@ function NobleCalculator(utils) {
 
 		cm = settings.initial.cm;
 		gan = settings.initial.gan;
+		gkMod = settings.initial.gkMod;
+		console.log(gkMod);
 		ean = settings.initial.ean;
 		stimmag = settings.initial.stimmag;
 		stimdur = settings.initial.stimdur;
@@ -206,8 +210,8 @@ function NobleCalculator(utils) {
 
 		// calculate potassium current conductance values
 		// TODO: Make 1.2 an editable value
-		var gk1 = 1.2 * Math.exp((-v-90)/50) + 0.015 * Math.exp((v+90)/60);
-		var gk2 = 1.2 * Math.pow(n, 4);
+		var gk1 = gkMod * Math.exp((-v-90)/50) + 0.015 * Math.exp((v+90)/60);
+		var gk2 = gkMod * Math.pow(n, 4);
 
 
 		// calculate currents

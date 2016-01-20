@@ -24,6 +24,7 @@ function initialize(require, exports, module) {
 
 		cm: 12,
 		gan: 0.0,
+		gkMod: 1.2,
 		ean: -60,
 		stimmag: -106,
 		stimdur: 2.0,

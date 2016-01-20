@@ -7,8 +7,10 @@ define(["utility"],
 function NobleForm(utils) {
 	"use strict";
 
+
 	var mediator;
 	var controls;
+
 
 	/**
 	 * This object describes the settings for the form.
@@ -19,6 +21,8 @@ function NobleForm(utils) {
 		m: 			0.0,
 		h: 			1.0,
 		n: 			0.0,
+		gan: 		0.0,
+		gkMod: 		0.0,  
 		gna1: 		400,
 		gna2: 		0.14,
 		ns1: 		4,
@@ -34,14 +38,11 @@ function NobleForm(utils) {
 	 */
 	function initialize(pmediator, newSettings) {
 		var overwrite = newSettings || {};
-
 		for (var attrname in overwrite) { 
 			if (settings.defaults.hasOwnProperty(attrname)) {
 				settings.defaults[attrname] = overwrite[attrname];
 			} 
 		};
-
-
 		mediator = pmediator;
 		setControls();
 		setControlValues(settings.defaults);
@@ -61,6 +62,8 @@ function NobleForm(utils) {
 			displayH: 		document.getElementById("displayH"), 
 			displayN: 		document.getElementById("displayN"), 
 			secondaryPlot:  document.getElementById("secondaryPlot"), 
+			gan: 			document.getElementsByName("gan")[0],
+			gkMod: 			document.getElementsByName("gkMod")[0],
 			gna1: 			document.getElementsByName("gna1")[0],
 			gna2: 			document.getElementsByName("gna2")[0],
 			ns1: 			document.getElementsByName("ns1")[0],
@@ -83,6 +86,8 @@ function NobleForm(utils) {
 		controls.period.value = values.period;
 		controls.gna1.value = values.gna1;
 		controls.gna2.value = values.gna2;
+		controls.gkMod.value = values.gkMod;
+		controls.gan.value = values.gan;
 	}
 
 
@@ -98,6 +103,8 @@ function NobleForm(utils) {
 		controls.ns1.addEventListener("change", updatePage);
 		controls.s2.addEventListener("change", updatePage);
 		controls.period.addEventListener("change", updatePage);
+		controls.gan.addEventListener("change", updatePage);
+		controls.gkMod.addEventListener("change", updatePage);
 
 		controls.displayS1S2.addEventListener("change", toggleDisplayS1S2);
 		controls.displayV.addEventListener("change", toggleDisplayV);
@@ -122,6 +129,8 @@ function NobleForm(utils) {
 	 * Resets the form elements to the ones specified in settings.defaults.
 	 */
 	function resetForm() {
+		controls.gan.value 		= settings.defaults.gan;
+		controls.gkMod.value 	= settings.defaults.gkMod;
 		controls.gna1.value 	= settings.defaults.gna1;
 		controls.gna2.value 	= settings.defaults.gna2;
 		controls.ns1.value 		= settings.defaults.ns1;                        
@@ -196,6 +205,8 @@ function NobleForm(utils) {
 		var settings = {
 			gna1: 	utils.numericValue(controls.gna1.value),
 			gna2: 	utils.numericValue(controls.gna2.value),
+			gkMod:  utils.numericValue(controls.gkMod.value),
+			gan: 	utils.numericValue(controls.gan.value),
 			ns1:  	utils.numericValue(controls.ns1.value),
 			s2:   	utils.numericValue(controls.s2.value),
 			period: utils.numericValue(controls.period.value),
