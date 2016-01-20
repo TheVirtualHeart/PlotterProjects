@@ -8,6 +8,7 @@ function NobleMediator(pointBuffer) {
 
 	var calculator;
 	var plots;
+	var displayOverlay = true;
 
 	var points = [];
 	var overlay = {};
@@ -66,6 +67,10 @@ function NobleMediator(pointBuffer) {
 		plots.toggleDisplay(name, value);
 	}
 
+	function setDisplayOverlay(value) {
+		displayOverlay = value;
+	}
+
 
 	/** 
 	 * Update the plots with the given point values. Recursively call self using
@@ -73,7 +78,9 @@ function NobleMediator(pointBuffer) {
 	 */
 	function update() {
 		plots.drawPlots(points);
-		plots.drawOverlay(overlay);
+		if (displayOverlay) {
+			plots.drawOverlay(overlay);
+		}
 		requestAnimationFrame(update);
 	}
 
@@ -81,6 +88,7 @@ function NobleMediator(pointBuffer) {
 	var api = {
 		initialize: initialize,
 		displayVariable: displayVariable,
+		setDisplayOverlay: setDisplayOverlay,
 		setSecondaryPlot: setSecondaryPlot,
 		updateGraph: updateGraph,
 	};

@@ -55,6 +55,7 @@ function NobleForm(utils) {
 	 */
 	function setControls() {
 		controls = {
+			displayS1S2: 	document.getElementById("displayS1S2"),
 			displayV: 		document.getElementById("displayV"), 
 			displayM: 		document.getElementById("displayM"), 
 			displayH: 		document.getElementById("displayH"), 
@@ -98,6 +99,7 @@ function NobleForm(utils) {
 		controls.s2.addEventListener("change", updatePage);
 		controls.period.addEventListener("change", updatePage);
 
+		controls.displayS1S2.addEventListener("change", toggleDisplayS1S2);
 		controls.displayV.addEventListener("change", toggleDisplayV);
 		controls.displayM.addEventListener("change", toggleDisplayM);
 		controls.displayH.addEventListener("change", toggleDisplayH);
@@ -152,6 +154,12 @@ function NobleForm(utils) {
 	}
 
 
+	/**
+	 * Toggle whether or not the S1-S2 overlay is displayed
+	 */
+	function toggleDisplayS1S2() {
+		mediator.setDisplayOverlay(controls.displayS1S2.checked);
+	}
 	/** 
 	 * Toggle the displayV variable
 	 */
