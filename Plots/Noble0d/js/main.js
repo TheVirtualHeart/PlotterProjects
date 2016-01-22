@@ -9,8 +9,8 @@ require.config({
 	},
 });
 
-define(
-function initialize(require, exports, module) {
+require(["plots", "calculator", "mediator", "form"],
+function initialize(plots, calculator, mediator, form) {
 
 	var defaultSettings = {
 		v: -80.0,
@@ -36,15 +36,10 @@ function initialize(require, exports, module) {
 		period: 500.0,
 		timestep: 0.01,
 	};
-
-	var plots = require("plots");
-	var calculator = require("calculator");
-	var mediator = require("mediator");
-	var form = require("form");
-
+		
 	plots.initialize();
 	calculator.initialize(defaultSettings);
 	mediator.initialize(calculator, plots);
-
 	form.initialize(mediator, defaultSettings);
+
 });
