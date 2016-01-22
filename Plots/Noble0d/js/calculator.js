@@ -113,7 +113,6 @@ function NobleCalculator(utils) {
 		cm = settings.initial.cm;
 		gan = settings.initial.gan;
 		gkMod = settings.initial.gkMod;
-		console.log(gkMod);
 		ean = settings.initial.ean;
 		stimmag = settings.initial.stimmag;
 		stimdur = settings.initial.stimdur;
@@ -124,7 +123,6 @@ function NobleCalculator(utils) {
 		ns1 = settings.initial.ns1;
 		period = settings.initial.period;
 		timestep = settings.initial.timestep;
-
 		count = 0;
 	}
 
@@ -209,13 +207,11 @@ function NobleCalculator(utils) {
 		n += timestep * dn;
 
 		// calculate potassium current conductance values
-		// TODO: Make 1.2 an editable value
 		var gk1 = gkMod * Math.exp((-v-90)/50) + 0.015 * Math.exp((v+90)/60);
 		var gk2 = gkMod * Math.pow(n, 4);
 
 
 		// calculate currents
-		// TODO: Make gan an editable value
 		var ina1 = gna1 * m * m * m * h * (v - 40);
 		var ina2 = gna2 * (v - 40);
 		var ik1 = gk1 * (v + 100);
@@ -229,16 +225,6 @@ function NobleCalculator(utils) {
 
 
 		// set stimulus current periodically to be nonzero
-		// var s1Count = utils.round(s1/timestep);
-		// var s2Count = utils.round(s2/timestep);
-		// var periodCount = utils.round(period/timestep);
-		// var stimdurCount = utils.round(stimdur/timestep);
-		// var istim = s1s2Stimulus(count, 
-		// 						 s1Count,
-		// 						 ns1, 
-		// 						 s2Count, 
-		// 						 periodCount,
-		// 						 stimdurCount);
 		var istim = s1s2Stimulus(count);
 
 
@@ -256,24 +242,19 @@ function NobleCalculator(utils) {
 
 
 	/**
-	 * This function calculates the stimulus according to the 
-	 * S1-S2 Protocol. 
+	 * This function calculates the stimulus according to the S1-S2 Protocol.
+	 * The function retrieves the location of the S1-S2 stimuli and then
+	 * compares the current position against that. If it is within a stimuli
+	 * location, the stimulus value is returned. Otherwise, 0 is returned.
+	 * 
+	 * @param {Number} count - the current position of the calculation. The
+	 * program checks this against the stimuli locations. If it is within one of
+	 * these locations, a stimulus is applied.
 	 * 
 	 * @return {number} - The stimulus that will be applied.
 	 */
 	function s1s2Stimulus(count) {
 		var stim = 0;
-		// for (var i = 0; i < ns1; i++) {
-		// 	var curPeriod = i * period + s1;
-		// 	var endPeriod = curPeriod + stimdur;
-		// 	if ((count >= curPeriod) && (count < endPeriod)) {
-		// 		stim = stimmag;
-		// 	}
-		// }
-		// var lastPeriod = s1 + (period * ns1-1);
-		// if ((count >= s2 + lastPeriod) && (count < s2 + lastPeriod + stimdur)) {
-		// 	stim = stimmag;
-		// }
 		var stimuli = getStimuliLocations();
 		var dur = utils.round(stimdur / timestep);
 		var periods = stimuli.s1;

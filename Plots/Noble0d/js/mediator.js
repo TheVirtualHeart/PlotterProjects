@@ -41,7 +41,7 @@ function NobleMediator(pointBuffer) {
 	 */
 	function updateGraph(settings) {
 		calculator.reset(settings);
-		pointBuffer.calculate(calculator, numCalculations, numPoints);
+		pointBuffer.calculate(calculator, numCalculations, numPoints, pointBuffer.AVERAGE_FUNCTION);
 		points = pointBuffer.variables;
 		overlay = calculator.getStimuliLocations();
 	}
@@ -67,6 +67,11 @@ function NobleMediator(pointBuffer) {
 		plots.toggleDisplay(name, value);
 	}
 
+
+	/**
+	 * toggle whether or not the overlay is displayed on the plot.
+	 * @param {boolean} value - the value to set the displayOverlay variable to.
+	 */
 	function setDisplayOverlay(value) {
 		displayOverlay = value;
 	}
@@ -85,6 +90,10 @@ function NobleMediator(pointBuffer) {
 	}
 
 
+	/**
+	 * The api that contains the functions that will be available to the User.
+	 * @type {Object}
+	 */
 	var api = {
 		initialize: initialize,
 		displayVariable: displayVariable,
