@@ -27,6 +27,7 @@ function NobleMediator(pointBuffer) {
 
 		pointBuffer.calculate(calculator, numCalculations, numPoints);
 		points = pointBuffer.variables;
+		console.log(points);
 		overlay = calculator.getStimuliLocations();
 
 		requestAnimationFrame(update)

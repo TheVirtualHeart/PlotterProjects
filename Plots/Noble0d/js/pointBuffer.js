@@ -19,7 +19,9 @@ function NoblePointBuffer(utils) {
 		n: [],
 		ik: [],
 		ina: [],
-		il: []
+		il: [],
+		upTimes: [],
+		downTimes: [],
 	};
 
 
@@ -85,6 +87,15 @@ function NoblePointBuffer(utils) {
 			calculator.calculateNext();
 			if (i % bufferSize === 0) {
 				var points = calculator.getPoints();
+
+				// add any uptimes or downtimes
+				if (!!points.upTime) {
+					upTimes.push(points.upTime);
+				}
+				if (!!points.downTime) {
+					downTimes.push(points.downTime);
+				}
+
 				variables.v.push(utils.normalize(points.v, new Point(-160, 40)));
 				variables.m.push(points.m);
 				variables.h.push(points.h);
@@ -128,6 +139,15 @@ function NoblePointBuffer(utils) {
 		for (var i = 0; i < iterations; i++) {
 			calculator.calculateNext();
 			points 	= calculator.getPoints();
+
+			// add any uptimes or downtimes
+			if (!!points.upTime) {
+				variables.upTimes.push(points.upTime);
+			}
+			if (!!points.downTime) {
+				variables.downTimes.push(points.downTime);
+			}
+
 			vAvg 	+= points.v;
 			mAvg 	+= points.m;
 			hAvg 	+= points.h;
@@ -178,6 +198,8 @@ function NoblePointBuffer(utils) {
 		variables.ik = [];
 		variables.ina = [];
 		variables.il = [];
+		variables.upTimes = [];
+		variables.downTimes = [];
 	}
 
 

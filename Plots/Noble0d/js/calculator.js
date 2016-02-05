@@ -13,6 +13,7 @@ function NobleCalculator(utils) {
 	 */
 	var count = 0;
 
+
 	/**
 	 * These variables are used in the calculations of Noble.
 	 */
@@ -38,6 +39,15 @@ function NobleCalculator(utils) {
 	var ns1;
 	var period;
 	var timestep;
+
+
+	/**
+	 * These variables are used to calculate the APD values
+	 */
+	var vOld;
+	var threshold;
+	var upTime;
+	var downTime;
 
 
 	/**
@@ -69,6 +79,10 @@ function NobleCalculator(utils) {
 		ns1: 4,
 		period: 500.0,
 		timestep: 0.01,
+
+		vOld: null,
+		threshold: -50.0,		// -69, if that's not catching, -57
+
 	};
 
 
@@ -123,17 +137,21 @@ function NobleCalculator(utils) {
 		ns1 = settings.initial.ns1;
 		period = settings.initial.period;
 		timestep = settings.initial.timestep;
+
+		vOld = settings.initial.vOld;
+		threshold = settings.initial.threshold;
 		count = 0;
 	}
 
 
 	/**
-	 * This gets the points from the current iteration of NobleCalculator.
+	 * This gets the points from the current iteration of NobleCalculator. If
+	 * the calculation crossed a threshold, add that value to the points array.
 	 * 
 	 * @return {Object} - an object containing the values that the 
 	 */
 	function getPoints() {
-		return {
+		var points = {
 			v: v,
 			m: m,
 			h: h,
@@ -143,6 +161,13 @@ function NobleCalculator(utils) {
 			ina: ina,
 			il: il,
 		};
+		if (!!upTime) {
+			points.upTime = upTime;
+		}
+		if (!!downTime) {
+			points.downTime = downTime;
+		}
+		return points;
 	}
 
 
@@ -169,6 +194,10 @@ function NobleCalculator(utils) {
 	 * be returned by getPoints().
 	 */
 	function calculateNext() {
+
+		// track the current value of v before iterating.
+		vOld = v;
+
 
 		// calculate alphas and betas for updating gating variables
 	 	var am;
@@ -236,6 +265,10 @@ function NobleCalculator(utils) {
 		v += timestep * dv;
 
 
+		// check vOld against the threshold
+		checkThreshold(vOld, v, threshold);
+
+
 		// iterate the count
 		count++;
 	}
@@ -269,6 +302,28 @@ function NobleCalculator(utils) {
 				stim = stimmag;
 		}		
 		return stim;
+	}
+
+
+	/**
+	 * Check to see if the v has crossed the threshold during the last 
+	 * calculation. If so, calculate the location of the crossover using
+	 * linear interpolation, and save that value in either the upTimes array or
+	 * the downTimes array.
+	 */
+	function checkThreshold() {
+
+		upTime = null;
+		downTime = null;
+
+		// don't work out linear yet
+		if ( (vOld < threshold) && (v >= threshold) ) {
+			upTime = timestep * (count - (v - threshold)) / (v - vOld);
+		}
+		else if ( (vOld > threshold) && (v <= threshold) ) {
+			downTime = timestep * (count - (v - threshold)) / (v - vOld);
+		}
+
 	}
  
 
