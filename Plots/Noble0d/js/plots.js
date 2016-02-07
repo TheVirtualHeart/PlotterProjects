@@ -18,12 +18,6 @@ function NoblePlots(utils) {
 	var timeperiod = 5000;
 
 
-	var s1 = 0;
-	var s2 = 0;
-	var ns1 = 0;
-	var period = 0;
-
-
 	/**
 	 * These are the settings for the plots that will be used when rendering
 	 * @type {Object}
@@ -31,7 +25,6 @@ function NoblePlots(utils) {
 	var secondaryOffset = new Point(0, 325);
 	var mainPlot = {
 		offset: new Point(0, 0),
-		domain: new Point(0, timeperiod),
 		range: new Point(-0.1, 1.1),
 		unitPerTick: new Point(1000, .1),
 		pixelPerUnit: new Point(.0875, 200),
@@ -43,7 +36,6 @@ function NoblePlots(utils) {
 	};
 	var ikPlot = {
 		offset: secondaryOffset,
-		domain: new Point(0, timeperiod),
 		range: new Point(10, 60),
 		unitPerTick: new Point(1000, 10),
 		pixelPerUnit: new Point(.0875, 4.8),
@@ -54,7 +46,6 @@ function NoblePlots(utils) {
 	};
 	var inaPlot = {
 		offset: secondaryOffset,
-		domain: new Point(0, timeperiod),
 		range: new Point(-60, 0),
 		unitPerTick: new Point(1000, 5),
 		pixelPerUnit: new Point(.0875, 4),
@@ -65,7 +56,6 @@ function NoblePlots(utils) {
 	};
 	var ilPlot = {
 		offset: secondaryOffset,
-		domain: new Point(0, timeperiod),
 		range: new Point(-100, 100),
 		unitPerTick: new Point(1000, 20),
 		pixelPerUnit: new Point(.0875, 1.2),
@@ -81,16 +71,12 @@ function NoblePlots(utils) {
 	 * element and define the initial plots.
 	 */
 	function initialize(newSettings) {
-		var overwrite = newSettings || {};
-		for (var attrname in overwrite) { 
-			if (settings.defaults.hasOwnProperty(attrname)) {
-				settings.defaults[attrname] = overwrite[attrname];
-			} 
-		};
-
 		app = createPlotter(document.getElementById("plot"));
-		app.newPlot(mainPlot, "Noble");
-		app.newPlot(ilPlot, "NobleOther");
+		var initialDomain = { domain: new Point(0, 5000) };
+		var initialMain = utils.extend({}, mainPlot, initialDomain);
+		var initialSecond = utils.extend({}, ilPlot, initialDomain);
+		app.newPlot(initialMain, "Noble");
+		app.newPlot(initialSecond, "NobleOther");
 	}
 
 
@@ -179,20 +165,6 @@ function NoblePlots(utils) {
 	function arrayAtTime(currentTime, timestep, array) {
 		var index = Math.floor(currentTime/timestep);
 		return array[index];
-	}
-
-
-	function drawStimuliOnPlot(plotName) {
-		app.selectPlot(plotName);
-		var range = new Point(-0.1, 1.1);//app.settings.range;
-		app.ctx.strokeStyle = utils.colors.Black;
-		app.ctx.lineWidth = 3;
-		for (var i = 0; i < ns1; i++) {
-			var x = s1 + (i * period);
-			app.plotLine(new Point(x, range.x), new Point(x, range.y));
-		}
-		var lastPeriod = s1 + (period * ns1);
-		app.plotLine(new Point(s2 + lastPeriod, range.x), new Point(s2 + lastPeriod, range.y));
 	}
 
 
@@ -316,6 +288,56 @@ function NoblePlots(utils) {
 
 
 	/**
+	 * Plots should maintain a constant width and height. The function gets the
+	 * current pixels per unit from the selected plot. Then, it checks to see if
+	 * it was passed a new domain or range. If there is a new domain and range,
+	 * it updates the pixelPerUnit value. It then resizes the plot to fit the
+	 * dimensions of the new domain and range.
+	 * 
+	 * @param  {string} plotName - the name of the plot to alter
+	 * 
+	 * @param  {Point} domain - the domain that the plot will be resized around
+	 * 
+	 * @param  {Point} range - the range that the plot will be resized around
+	 */
+	function resizePlots(plotName, domain, range) {
+		var width = 437.5;
+		var height = 240;
+		
+		app.selectPlot(plotName);
+		var ppu = app.settings.pixelPerUnit;
+		var newDomain = app.settings.domain;
+		var newRange = app.settings.range;
+
+		if (!!domain) {
+			ppu.x = width / (domain.y - domain.x);
+			newDomain = domain;
+		}
+		if (!!range) {
+			ppu.y = height / (range.y - range.x);
+			newRange = range;
+		}
+
+		var resizeObj = {
+			pixelPerUnit: ppu,
+			domain: newDomain,
+			range: newRange,
+		}
+		app.editPlot(plotName, resizeObj, true, true);
+	}
+
+
+	/**
+	 * Resize the domain of the plot based on the 
+	 * @param  {Point} domain - the new domain of the app
+	 */
+	function resizeDomain(domain) {
+		resizePlots("Noble", domain);
+		resizePlots("NobleOther", domain);
+	}
+
+
+	/**
 	 * This is the api that is returned by NoblePlots. It contains the
 	 * properties and functions that the user can interact with.
 	 */
@@ -325,6 +347,7 @@ function NoblePlots(utils) {
 		setSecondaryPlot: setSecondaryPlot,
 		drawPlots: drawPlots,
 		drawOverlay: drawOverlay,
+		resizeDomain: resizeDomain,
 	}
 	return api;
 });

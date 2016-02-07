@@ -4,6 +4,32 @@
 define(function NobleUtilities() {
 	"use strict";
 	
+
+	/**
+	 * This function creates a new object from all of the other objects
+	 * specified in the arguments. Based on the assign polyfill: 
+	 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+	 * 
+	 * @param  {Object} target - the object we want to add properties to.
+	 * 
+	 * @return {Object}        - an object with the properties added to it.
+	 */
+	function extend(target) {
+		var output = Object(target);
+	      for (var index = 1; index < arguments.length; index++) {
+	        var source = arguments[index];
+	        if (source !== undefined && source !== null) {
+	          for (var nextKey in source) {
+	            if (source.hasOwnProperty(nextKey)) {
+	              output[nextKey] = source[nextKey];
+	            }
+	          }
+	        }
+	      }
+	      return output;
+	}
+
+
 	/**
 	 * The heaviside function. Return 0 if the expression is negative
 	 * and 1 otherwise
@@ -120,6 +146,7 @@ define(function NobleUtilities() {
 		checkBool: checkBool,
 		normalize: normalize,
 		colors: Colors,
+		extend: extend,
 	};
 	return api;
 });

@@ -19,7 +19,6 @@ function NobleMediator(pointBuffer) {
 	/**
 	 * This function performs all of the steps required to initialize the
 	 * components that the mediator will use.
-	 * @return {[type]} [description]
 	 */
 	function initialize(pcalculator, pplots) {
 		calculator = pcalculator;
@@ -27,7 +26,6 @@ function NobleMediator(pointBuffer) {
 
 		pointBuffer.calculate(calculator, numCalculations, numPoints);
 		points = pointBuffer.variables;
-		console.log(points);
 		overlay = calculator.getStimuliLocations();
 
 		requestAnimationFrame(update)
@@ -44,7 +42,11 @@ function NobleMediator(pointBuffer) {
 		calculator.reset(settings);
 		pointBuffer.calculate(calculator, numCalculations, numPoints, pointBuffer.AVERAGE_FUNCTION);
 		points = pointBuffer.variables;
-		overlay = calculator.getStimuliLocations();
+
+		var stimuli = calculator.getStimuliLocations();
+		overlay = stimuli;
+		var domain = new Point(0, stimuli.s2 + 650);
+		plots.resizeDomain(domain);
 	}
 
 
