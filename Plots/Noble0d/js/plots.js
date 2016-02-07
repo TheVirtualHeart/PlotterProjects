@@ -180,7 +180,8 @@ function NoblePlots(utils) {
 
 		app.selectPlot("Noble");
 		if (displayV) {
-			timestep = timeperiod / values.v.length
+			timestep = timeperiod / values.v.length;
+			console.log(timestep);
 			app.ctx.strokeStyle = utils.colors.Red;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
@@ -312,6 +313,7 @@ function NoblePlots(utils) {
 		if (!!domain) {
 			ppu.x = width / (domain.y - domain.x);
 			newDomain = domain;
+			timeperiod = domain.y;
 		}
 		if (!!range) {
 			ppu.y = height / (range.y - range.x);
@@ -323,17 +325,19 @@ function NoblePlots(utils) {
 			domain: newDomain,
 			range: newRange,
 		}
+
 		app.editPlot(plotName, resizeObj, true, true);
 	}
 
 
 	/**
-	 * Resize the domain of the plot based on the 
+	 * Resize the domain of the plot and update the time period.
 	 * @param  {Point} domain - the new domain of the app
 	 */
 	function resizeDomain(domain) {
 		resizePlots("Noble", domain);
 		resizePlots("NobleOther", domain);
+
 	}
 
 

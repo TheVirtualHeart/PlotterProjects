@@ -13,8 +13,9 @@ function NobleMediator(pointBuffer) {
 	var points = [];
 	var overlay = {};
 	var numPoints = 1500;
-	var numCalculations = 500000;
 
+
+	var numCalculations = 500000;
 
 	/**
 	 * This function performs all of the steps required to initialize the
@@ -24,11 +25,24 @@ function NobleMediator(pointBuffer) {
 		calculator = pcalculator;
 		plots = pplots;
 
-		pointBuffer.calculate(calculator, numCalculations, numPoints);
+		pointBuffer.calculate(calculator, numCalculations, numPoints, pointBuffer.AVERAGE_FUNCTION);
 		points = pointBuffer.variables;
 		overlay = calculator.getStimuliLocations();
 
 		requestAnimationFrame(update)
+	}
+
+
+	/**
+	 * A utility function for plotting the new bounds of the plot.
+	 * @param  {number} s1  - the length of time per s1 period.
+	 * @param  {number} ns1 - the number of s1 periods.
+	 * @param  {number} s2  - the amount of time after the last s1 period
+	 * before this final calculation.
+	 * @return {number}     - the new bounds of the plot.
+	 */
+	function calculatePlotBounds(s1, ns1, s2) {
+		return (s1 * ns1) + s2;
 	}
 
 
@@ -40,13 +54,27 @@ function NobleMediator(pointBuffer) {
 	 */
 	function updateGraph(settings) {
 		calculator.reset(settings);
-		pointBuffer.calculate(calculator, numCalculations, numPoints, pointBuffer.AVERAGE_FUNCTION);
+
+		var bounds = calculatePlotBounds(settings.period, settings.ns1, settings.s2);
+		console.log(bounds);
+
+		var newDomain = new Point(0, bounds + 650);
+		plots.resizeDomain(newDomain);
+
+
+		var calculations = (bounds + 650) * 100;
+		console.log(calculations);
+
+
+		//var numCalculations = (settings.s2 + 650) * 100 / numPoints;
+		pointBuffer.calculate(calculator, calculations, numPoints, pointBuffer.AVERAGE_FUNCTION);
 		points = pointBuffer.variables;
+		console.log(points);
 
 		var stimuli = calculator.getStimuliLocations();
 		overlay = stimuli;
-		var domain = new Point(0, stimuli.s2 + 650);
-		plots.resizeDomain(domain);
+		//var domain = new Point(0, stimuli.s2 + 650);
+		//plots.resizeDomain(domain);
 	}
 
 
