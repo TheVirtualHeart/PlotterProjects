@@ -30,7 +30,7 @@ function initialize(plots, calculator, mediator, form) {
 		stimdur: 2.0,
 		gna1: 400.0,
 		gna2: 0.14,
-		s1: 250,
+		s1Start: 0,
 		s2: 1000,
 		ns1: 4,
 		period: 500.0,

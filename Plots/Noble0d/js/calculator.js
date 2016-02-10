@@ -34,7 +34,7 @@ function NobleCalculator(utils) {
 	var stimdur;
 	var gna1;
 	var gna2;
-	var s1;
+	var s1Start;
 	var s2;
 	var ns1;
 	var period;
@@ -74,7 +74,7 @@ function NobleCalculator(utils) {
 		stimdur: 2.0,
 		gna1: 400.0,
 		gna2: 0.14,
-		s1: 250,
+		s1Start: 250,
 		s2: 2000,
 		ns1: 4,
 		period: 500.0,
@@ -132,7 +132,7 @@ function NobleCalculator(utils) {
 		stimdur = settings.initial.stimdur;
 		gna1 = settings.initial.gna1;
 		gna2 = settings.initial.gna2;
-		s1 = settings.initial.s1;
+		s1Start = settings.initial.s1Start;
 		s2 = settings.initial.s2;
 		ns1 = settings.initial.ns1;
 		period = settings.initial.period;

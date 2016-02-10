@@ -311,7 +311,6 @@ function NoblePlots(utils) {
 	/**
 	 * Renders the secondary plot with plotter
 	 * @param  {Object} values - an object containing arrays of values to display
-	 * @return {[type]}        [description]
 	 */
 	function drawSecondaryPlot(values) {
 
@@ -374,14 +373,6 @@ function NoblePlots(utils) {
 			app.ctx.strokeStyle = utils.colors.Black;
 			app.ctx.lineWidth = 1;
 			app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
-
-			// if (secondaryPlot !== null) {
-			// 	app.selectPlot("NobleOther", false);
-			// 	range = app.settings.range;
-			// 	app.ctx.strokeStyle = utils.colors.Black;
-			// 	app.ctx.lineWidth = 1;
-			// 	app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
-			// }
 		}
 
 		// draw the s2 overlays
@@ -391,14 +382,6 @@ function NoblePlots(utils) {
 		app.ctx.strokeStyle = utils.colors.Black;
 		app.ctx.lineWidth = 1;
 		app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
-
-		// if (secondaryPlot !== null) {
-		// 	app.selectPlot("NobleOther", false);
-		// 	range = app.settings.range;
-		// 	app.ctx.strokeStyle = utils.colors.Black;
-		// 	app.ctx.lineWidth = 1;
-		// 	app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
-		// }
 	}
 
 
