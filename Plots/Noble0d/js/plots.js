@@ -23,6 +23,7 @@ function NoblePlots(utils) {
 	 * @type {Object}
 	 */
 	var secondaryOffset = new Point(0, 325);
+
 	var mainPlot = {
 		offset: new Point(0, 0),
 		range: new Point(-0.1, 1.1),
@@ -59,7 +60,7 @@ function NoblePlots(utils) {
 		labelFrequency: new Point(1, 1),
 		xAxis: "Time (ms)",
 		yAxis: "il",
-		labelPrecision: new Point(0, 0),
+		//labelPrecision: new Point(0, 0),
 	};
 
 
@@ -439,7 +440,7 @@ function NoblePlots(utils) {
 			range: newRange,
 		}
 
-		app.editPlot(plotName, resizeObj, true, false);
+		app.editPlot(plotName, resizeObj, false, false);
 	}
 
 
