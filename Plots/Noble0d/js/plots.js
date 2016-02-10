@@ -38,7 +38,6 @@ function NoblePlots(utils) {
 		offset: secondaryOffset,
 		range: new Point(10, 60),
 		unitPerTick: new Point(1000, 10),
-		pixelPerUnit: new Point(.0875, 4.8),
 		labelFrequency: new Point(1, 1),
 		xAxis: "Time (ms)",
 		yAxis: "ik",
@@ -48,7 +47,6 @@ function NoblePlots(utils) {
 		offset: secondaryOffset,
 		range: new Point(-60, 0),
 		unitPerTick: new Point(1000, 5),
-		pixelPerUnit: new Point(.0875, 4),
 		labelFrequency: new Point(1, 1),
 		xAxis: "Time (ms)",
 		yAxis: "ina",
@@ -58,7 +56,6 @@ function NoblePlots(utils) {
 		offset: secondaryOffset,
 		range: new Point(-100, 100),
 		unitPerTick: new Point(1000, 20),
-		pixelPerUnit: new Point(.0875, 1.2),
 		labelFrequency: new Point(1, 1),
 		xAxis: "Time (ms)",
 		yAxis: "il",
@@ -72,9 +69,24 @@ function NoblePlots(utils) {
 	 */
 	function initialize(newSettings) {
 		app = createPlotter(document.getElementById("plot"));
-		var initialDomain = { domain: new Point(0, 5000) };
-		var initialMain = utils.extend({}, mainPlot, initialDomain);
-		var initialSecond = utils.extend({}, ilPlot, initialDomain);
+
+
+		/**
+		 * @todo  These hardcoded values should be replaced
+		 * @type {Object}
+		 */
+		var mainDomain = { 
+			domain: new Point(0, 3650),
+			pixelPerUnit: new Point(.1199, 200),
+		};
+		var secondDomain = { 
+			domain: new Point(0, 3650),
+			pixelPerUnit: new Point(.1199, 1.2),
+		};
+
+
+		var initialMain = utils.extend({}, mainPlot, mainDomain);
+		var initialSecond = utils.extend({}, ilPlot, secondDomain);
 		app.newPlot(initialMain, "Noble");
 		app.newPlot(initialSecond, "NobleOther");
 	}
@@ -90,6 +102,7 @@ function NoblePlots(utils) {
 		switch(plotName) {
 			case "ik":
 				if (secondaryPlot !== "ik") {
+					// In this section, update the ppu
 					secondaryPlot = "ik";
 					app.editPlot("NobleOther", ikPlot, true, true);
 				}
@@ -168,20 +181,16 @@ function NoblePlots(utils) {
 	}
 
 
-	/**
-	 * Update the plots with the given values.
-	 * 
-	 * @param  {Object} values - an object containing the values that will be
-	 * plotted.
+	/** 
+	 * Renders the main plot to plotter
+	 * @param  {Object} values - an object containing arrays of values to
+	 * display
 	 */
-	function drawPlots(values) {
-
+	function drawMainPlot(values) {
 		var timestep;
-
 		app.selectPlot("Noble");
 		if (displayV) {
 			timestep = timeperiod / values.v.length;
-			console.log(timestep);
 			app.ctx.strokeStyle = utils.colors.Red;
 			app.ctx.lineWidth = 3;
 			app.plotFunction(function(x) {
@@ -212,6 +221,74 @@ function NoblePlots(utils) {
 				return arrayAtTime(x, timestep, values.n);
 			}, true, timestep, 0, timeperiod);
 		}
+	}
+
+
+	/**
+	 * Draw the Ik value on the Secondary Plot
+	 * @param  {Object} values - an object containing the ik points to plot.
+	 */
+	function drawIkPlot(values) {
+		var timestep = timeperiod / values.ik.length;
+		resizePlots("NobleOther", null, ikPlot.range);
+
+		app.selectPlot("NobleOther");
+		app.ctx.strokeStyle = utils.colors.Yellow;
+		app.ctx.lineWidth = 3;
+		app.plotFunction(function(x) {
+			return arrayAtTime(x, timestep, values.ik);
+		}, true, timestep, 0, timeperiod);
+	}
+
+
+	/**
+	 * Draw the Ina value on the Secondary Plot
+	 * @param  {Object} values - an object containing the ina points to plot.
+	 */
+	function drawInaPlot(values) {
+		var timestep = timeperiod / values.ina.length;
+		resizePlots("NobleOther", null, inaPlot.range);
+
+		app.selectPlot("NobleOther");
+		app.ctx.strokeStyle = utils.colors.Black;
+		app.ctx.lineWidth = 3;
+		app.plotFunction(function(x) {
+			return arrayAtTime(x, timestep, values.ina);
+		}, true, timestep, 0, timeperiod);
+	}
+
+
+	/**
+	 * Draw the Il value on the Secondary Plot
+	 * @param  {Object} values - an object containing the il points to plot.
+	 */
+	function drawIlPlot(values) {
+		var timestep = timeperiod / values.il.length;
+		resizePlots("NobleOther", null, ilPlot.range);
+
+		app.selectPlot("NobleOther");
+		app.ctx.strokeStyle = utils.colors.Aqua;
+		app.ctx.lineWidth = 3;
+		app.plotFunction(function(x) {
+			return arrayAtTime(x, timestep, values.il);
+		}, true, timestep, 0, timeperiod);
+	}
+
+
+	/**
+	 * Clear the NobleOther plot
+	 */
+	function clearSecondaryPlot() {
+		app.selectPlot("NobleOther");
+	}
+
+
+	/**
+	 * Renders the secondary plot with plotter
+	 * @param  {Object} values - an object containing arrays of values to display
+	 * @return {[type]}        [description]
+	 */
+	function drawSecondaryPlot(values) {
 
 		app.selectPlot("NobleOther");
 		switch(secondaryPlot) {
@@ -244,47 +321,59 @@ function NoblePlots(utils) {
 
 
 	/**
+	 * Update the plots with the given values.
+	 * 
+	 * @param  {Object} values - an object containing the values that will be
+	 * plotted.
+	 */
+	function drawPlots(values) {
+		drawMainPlot(values);
+		drawSecondaryPlot(values);
+	}
+
+
+	/**
 	 * Draw the Overlay on the plot
 	 * @return {[type]} [description]
 	 */
-	function drawOverlay(values) {
+	function drawOverlay(plotName, values) {
 		var xLoc;
 		var range;
 
 		// draw the s1 overlays
 		for (var i = 0; i < values.s1.length; i++) {
 
-			app.selectPlot("Noble", false);
+			app.selectPlot(plotName, false);
 			xLoc = values.s1[i];
 			range = app.settings.range;
 			app.ctx.strokeStyle = utils.colors.Black;
 			app.ctx.lineWidth = 1;
 			app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
 
-			if (secondaryPlot !== null) {
-				app.selectPlot("NobleOther", false);
-				range = app.settings.range;
-				app.ctx.strokeStyle = utils.colors.Black;
-				app.ctx.lineWidth = 1;
-				app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
-			}
+			// if (secondaryPlot !== null) {
+			// 	app.selectPlot("NobleOther", false);
+			// 	range = app.settings.range;
+			// 	app.ctx.strokeStyle = utils.colors.Black;
+			// 	app.ctx.lineWidth = 1;
+			// 	app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
+			// }
 		}
 
 		// draw the s2 overlays
-		app.selectPlot("Noble", false);
+		app.selectPlot(plotName, false);
 		xLoc = values.s2;
 		range = app.settings.range;
 		app.ctx.strokeStyle = utils.colors.Black;
 		app.ctx.lineWidth = 1;
 		app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
 
-		if (secondaryPlot !== null) {
-			app.selectPlot("NobleOther", false);
-			range = app.settings.range;
-			app.ctx.strokeStyle = utils.colors.Black;
-			app.ctx.lineWidth = 1;
-			app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
-		}
+		// if (secondaryPlot !== null) {
+		// 	app.selectPlot("NobleOther", false);
+		// 	range = app.settings.range;
+		// 	app.ctx.strokeStyle = utils.colors.Black;
+		// 	app.ctx.lineWidth = 1;
+		// 	app.plotLine(new Point(xLoc, range.x), new Point(xLoc, range.y));
+		// }
 	}
 
 
@@ -326,13 +415,13 @@ function NoblePlots(utils) {
 			range: newRange,
 		}
 
-		app.editPlot(plotName, resizeObj, true, true);
+		app.editPlot(plotName, resizeObj, true, false);
 	}
 
 
 	/**
 	 * Resize the domain of the plot and update the time period.
-	 * @param  {Point} domain - the new domain of the app
+	 * @param  {number} domain - the new domain of the app
 	 */
 	function resizeDomain(domain) {
 		resizePlots("Noble", domain);
@@ -340,6 +429,10 @@ function NoblePlots(utils) {
 
 	}
 
+
+	function clearPlots() {
+		app.clearPlot(true);
+	}
 
 	/**
 	 * This is the api that is returned by NoblePlots. It contains the
@@ -350,7 +443,13 @@ function NoblePlots(utils) {
 		toggleDisplay: toggleDisplay,
 		setSecondaryPlot: setSecondaryPlot,
 		drawPlots: drawPlots,
+		drawMainPlot: drawMainPlot,
+		drawIkPlot: drawIkPlot,
+		drawInaPlot: drawInaPlot,
+		drawIlPlot: drawIlPlot,
 		drawOverlay: drawOverlay,
+		clearSecondaryPlot: clearSecondaryPlot,
+		clearPlots: clearPlots,
 		resizeDomain: resizeDomain,
 	}
 	return api;

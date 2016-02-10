@@ -14,6 +14,8 @@ function NobleMediator(pointBuffer) {
 	var overlay = {};
 	var numPoints = 1500;
 
+	var secondaryPlot = null;
+
 
 	var numCalculations = 500000;
 
@@ -56,25 +58,22 @@ function NobleMediator(pointBuffer) {
 		calculator.reset(settings);
 
 		var bounds = calculatePlotBounds(settings.period, settings.ns1, settings.s2);
-		console.log(bounds);
 
 		var newDomain = new Point(0, bounds + 650);
 		plots.resizeDomain(newDomain);
 
 
+		/**
+		 * @todo - make this dynamic. It is hard coded and ugly
+		 */
 		var calculations = (bounds + 650) * 100;
-		console.log(calculations);
 
 
-		//var numCalculations = (settings.s2 + 650) * 100 / numPoints;
 		pointBuffer.calculate(calculator, calculations, numPoints, pointBuffer.AVERAGE_FUNCTION);
 		points = pointBuffer.variables;
-		console.log(points);
 
 		var stimuli = calculator.getStimuliLocations();
 		overlay = stimuli;
-		//var domain = new Point(0, stimuli.s2 + 650);
-		//plots.resizeDomain(domain);
 	}
 
 
@@ -83,8 +82,41 @@ function NobleMediator(pointBuffer) {
 	 * 
 	 * @param {String} value - the name of the secondary plot to display.
 	 */
-	function setSecondaryPlot(value) {
-		plots.setSecondaryPlot(value);
+	function setSecondaryPlot(plotName) {
+		switch (plotName) {
+			case "il":
+			case "ina":
+			case "ik":
+				secondaryPlot = plotName;
+				break;
+			default:
+				secondaryPlot = null;
+		}
+	}
+
+
+	/**
+	 * 
+	 */
+	function drawMain(points) {
+		plots.drawMainPlot(points);
+	}
+
+
+	function drawSecondaryPlot(points, plotName) {
+		switch (plotName) {
+			case "il":
+				plots.drawIlPlot(points);
+				break;
+			case "ina":
+				plots.drawInaPlot(points);
+				break;
+			case "ik":
+				plots.drawIkPlot(points);
+				break;
+			default:
+				plots.clearSecondaryPlot();
+		}
 	}
 
 
@@ -113,11 +145,16 @@ function NobleMediator(pointBuffer) {
 	 * requestAnimationFrame.
 	 */
 	function update() {
-		plots.drawPlots(points);
-		if (displayOverlay) {
-			plots.drawOverlay(overlay);
-		}
 		requestAnimationFrame(update);
+		drawMain(points);
+		drawSecondaryPlot(points, secondaryPlot);
+		if (displayOverlay) {
+			plots.drawOverlay("Noble", overlay);
+			if (!!secondaryPlot) {
+				plots.drawOverlay("NobleOther", overlay);
+			}
+		}
+		//plots.clearPlots();
 	}
 
 
