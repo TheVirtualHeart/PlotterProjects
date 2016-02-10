@@ -37,7 +37,7 @@ function NobleCalculator(utils) {
 	var s1Start;
 	var s2;
 	var ns1;
-	var period;
+	var s1;
 	var timestep;
 
 
@@ -135,7 +135,7 @@ function NobleCalculator(utils) {
 		s1Start = settings.initial.s1Start;
 		s2 = settings.initial.s2;
 		ns1 = settings.initial.ns1;
-		period = settings.initial.period;
+		s1 = settings.initial.s1;
 		timestep = settings.initial.timestep;
 
 		vOld = settings.initial.vOld;
@@ -181,9 +181,9 @@ function NobleCalculator(utils) {
 		var stimuli = {};
 		stimuli.s1 = [];
 		for (var i = 0; i < ns1; i++) {
-			stimuli.s1.push(i * period + s1);
+			stimuli.s1.push(i * s1 + s1Start);
 		}
-		var lastPeriod = s1 + (period * (ns1 - 1));
+		var lastPeriod = s1Start + (s1 * (ns1 - 1));
 		stimuli.s2 = lastPeriod + s2;
 		return stimuli;
 	}

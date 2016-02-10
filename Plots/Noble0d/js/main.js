@@ -33,7 +33,7 @@ function initialize(plots, calculator, mediator, form) {
 		s1Start: 0,
 		s2: 1000,
 		ns1: 4,
-		period: 500.0,
+		s1: 500.0,
 		timestep: 0.01,
 	};
 		

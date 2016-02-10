@@ -27,7 +27,7 @@ function NobleForm(utils) {
 		gna2: 		0.14,
 		ns1: 		4,
 		s2: 		2000,
-		period: 	500
+		s1: 		500
 	};
 
 
@@ -68,7 +68,7 @@ function NobleForm(utils) {
 			gna2: 			document.getElementsByName("gna2")[0],
 			ns1: 			document.getElementsByName("ns1")[0],
 			s2: 			document.getElementsByName("s2")[0],
-			period: 		document.getElementsByName("period")[0],
+			s1: 			document.getElementsByName("s1")[0],
 			updateButton: 	document.getElementById("update"),
 			resetButton: 	document.getElementById("default"),
 			printButton: 	document.getElementById("print"),
@@ -83,7 +83,7 @@ function NobleForm(utils) {
 	function setControlValues(values) {
 		controls.s2.value = values.s2;
 		controls.ns1.value = values.ns1;
-		controls.period.value = values.period;
+		controls.s1.value = values.s1;
 		controls.gna1.value = values.gna1;
 		controls.gna2.value = values.gna2;
 		controls.gkMod.value = values.gkMod;
@@ -102,7 +102,7 @@ function NobleForm(utils) {
 		controls.gna2.addEventListener("change", updatePage);
 		controls.ns1.addEventListener("change", updatePage);
 		controls.s2.addEventListener("change", updatePage);
-		controls.period.addEventListener("change", updatePage);
+		controls.s1.addEventListener("change", updatePage);
 		controls.gan.addEventListener("change", updatePage);
 		controls.gkMod.addEventListener("change", updatePage);
 
@@ -135,7 +135,7 @@ function NobleForm(utils) {
 		controls.gna2.value 	= settings.defaults.gna2;
 		controls.ns1.value 		= settings.defaults.ns1;                        
 		controls.s2.value 		= settings.defaults.s2;
-		controls.period.value 	= settings.defaults.period;
+		controls.s1.value 		= settings.defaults.s1;
 	}
 
 
@@ -209,7 +209,7 @@ function NobleForm(utils) {
 			gan: 	utils.numericValue(controls.gan.value),
 			ns1:  	utils.numericValue(controls.ns1.value),
 			s2:   	utils.numericValue(controls.s2.value),
-			period: utils.numericValue(controls.period.value),
+			s1: 	utils.numericValue(controls.s1.value),
 		};
 		return settings;
 	}
