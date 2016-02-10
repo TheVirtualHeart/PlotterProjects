@@ -85,9 +85,16 @@ function NobleMediator(pointBuffer) {
 	function setSecondaryPlot(plotName) {
 		switch (plotName) {
 			case "il":
+				secondaryPlot = plotName;
+				plots.setIlPlot();
+				break;
 			case "ina":
+				secondaryPlot = plotName;
+				plots.setInaPlot();
+				break;
 			case "ik":
 				secondaryPlot = plotName;
+				plots.setIkPlot();
 				break;
 			default:
 				secondaryPlot = null;

@@ -276,6 +276,30 @@ function NoblePlots(utils) {
 
 
 	/**
+	 * Establish the secondary plot with settings for the ik plot
+	 */
+	function setIkPlot() {
+		app.editPlot("NobleOther", ikPlot, true, true);
+	}
+
+
+	/**
+	 * Establish the secondary plot with settings for the il plot
+	 */
+	function setIlPlot() {
+		app.editPlot("NobleOther", ilPlot, true, true);
+	}
+
+
+	/**
+	 * Establish the secondary plot with settings for the ina plot
+	 */
+	function setInaPlot() {
+		app.editPlot("NobleOther", inaPlot, true, true);
+	}
+
+
+	/**
 	 * Clear the NobleOther plot
 	 */
 	function clearSecondaryPlot() {
@@ -442,6 +466,9 @@ function NoblePlots(utils) {
 		initialize: initialize,
 		toggleDisplay: toggleDisplay,
 		setSecondaryPlot: setSecondaryPlot,
+		setIkPlot: setIkPlot,
+		setInaPlot: setInaPlot,
+		setIlPlot: setIlPlot,
 		drawPlots: drawPlots,
 		drawMainPlot: drawMainPlot,
 		drawIkPlot: drawIkPlot,
