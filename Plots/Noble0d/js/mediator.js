@@ -29,6 +29,7 @@ function NobleMediator(pointBuffer) {
 
 		pointBuffer.calculate(calculator, numCalculations, numPoints, pointBuffer.AVERAGE_FUNCTION);
 		points = pointBuffer.variables;
+		//console.log(points);
 		overlay = calculator.getStimuliLocations();
 
 		requestAnimationFrame(update)
@@ -156,9 +157,9 @@ function NobleMediator(pointBuffer) {
 		drawMain(points);
 		drawSecondaryPlot(points, secondaryPlot);
 		if (displayOverlay) {
-			plots.drawOverlay("Noble", overlay);
+			plots.drawS1S2Overlay("Noble", overlay);
 			if (!!secondaryPlot) {
-				plots.drawOverlay("NobleOther", overlay);
+				plots.drawS1S2Overlay("NobleOther", overlay);
 			}
 		}
 		//plots.clearPlots();

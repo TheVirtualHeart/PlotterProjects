@@ -360,7 +360,7 @@ function NoblePlots(utils) {
 	 * Draw the Overlay on the plot
 	 * @return {[type]} [description]
 	 */
-	function drawOverlay(plotName, values) {
+	function drawS1S2Overlay(plotName, values) {
 		var xLoc;
 		var range;
 
@@ -403,7 +403,6 @@ function NoblePlots(utils) {
 		var height = 240;
 		
 		app.selectPlot(plotName);
-		//console.log("blork");
 		var ppu = app.settings.pixelPerUnit;
 		var newDomain = app.settings.domain;
 		var newRange = app.settings.range;
@@ -424,7 +423,7 @@ function NoblePlots(utils) {
 			range: newRange,
 		}
 
-		app.editPlot(plotName, resizeObj, true, true);
+		app.editPlot(plotName, resizeObj, false, false);
 	}
 
 
@@ -459,7 +458,7 @@ function NoblePlots(utils) {
 		drawIkPlot: drawIkPlot,
 		drawInaPlot: drawInaPlot,
 		drawIlPlot: drawIlPlot,
-		drawOverlay: drawOverlay,
+		drawS1S2Overlay: drawS1S2Overlay,
 		clearSecondaryPlot: clearSecondaryPlot,
 		clearPlots: clearPlots,
 		resizeDomain: resizeDomain,
