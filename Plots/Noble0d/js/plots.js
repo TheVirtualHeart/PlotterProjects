@@ -403,6 +403,7 @@ function NoblePlots(utils) {
 		var height = 240;
 		
 		app.selectPlot(plotName);
+		//console.log("blork");
 		var ppu = app.settings.pixelPerUnit;
 		var newDomain = app.settings.domain;
 		var newRange = app.settings.range;
@@ -423,7 +424,7 @@ function NoblePlots(utils) {
 			range: newRange,
 		}
 
-		app.editPlot(plotName, resizeObj, false, false);
+		app.editPlot(plotName, resizeObj, true, true);
 	}
 
 

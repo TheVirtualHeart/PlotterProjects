@@ -57,7 +57,7 @@ function NobleMediator(pointBuffer) {
 	function updateGraph(settings) {
 		calculator.reset(settings);
 
-		var bounds = calculatePlotBounds(settings.period, settings.ns1, settings.s2);
+		var bounds = calculatePlotBounds(settings.s1, settings.ns1, settings.s2);
 
 		var newDomain = new Point(0, bounds + 650);
 		plots.resizeDomain(newDomain);
