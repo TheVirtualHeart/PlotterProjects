@@ -119,7 +119,7 @@ define(function NobleUtilities() {
 	 * graph.
 	 */
 	var Colors  = {
-		blah: "blah",
+        Blue: "#0099FF",
 		Aqua: "rgb(29, 239, 242)",
 		Yellow: "rgb(254, 238, 0)",
 		Black: "rgb(0, 0, 0)",

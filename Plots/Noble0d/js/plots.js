@@ -357,8 +357,41 @@ function NoblePlots(utils) {
 
 
 	/**
+	 * draw the APD values on the plot
+	 */
+	function drawAPD(plotName, values) {
+		for (var i = 0; i < values.length; i++) {
+
+			app.selectPlot(plotName, false);
+			// xLoc = values[i][0].x;
+			// range = app.settings.range;
+			app.ctx.strokeStyle = utils.colors.Blue;
+			app.ctx.lineWidth = 3;
+			app.plotLine(values[i][0], values[i][1]);
+		}
+        //debugger;
+	}
+    
+    
+   /**
+	 * draw the APD values on the plot
+	 */
+	function drawDI(plotName, values) {
+		for (var i = 0; i < values.length; i++) {
+
+			app.selectPlot(plotName, false);
+			// xLoc = values[i][0].x;
+			// range = app.settings.range;
+			app.ctx.strokeStyle = utils.colors.Orange;
+			app.ctx.lineWidth = 3;
+			app.plotLine(values[i][0], values[i][1]);
+		}
+        //debugger;
+	}
+
+
+	/**
 	 * Draw the Overlay on the plot
-	 * @return {[type]} [description]
 	 */
 	function drawS1S2Overlay(plotName, values) {
 		var xLoc;
@@ -459,6 +492,8 @@ function NoblePlots(utils) {
 		drawInaPlot: drawInaPlot,
 		drawIlPlot: drawIlPlot,
 		drawS1S2Overlay: drawS1S2Overlay,
+		drawAPD: drawAPD, 
+        drawDI: drawDI,
 		clearSecondaryPlot: clearSecondaryPlot,
 		clearPlots: clearPlots,
 		resizeDomain: resizeDomain,

@@ -29,7 +29,6 @@ function NobleMediator(pointBuffer) {
 
 		pointBuffer.calculate(calculator, numCalculations, numPoints, pointBuffer.AVERAGE_FUNCTION);
 		points = pointBuffer.variables;
-		//console.log(points);
 		overlay = calculator.getStimuliLocations();
 
 		requestAnimationFrame(update)
@@ -148,15 +147,102 @@ function NobleMediator(pointBuffer) {
 	}
 
 
+    /**
+     * Draws the APD on the given plot. This function combines points from the
+     * uptimes and downtimes and creates the coordinates for a line that spans
+     * the length of when the voltage is above the threshhold.
+     * 
+     * @param {string} name - the name of the plot that we will draw the APD on
+     * @param {array} upTimes - an array containing a list of points where the 
+     * voltage crossed above the threshold
+     * @param {array} downTimes - an array containing a list of points where
+     * the voltage crossed below the threshold
+     */
+	function drawAPD(name, upTimes, downTimes) {
+        
+        /*
+         * Find out where the first uptime-downtime stretch occurs
+         * in the arrays
+         */
+        var foundDown = false,
+            downStart = 0;   
+        while (downStart < downTimes.length && !foundDown) {
+            if (downTimes[downStart].x < upTimes[0].x) {
+                downStart++;
+            } else {
+                foundDown = true;
+            }
+        }
+        
+        /*
+         * create lines from the corresponding array from each point
+         * ignore any unmatched points 
+         */
+        var pointArray = [];
+        for (var i = 0; i < downTimes.length - downStart; i++) {
+            pointArray[i] = [upTimes[i], downTimes[i + downStart]];
+        }
+        
+        plots.drawAPD(name, pointArray);
+        
+	}
+    
+    
+    /**
+     * Draws the DI on the given plot. This function combines points from the
+     * uptimes and downtimes and creates the coordinates for a line that spans
+     * the length of when the voltage is below the threshhold.
+     * 
+     * @param {string} name - the name of the plot that we will draw the APD on
+     * @param {array} upTimes - an array containing a list of points where the 
+     * voltage crossed above the threshold
+     * @param {array} downTimes - an array containing a list of points where
+     * the voltage crossed below the threshold
+     */
+	function drawDI(name, upTimes, downTimes) {
+        
+        /*
+         * Find out where the first uptime-downtime stretch occurs
+         * in the arrays
+         */
+        var foundUp = false,
+            upStart = 0;   
+        while (upStart < upTimes.length && !foundUp) {
+            if (upTimes[upStart].x < downTimes[0].x) {
+                upStart++;
+            } else {
+                foundUp = true;
+            }
+        }
+        
+        /*
+         * create lines from the corresponding array from each point
+         * ignore any unmatched points 
+         */
+        var pointArray = [];
+        for (var i = 0; i < upTimes.length - upStart; i++) {
+            pointArray[i] = [downTimes[i], upTimes[i + upStart]];
+        }
+        
+        plots.drawDI(name, pointArray);
+        
+	}
+
+
 	/** 
 	 * Update the plots with the given point values. Recursively call self using
 	 * requestAnimationFrame.
 	 */
 	function update() {
 		requestAnimationFrame(update);
+        
+        if (displayOverlay) {
+        }
 		drawMain(points);
 		drawSecondaryPlot(points, secondaryPlot);
 		if (displayOverlay) {
+            drawAPD("Noble", points.upTimes, points.downTimes);
+            drawDI("Noble", points.upTimes, points.downTimes);
 			plots.drawS1S2Overlay("Noble", overlay);
 			if (!!secondaryPlot) {
 				plots.drawS1S2Overlay("NobleOther", overlay);

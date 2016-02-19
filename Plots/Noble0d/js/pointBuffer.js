@@ -90,10 +90,14 @@ function NoblePointBuffer(utils) {
 
 				// add any uptimes or downtimes
 				if (!!points.upTime) {
-					upTimes.push(points.upTime);
+					var pointX = i * calculator.timestep;
+					var pointY = utils.normalize(points.v, new Point(-160, 40));
+					variables.upTimes.push(new Point(pointX, pointY));
 				}
 				if (!!points.downTime) {
-					downTimes.push(points.downTime);
+					var pointX = i * calculator.timestep;
+					var pointY = utils.normalize(points.v, new Point(-160, 40));
+					variables.downTimes.push(new Point(pointX, pointY));
 				}
 
 				variables.v.push(utils.normalize(points.v, new Point(-160, 40)));
@@ -136,16 +140,23 @@ function NoblePointBuffer(utils) {
 		var inaAvg 	= points.ina;
 		var ilAvg 	= points.il;
 
+		console.log(calculator);
+		
 		for (var i = 0; i < iterations; i++) {
 			calculator.calculateNext();
 			points 	= calculator.getPoints();
 
 			// add any uptimes or downtimes
 			if (!!points.upTime) {
-				variables.upTimes.push(points.upTime);
+				var pointX = i * calculator.timestep;
+				var pointY = utils.normalize(points.v, new Point(-160, 40));
+				variables.upTimes.push(new Point(pointX, pointY));
 			}
 			if (!!points.downTime) {
-				variables.downTimes.push(points.downTime);
+				var pointX = i * calculator.timestep;
+				var pointY = utils.normalize(points.v, new Point(-160, 40));
+				variables.downTimes.push(new Point(pointX, pointY));
+
 			}
 
 			vAvg 	+= points.v;

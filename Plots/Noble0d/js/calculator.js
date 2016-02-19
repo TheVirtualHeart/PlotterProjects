@@ -318,10 +318,10 @@ function NobleCalculator(utils) {
 
 		// don't work out linear yet
 		if ( (vOld < threshold) && (v >= threshold) ) {
-			upTime = timestep * (count - (v - threshold)) / (v - vOld);
+			upTime = true;
 		}
 		else if ( (vOld > threshold) && (v <= threshold) ) {
-			downTime = timestep * (count - (v - threshold)) / (v - vOld);
+			downTime = true;
 		}
 
 	}
@@ -332,6 +332,7 @@ function NobleCalculator(utils) {
 	 * properties and functions that are accessible from the outside.
 	 */
 	var api = {
+		timestep: settings.initial.timestep,
 		initialize: initialize,
 		getPoints: getPoints,
 		calculateNext: calculateNext,
