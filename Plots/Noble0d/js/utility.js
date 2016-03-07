@@ -30,6 +30,26 @@ define(function NobleUtilities() {
 	}
 
 
+    /**
+     * This function implements a flyweight pattern following this gist
+     * https://gist.github.com/addyosmani/2668755
+     */
+    function implementsFor(object, target) {
+        if (target.constructor == Function) {
+            // Normal Inheritance 
+            object.prototype = new target();
+            object.prototype.constructor = object;
+            object.prototype.parent = target.prototype;
+        } else {
+            // Pure Virtual Inheritance 
+            object.prototype = target;
+            object.prototype.constructor = object;
+            object.prototype.parent = target;
+        }
+        return object;
+    }
+    
+
 	/**
 	 * The heaviside function. Return 0 if the expression is negative
 	 * and 1 otherwise

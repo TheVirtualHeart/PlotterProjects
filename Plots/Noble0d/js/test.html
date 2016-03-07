@@ -1,0 +1,61 @@
+---
+title: Noble0d Test
+plot: true
+---
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+    </head>
+    <body>
+
+        <script src="../../../node_modules/requirejs/require.js"></script>
+        <script>
+            require.config({
+                paths: {
+                    calculator: "calculator",
+                    form: "form",
+                    mediator: "mediator",
+                    plots: "plots",
+                    pointBuffer: "pointBuffer",
+                    pointBufferAnalyzer: "pointBufferAnalyzer",
+                    utility: "utility",
+                },
+            });
+
+            require(["calculator", "pointBufferAnalyzer"],
+            function initialize(calculator) {
+                var defaultSettings = {
+                    v: -80.0,
+                    m: 0.0,
+                    h: 1.0,
+                    n: 0.0,
+
+                    ik: 0,
+                    ina: 0, 
+                    il: 0,
+
+                    cm: 12,
+                    gan: 0.0,
+                    gkMod: 1.2,
+                    ean: -60,
+                    stimmag: -106,
+                    stimdur: 2.0,
+                    gna1: 400.0,
+                    gna2: 0.14,
+                    s1Start: 0,
+                    s2: 1000,
+                    ns1: 4,
+                    s1: 500.0,
+                    timestep: 0.01,
+                };
+                calculator.initialize(defaultSettings);
+                
+                
+                window.calculator = calculator;
+            });
+        </script>
+    </body>
+</html>
