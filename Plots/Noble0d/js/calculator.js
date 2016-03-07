@@ -104,9 +104,7 @@ function NobleCalculator(utils) {
 	 */
 	function initialize(newSettings) {		
 		//reset(newSettings);
-        console.log(newSettings);
         settings = utils.extend(newSettings);
-        console.log(settings);
 	}
 
 
@@ -195,7 +193,6 @@ function NobleCalculator(utils) {
 		}
 		var lastPeriod = settings.s1Start + (settings.s1 * (settings.ns1 - 1));
 		stimuli.s2 = lastPeriod + settings.s2;
-        console.log(stimuli);
 		return stimuli;
 	}
 
@@ -205,8 +202,6 @@ function NobleCalculator(utils) {
 	 * be returned by getPoints().
 	 */
 	function calculateNext(data) {
-        console.log("data");
-        console.log(data);
         var v = data.v;
         var m = data.m;
         var n = data.n;
@@ -228,15 +223,6 @@ function NobleCalculator(utils) {
         var cm = data.cm;
         
         
-        
-        console.log(v);
-        console.log(m);
-        console.log(h);
-        console.log(n);
-        console.log(ik);
-        console.log(il);
-        console.log(ina);
-        
 		// track the current value of v before iterating.
 		var vOld = v;
 
@@ -256,13 +242,9 @@ function NobleCalculator(utils) {
 		else {
 			bm=0.12*(v+8)/(Math.exp((v+8)/5)-1);
 		}
-        console.log(am);
-        console.log(bm);
         
 		var ah = 0.17 * Math.exp((-v - 90)/20);
 		var bh = 1 / (Math.exp((-v - 42)/10) + 1);
-        console.log(ah);
-        console.log(bh);
         
 		var an;
 		if (Math.abs(-v - 50) < 0.001) {
@@ -271,9 +253,6 @@ function NobleCalculator(utils) {
 			an = 0.0001 * (-v - 50) / (Math.exp((-v-50)/10)-1);
 		}
 		var bn = 0.002 * Math.exp((-v-90)/80);
-        
-        console.log(an);
-        console.log(bn);
 
 
 		// calculate derivatives of gating variables
@@ -281,12 +260,6 @@ function NobleCalculator(utils) {
 		var dh = ah * (1-h) - bh * h;
 		var dn = an * (1-n) - bn * n;
         
-        console.log(dm);
-        console.log(dh);
-        console.log(dn);
-
-
-        console.log(timestep);
 		// update gating variables using explicit method
 		m += timestep * dm;
 		h += timestep * dh;
@@ -299,26 +272,15 @@ function NobleCalculator(utils) {
 
 		// calculate currents
 		var ina1 = gna1 * m * m * m * h * (v - 40);
-        console.log("gna1 " + gna1);
-        
-        console.log("ina1 " + ina1);
 		var ina2 = gna2 * (v - 40);
-        console.log("ina2 " + ina2);
 		var ik1 = gk1 * (v + 100);
-        
-        console.log("ik1 " + ik1);
 		var ik2 = gk2 * (v + 100);
-        
-        console.log("ik2 " + ik2);
 		il = gan * (v - ean);
 
 
 		// sum the two sodium and the two potassium currents
 		ina = ina1 + ina2;
 		ik = ik1 + ik2;
-        console.log("ina " + ina);
-        console.log("ik " + ik);
-        console.log("il " + il);
 
 
 		// set stimulus current periodically to be nonzero
@@ -327,7 +289,6 @@ function NobleCalculator(utils) {
 
 		// calculate derivative of voltage 
 		var dv = (-ina - ik - il - istim) / cm;
-        console.log("dv " + dv);
 
 
 		// update voltage using forward Euler
@@ -406,7 +367,6 @@ function NobleCalculator(utils) {
 		if ((count >= lastPeriodX) && (count < lastPeriodX + dur)) {
 				stim = settings.stimmag;
 		}		
-        console.log(stim);
 		return stim;
 	}
 

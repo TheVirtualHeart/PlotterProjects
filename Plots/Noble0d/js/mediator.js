@@ -2,8 +2,8 @@
  * provide a series of functions to easily mediate between the calculator, the
  * pointBuffer, and the plots.
  */
-define(["pointBuffer"],
-function NobleMediator(pointBuffer) {
+define(["pointBufferAnalyzer"],
+function NobleMediator(pointBufferAnalyzer) {
 	"use strict";
 
 	var calculator;
@@ -26,10 +26,16 @@ function NobleMediator(pointBuffer) {
 	function initialize(pcalculator, pplots) {
 		calculator = pcalculator;
 		plots = pplots;
+        
+        pointBufferAnalyzer.initialize(numPoints)
+        
+        
+        calculator.addAnalysisFunction(pointBufferAnalyzer.aggregate)
 
-		pointBuffer.calculate(calculator, numCalculations, numPoints, pointBuffer.AVERAGE_FUNCTION);
-		points = pointBuffer.variables;
-		overlay = calculator.getStimuliLocations();
+		//pointBuffer.calculate(calculator, numCalculations, numPoints, pointBuffer.AVERAGE_FUNCTION);
+        
+		//points = pointBuffer.variables;
+		//overlay = calculator.getStimuliLocations();
 
 		requestAnimationFrame(update)
 	}
