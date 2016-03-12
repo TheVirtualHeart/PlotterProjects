@@ -10,11 +10,85 @@ plot: true
         <title></title>
     </head>
     <body>
+        <div>
+            <fieldset>
+                <div class="plotter_inputgroup plotter_inputgroup-black">
+                    <input id="displayS1S2" name="displayV" type="checkbox" checked/>
+                    <label for="displayS1S2">Display S1-S2 Locations</label>
+                </div>
+                <div class="plotter_inputgroup plotter_inputgroup-red">
+                    <input id="displayV" name="displayV" type="checkbox" checked/>
+                    <label for="displayV">Display V</label>
+                </div>
+                <div class="plotter_inputgroup plotter_inputgroup-green">
+                    <input id="displayM" name="displayM" type="checkbox" checked/>
+                    <label for="displayM">Display M</label>
+                </div>
+                <div class="plotter_inputgroup plotter_inputgroup-lightblue">
+                    <input id="displayH" name="displayH" type="checkbox" checked/>
+                    <label for="displayH">Display H</label>
+                </div>
+                <div class="plotter_inputgroup plotter_inputgroup-indigo">
+                    <input id="displayN" name="displayN" type="checkbox" checked/>
+                    <label for="displayN">Display N</label>
+                </div>
+                <div class="plotter_inputgroup">
+                    <select id="secondaryPlot" name="secondaryPlot">
+                        <option value=""> -- none -- </option>
+                        <option id="displayIna" value="ina">ina</option>
+                        <option id="displayIk" value="ik">ik</option>
+                        <option id="displayIl" value-"il">il</option>
+                    </select>
+                    <label for="secondaryPlot">Secondary Plot</label>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div class="plotter_inputgroup">
+                    <label for="gna1">gna1</label>
+                    <input type="text" name="gna1" value="400" />
+                </div>
+                <div class="plotter_inputgroup">
+                    <label for="gna2">gna2</label>
+                    <input type="text" name="gna2" value=".14" />
+                </div>
 
+                <div class="plotter_inputgroup">
+                    <label for="gan">gan</label>
+                    <input type="text" name="gan" value="0.0" />
+                </div>
+
+                <div class="plotter_inputgroup">
+                    <label for="gkMod">gk</label>
+                    <input type="text" name="gkMod" value="0.0" />
+                </div>
+
+                <div class="plotter_inputgroup">
+                    <label for="s1">s1</label>
+                    <input type="text" name="s1" value="500" />
+                </div>
+                <div class="plotter_inputgroup">
+                    <label for="ns1">n</label>
+                    <input type="text" name="ns1" value="4"/>
+                </div>
+                <div class="plotter_inputgroup">
+                    <label for="s2">s2</label>
+                    <input type="text" name="s2" value="2000"/>
+                </div>
+            </fieldset>
+            <!-- Buttons -->
+            <fieldset>
+                <div class="plotter_inputgroup">
+                    <button id="update">Update</button>
+                    <button id="default">Defaults</button>
+                    <button id="print">Print Data</button>
+                </div>
+            </fieldset>
+        </div>
         <script src="../../../Plotter/plotter.dev.js"></script>
         <script src="../../../node_modules/requirejs/require.js"></script>
         <script>
             require.config({
+                nodeRequire: require,
                 paths: {
                     settings: "settings",
                     calculator: "calculator",
@@ -24,15 +98,33 @@ plot: true
                     pointBuffer: "pointBuffer",
                     pointBufferAnalyzer: "pointBufferAnalyzer",
                     utility: "utility",
+                    deepcopy: "../../../node_modules/deepcopy/index.js"
                 },
             });
 
-            require(["settings", "calculator", "pointBufferAnalyzer"],
-            function initialize(settings, calculator, pointBufferAnalyzer) {
+            require(["settings", "form", "calculator", "pointBufferAnalyzer"],
+            function initialize(
+                settings, 
+                form, 
+                calculator, 
+                pointBufferAnalyzer) {
+                
+                /**
+                 * Initialize the default settings for the plot
+                 */
                 settings.initialize({});
+                
                 console.log(settings.getSettings());
                 
+                /**
+                 * Initialize a form
+                 */
+                form.initialize(settings.getSettings());
                 
+                
+                /**
+                 * Initialize a calculator
+                 */
                 calculator.initialize(settings.getSettings());
                 
                 pointBufferAnalyzer.initialize({ bufferSize: 100 });

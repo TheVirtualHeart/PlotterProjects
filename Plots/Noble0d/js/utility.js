@@ -15,6 +15,7 @@ define(function NobleUtilities() {
 	 * @return {Object}        - an object with the properties added to it.
 	 */
 	function extend(target) {
+        
 		var output = Object(target);
 	      for (var index = 1; index < arguments.length; index++) {
 	        var source = arguments[index];
@@ -28,6 +29,31 @@ define(function NobleUtilities() {
 	      }
 	      return output;
 	}
+    
+    
+    function deepCopy(source) {
+        
+        var obj = {};
+        
+        // cycle through all of the properties in the
+        // source object
+        for (var nextKey in source) {
+            if (source.hasOwnProperty(nextKey)) {
+                
+                // if the key is an object, deepcopy that object
+                var prop;
+                if (source[nextKey] !== null && 
+                    typeof source[nextKey] === 'object') {    
+                        prop = deepCopy(source[nextKey]);
+                } else {
+                    prop = source[nextKey];
+                }
+                obj[nextKey] = prop;
+            }
+        }
+        
+        return obj;
+    }
 
 
     /**
@@ -160,6 +186,8 @@ define(function NobleUtilities() {
 	 * @type {Object}
 	 */
 	var api = {
+        deepCopy: deepCopy,
+        implementsFor: implementsFor,
 		heaviside: heaviside,
 		round: round,
 		numericValue: numericValue,

@@ -12,29 +12,39 @@ require.config({
 require(["plots", "calculator", "mediator", "form"],
 function initialize(plots, calculator, mediator, form) {
 
-	var defaultSettings = {
-		v: -80.0,
-		m: 0.0,
-		h: 1.0,
-		n: 0.0,
+	var defaultSettings = {        
+        calculationSettings: {
+            v: -80.0,
+            m: 0.0,
+            h: 1.0,
+            n: 0.0,
 
-		ik: 0,
-		ina: 0, 
-		il: 0,
+            ik: 0,
+            ina: 0, 
+            il: 0,
 
-		cm: 12,
-		gan: 0.0,
-		gkMod: 1.2,
-		ean: -60,
-		stimmag: -106,
-		stimdur: 2.0,
-		gna1: 400.0,
-		gna2: 0.14,
-		s1Start: 0,
-		s2: 1000,
-		ns1: 4,
-		s1: 500.0,
-		timestep: 0.01,
+            cm: 12,
+            gan: 0.0,
+            gkMod: 1.2,
+            ean: -60,
+            stimmag: -106,
+            stimdur: 2.0,
+            gna1: 400.0,
+            gna2: 0.14,
+            s1Start: 0,
+            s2: 1000,
+            ns1: 4,
+            s1: 500.0,
+            timestep: 0.01
+        },
+        formSettings: {
+            displayV: true,
+            displayM: true,
+            displayH: true,
+            displayN: true,
+            displayS1S2: true,
+            secondaryPlot: "il",
+        }
 	};
 		
 	plots.initialize();
