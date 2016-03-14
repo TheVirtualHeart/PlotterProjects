@@ -4,52 +4,69 @@ require.config({
 		form: "form",
 		mediator: "mediator",
 		plots: "plots",
-		pointBuffer: "pointBuffer",
+		pointBufferAnalyzer: "pointBufferAnalyzer",
 		utility: "utility",
 	},
 });
 
-require(["plots", "calculator", "mediator", "form"],
-function initialize(plots, calculator, mediator, form) {
+// require(["plots", "calculator", "mediator", "form"],
+// function initialize(plots, calculator, mediator, form) {
 
-	var defaultSettings = {        
-        calculationSettings: {
-            v: -80.0,
-            m: 0.0,
-            h: 1.0,
-            n: 0.0,
+require(["settings", 
+         "mediator", 
+         "form", 
+         "calculator", 
+         "pointBufferAnalyzer",
+         "plots"],
+function initialize(
+    settings, 
+    mediator,
+    form, 
+    calculator, 
+    pointBufferAnalyzer,
+    plots) {
+    
+    /*
+     * Initialize the default settings for the plot
+     */
+    settings.initialize({});
+    var plotSettings = settings.getSettings();
+    
 
-            ik: 0,
-            ina: 0, 
-            il: 0,
-
-            cm: 12,
-            gan: 0.0,
-            gkMod: 1.2,
-            ean: -60,
-            stimmag: -106,
-            stimdur: 2.0,
-            gna1: 400.0,
-            gna2: 0.14,
-            s1Start: 0,
-            s2: 1000,
-            ns1: 4,
-            s1: 500.0,
-            timestep: 0.01
-        },
-        formSettings: {
-            displayV: true,
-            displayM: true,
-            displayH: true,
-            displayN: true,
-            displayS1S2: true,
-            secondaryPlot: "il",
-        }
-	};
-		
-	plots.initialize();
-	calculator.initialize(defaultSettings);
-	mediator.initialize(calculator, plots);
-	form.initialize(mediator, defaultSettings);
-
+    /*
+     * Initialize a calculator
+     */
+    calculator.initialize(plotSettings);
+        
+    
+    /*
+     * Initialize a point buffer analyzer
+     */
+    pointBufferAnalyzer.initialize(plotSettings);
+    calculator.addAnalysisFunction(pointBufferAnalyzer.aggregate);
+        
+    
+    /*
+     * Initialize the plot
+     */
+    plots.initialize(plotSettings);
+    
+    
+    /*
+     * Initialize a mediator with the calculator
+     */
+    mediator.initialize(calculator, plots);
+    
+    
+    /*
+     * Initialize a form
+     */
+    form.initialize(
+        plotSettings,
+        mediator
+    );
+    
+    
+    window.calculator = calculator;
+    window.pointBufferAnalyzer = pointBufferAnalyzer;
 });

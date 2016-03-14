@@ -23,7 +23,7 @@ function NobleForm(utils) {
 	 * the interface that the form will interact with. After that, bind the UI
 	 * compenents to specific actions.
 	 */
-	function initialize(defaultSettings) {
+	function initialize(defaultSettings, mediatorObj) {
         //settings = utils.implementsFor(settings, defaultSettings);
 		// var overwrite = newSettings || {};
 		// for (var attrname in overwrite) { 
@@ -38,10 +38,17 @@ function NobleForm(utils) {
         
         
         settings = defaultSettings;
+        mediator = mediatorObj;
         
         
         // bindFormElement(document.getElementById("displayV"), settings.formSettings.displayV, "checked");
         
+        
+        /*
+         * Set the DOM input to the value in the settings and
+         * add an event listener so that it updates the values on 
+         * change
+         */
         var displayV = document.getElementById("displayV");
         displayV["checked"] = settings.formSettings["displayV"];
         displayV.addEventListener("change", function(e) {
@@ -82,14 +89,98 @@ function NobleForm(utils) {
             updateCalculations();
         });
         
+        var secondaryPlot = document.getElementById("secondaryPlot");
+        secondaryPlot.selectedIndex = settings.formSettings.secondaryPlot;
+        
+        for (var i = 0; i < secondaryPlot.options.length; i++) {
+            var option = secondaryPlot.options[i];
+            if (option.value === settings.formSettings["secondaryPlot"]) {
+                secondaryPlot.selectedIndex = i;
+            }
+        }
+        //secondaryPlot["selected"] = settings.formSettings["secondaryPlot"];
+        // displayS1S2.addEventListener("change", function(e) {
+        //     settings.formSettings.displayS1S2 = displayS1S2["checked"];
+            
+        //     updateCalculations();
+        // });
+        
+        var gna1Input = document.getElementsByName("gna1")[0];
+        gna1Input["value"] = settings.calculationSettings["gna1"];
+        gna1Input.addEventListener("change", function(e) {
+            settings.calculationSettings.gna1 = 
+                utils.numericValue(gna1Input["value"]);
+            
+            updateCalculations();
+        });
+        
+        var gna2Input = document.getElementsByName("gna2")[0];
+        gna2Input["value"] = settings.calculationSettings["gna2"];
+        gna2Input.addEventListener("change", function(e) {
+            settings.calculationSettings.gna2 = 
+                utils.numericValue(gna2Input["value"]);
+            
+            updateCalculations();
+        });
+        
+        var ganInput = document.getElementsByName("gan")[0];
+        ganInput["value"] = settings.calculationSettings["gan"];
+        ganInput.addEventListener("change", function(e) {
+            settings.calculationSettings.gan = 
+                utils.numericValue(ganInput["value"]);
+            
+            updateCalculations();
+        });
+        
+        var gkModInput = document.getElementsByName("gkMod")[0];
+        gkModInput["value"] = settings.calculationSettings["gkMod"];
+        gkModInput.addEventListener("change", function(e) {
+            settings.calculationSettings.gkMod = 
+                utils.numericValue(gkModInput["value"]);
+            
+            updateCalculations();
+        });
+        
+        var s1Input = document.getElementsByName("s1")[0];
+        s1Input["value"] = settings.calculationSettings["s1"];
+        s1Input.addEventListener("change", function(e) {
+            settings.calculationSettings.s1 = 
+                utils.numericValue(s1Input["value"]);
+            
+            updateCalculations();
+        });
+        
+        var ns1Input = document.getElementsByName("ns1")[0];
+        ns1Input["value"] = settings.calculationSettings["ns1"];
+        ns1Input.addEventListener("change", function(e) {
+            settings.calculationSettings.ns1 = 
+                utils.numericValue(ns1Input["value"]);
+            
+            updateCalculations();
+        });
+        
+        var s2Input = document.getElementsByName("s2")[0];
+        s2Input["value"] = settings.calculationSettings["s2"];
+        s2Input.addEventListener("change", function(e) {
+            settings.calculationSettings.s2 = 
+                utils.numericValue(s2Input["value"]);
+            
+            updateCalculations();
+        });
+        
         // setControls();
         // setControlValues();
         // bindUIActions();
 	}
     
+    
     function updateCalculations() {
-        console.log(settings)
-        return settings;
+        mediator.updateCalculator(settings);
+    }
+    
+    
+    function updateDisplay() {
+        mediator.updateDisplay(settings);
     }
     
 	// /**

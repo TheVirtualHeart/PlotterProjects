@@ -202,25 +202,25 @@ function NobleCalculator(utils) {
 	 * be returned by getPoints().
 	 */
 	function calculateNext(data) {
-        var v = data.v;
-        var m = data.m;
-        var n = data.n;
-        var h = data.h;
-        var ik = data.ik;
-        var il = data.il;
-        var ina = data.ina;
-        var timestep = data.timestep;
-        var gna1 = data.gna1;
-        var gna2 = data.gna2;
-        var gk1 = data.gk1;
-        var gk2 = data.gk2;
-        var gkMod = data.gkMod;
-        var gan = data.gan;
-        var ean = data.ean;
-        var ns1 = data.ns1;
-        var s1 = data.s1;
-        var s2 = data.s2;
-        var cm = data.cm;
+        var v = data.calculationSettings.v;
+        var m = data.calculationSettings.m;
+        var n = data.calculationSettings.n;
+        var h = data.calculationSettings.h;
+        var ik = data.calculationSettings.ik;
+        var il = data.calculationSettings.il;
+        var ina = data.calculationSettings.ina;
+        var timestep = data.calculationSettings.timestep;
+        var gna1 = data.calculationSettings.gna1;
+        var gna2 = data.calculationSettings.gna2;
+        var gk1 = data.calculationSettings.gk1;
+        var gk2 = data.calculationSettings.gk2;
+        var gkMod = data.calculationSettings.gkMod;
+        var gan = data.calculationSettings.gan;
+        var ean = data.calculationSettings.ean;
+        var ns1 = data.calculationSettings.ns1;
+        var s1 = data.calculationSettings.s1;
+        var s2 = data.calculationSettings.s2;
+        var cm = data.calculationSettings.cm;
         
         
 		// track the current value of v before iterating.
@@ -302,13 +302,13 @@ function NobleCalculator(utils) {
 		// iterate the count
 		count++;
         
-        data.v = v;
-        data.m = m;
-        data.n = n;
-        data.h = h;
-        data.ik = ik;
-        data.ina = ina;
-        data.il = il;
+        data.calculationSettings.v = v;
+        data.calculationSettings.m = m;
+        data.calculationSettings.n = n;
+        data.calculationSettings.h = h;
+        data.calculationSettings.ik = ik;
+        data.calculationSettings.ina = ina;
+        data.calculationSettings.il = il;
         
         // var obj = {
         //     v: v,
@@ -325,14 +325,15 @@ function NobleCalculator(utils) {
 	}
 
 
-    function runCalculations(iterations) {
-        var state = utils.extend(settings);
+    function runCalculations(iterations, settings) {
+        var state = settings;
         for (var i = 0; i < iterations; i++) {
             var data = calculateNext(state);
             for (var j = 0; j < analysisFunctions.length; j++) {
                 analysisFunctions[j](data);
             }
         }
+        console.log(state);
     }
     
     

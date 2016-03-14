@@ -7,17 +7,40 @@ function PointBufferAnalyzer(utils) {
     var calcFunction = CALCULATE_SKIP;
     var count = 0;
     
-    var points = {
-        v: [],
-        h: [],
-        m: [],
-        n: [],
+    // var points = {
+    //     v: [],
+    //     h: [],
+    //     m: [],
+    //     n: [],
         
-    }
+    // }
+    var bufferSettings;
     
     function initialize(settings) {
-        bufferSize = settings.bufferSize || 1;
-        calcFunction = settings.calcFunction || CALCULATE_SKIP;
+        if (!settings.calculationSettings.hasOwnProperty("pointBuffer")) {
+            settings.calculationSettings.pointBuffer = {
+                bufferSize: 100,
+                calcFunction: CALCULATE_SKIP,
+                points: {
+                    v: [],
+                    h: [],
+                    m: [],
+                    n: []
+                }
+            };
+        }
+        console.log(settings);
+        // }
+        
+        
+        // bufferSize = bufferSettings.bufferSize || 1;
+        // calcFunction = bufferSettings.calcFunction || CALCULATE_SKIP;
+        
+        // bufferSettings.points = {};
+        // bufferSettings.points.v = [];
+        // bufferSettings.points.h = [];
+        // bufferSettings.points.m = [];
+        // bufferSettings.points.n = [];
     }
     
     
@@ -50,6 +73,8 @@ function PointBufferAnalyzer(utils) {
 	 * aggregated
 	 */
 	function CALCULATE_SKIP(data) {
+        bufferSettings = data.calculationSettings.pointBuffer;
+        
         if (count % bufferSize === 0) {
             // var points = calculator.getPoints();
 
@@ -65,10 +90,10 @@ function PointBufferAnalyzer(utils) {
             // 	variables.downTimes.push(new Point(pointX, pointY));
             // }
 
-            points.v.push(utils.normalize(data.v, new Point(-160, 40)));
-            points.m.push(data.m);
-            points.h.push(data.h);
-            points.n.push(data.n);
+            bufferSettings.points.v.push(utils.normalize(data.calculationSettings.v, new Point(-160, 40)));
+            bufferSettings.points.m.push(data.calculationSettings.m);
+            bufferSettings.points.h.push(data.calculationSettings.h);
+            bufferSettings.points.n.push(data.calculationSettings.n);
         }
 	}
     
