@@ -18,7 +18,7 @@ function NobleCalculator(utils) {
      * This refers the functions that will analyze the 
      * data that is produced
      */
-    var analysisFunctions = [];
+    var analyzers = [];
     
     
 	/**
@@ -325,20 +325,32 @@ function NobleCalculator(utils) {
 	}
 
 
+    function _getNumIterations(settings) {
+        var c = settings.calculationSettings;
+        var num = (((c.s1 * c.ns1) + c.s2) * 1.1) / c.timestep;
+        num = Math.floor(num);
+        return num;    
+    }
+    
+    
     function runCalculations(iterations, settings) {
-        var state = settings;
-        for (var i = 0; i < iterations; i++) {
+        var state = settings;  
+        
+        var numCalculations = _getNumIterations(settings);  
+        for (var k = 0; k < analyzers.length; k++) {
+            analyzers[k].reset(state);
+        }
+        for (var i = 0; i < numCalculations; i++) {
             var data = calculateNext(state);
-            for (var j = 0; j < analysisFunctions.length; j++) {
-                analysisFunctions[j](data);
+            for (var j = 0; j < analyzers.length; j++) {
+                analyzers[j].aggregate(data);
             }
         }
-        console.log(state);
     }
     
     
     function addAnalysisFunction(fn) {
-        analysisFunctions.push(fn);
+        analyzers.push(fn);
     }
 
 	/**

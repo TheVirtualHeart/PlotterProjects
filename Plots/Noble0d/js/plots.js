@@ -535,7 +535,7 @@ function NoblePlots(utils) {
 	 * @return {number} - the value of the array for the current time.
 	 */
 	function _arrayAtTime(currentTime, timestep, array) {
-		var index = Math.floor(currentTime/timestep);
+		var index = Math.floor(currentTime);
 		return array[index];
 	}
     
@@ -557,17 +557,12 @@ function NoblePlots(utils) {
     function drawPlots(settings) {
         
         app.selectPlot("Noble");
+        
+        // draw V
 		if (settings.formSettings.displayV) {
-            
-            console.log("drawingV");
-            console.log(settings);
-            
-			var timestep = settings.calculationSettings.timestep;
-			app.ctx.strokeStyle = utils.colors.Red;
-			app.ctx.lineWidth = 3;
-			app.plotFunction(function(x) {
-				return _arrayAtTime(x, settings.calculationSettings.timestep, settings.calculationSettings.pointBuffer.points.v);
-			}, true, timestep, 0, 5000);
+            app.ctx.strokeStyle = utils.colors.Red;
+            app.ctx.lineWidth = 3;
+            app.plotPoly(settings.calculationSettings.pointBuffer.points.v, false);
 		}
         
     }

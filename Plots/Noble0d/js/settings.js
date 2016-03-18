@@ -99,7 +99,7 @@ function Settings(utils) {
             //         }
             //     }
             // }
-            defaultSettings = utils.extend(defaultSettings, override);
+            defaultSettings = _.merge(defaultSettings, override);
         },   
         
         

@@ -54,7 +54,7 @@ function NobleForm(utils) {
         displayV.addEventListener("change", function(e) {
             settings.formSettings.displayV = displayV["checked"];
             
-            updateCalculations();
+            updateDisplay();
         });
         
         var displayM = document.getElementById("displayM");
@@ -62,7 +62,7 @@ function NobleForm(utils) {
         displayM.addEventListener("change", function(e) {
             settings.formSettings.displayM = displayM["checked"];
             
-            updateCalculations();
+            updateDisplay();
         });
         
         var displayH = document.getElementById("displayH");
@@ -70,7 +70,7 @@ function NobleForm(utils) {
         displayH.addEventListener("change", function(e) {
             settings.formSettings.displayH = displayH["checked"];
             
-            updateCalculations();
+            updateDisplay();
         });
         
         var displayN = document.getElementById("displayN");
@@ -78,7 +78,7 @@ function NobleForm(utils) {
         displayN.addEventListener("change", function(e) {
             settings.formSettings.displayN = displayN["checked"];
             
-            updateCalculations();
+            updateDisplay();
         });
         
         var displayS1S2 = document.getElementById("displayS1S2");
@@ -86,7 +86,7 @@ function NobleForm(utils) {
         displayS1S2.addEventListener("change", function(e) {
             settings.formSettings.displayS1S2 = displayS1S2["checked"];
             
-            updateCalculations();
+            updateDisplay();
         });
         
         var secondaryPlot = document.getElementById("secondaryPlot");

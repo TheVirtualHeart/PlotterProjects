@@ -29,9 +29,19 @@ function initialize(
     /*
      * Initialize the default settings for the plot
      */
-    settings.initialize({});
-    var plotSettings = settings.getSettings();
+    settings.initialize({
+        formSettings: {
+            displayV: true
+        }, 
+        calculationSettings: {
+            pointBuffer: {
+                bufferSize: 1000
+            }
+        }
+    });
     
+    var plotSettings = settings.getSettings();
+    console.log(plotSettings);
 
     /*
      * Initialize a calculator
@@ -43,7 +53,7 @@ function initialize(
      * Initialize a point buffer analyzer
      */
     pointBufferAnalyzer.initialize(plotSettings);
-    calculator.addAnalysisFunction(pointBufferAnalyzer.aggregate);
+    calculator.addAnalysisFunction(pointBufferAnalyzer);
         
     
     /*
@@ -65,6 +75,8 @@ function initialize(
         plotSettings,
         mediator
     );
+    
+    mediator.updateCalculator(plotSettings);
     
     
     window.calculator = calculator;

@@ -30,6 +30,18 @@ define(function NobleUtilities() {
 	      return output;
 	}
     
+    function deepExtend(target, source) {
+        for (var prop in source) {
+            if (typeof prop === "object") {
+                target[prop] = deepExtend(target[prop], source[prop]);
+            }
+            else {
+                target[prop] = source[prop];
+            }
+        }
+        return target;
+    }
+    
     
     function deepCopy(source) {
         
@@ -186,6 +198,7 @@ define(function NobleUtilities() {
 	 * @type {Object}
 	 */
 	var api = {
+        deepExtend: deepExtend,
         deepCopy: deepCopy,
         implementsFor: implementsFor,
 		heaviside: heaviside,

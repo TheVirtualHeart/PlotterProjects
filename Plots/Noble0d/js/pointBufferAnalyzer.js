@@ -2,9 +2,6 @@ define(["utility"],
 function PointBufferAnalyzer(utils) {
     "use strict";
     
-    
-    var bufferSize = 1;
-    var calcFunction = CALCULATE_SKIP;
     var count = 0;
     
     // var points = {
@@ -15,10 +12,8 @@ function PointBufferAnalyzer(utils) {
         
     // }
     var bufferSettings;
-    
     function initialize(settings) {
-        if (!settings.calculationSettings.hasOwnProperty("pointBuffer")) {
-            settings.calculationSettings.pointBuffer = {
+        var bufferSettings = {
                 bufferSize: 100,
                 calcFunction: CALCULATE_SKIP,
                 points: {
@@ -27,20 +22,13 @@ function PointBufferAnalyzer(utils) {
                     m: [],
                     n: []
                 }
-            };
+        };
+        
+        if (!settings.calculationSettings.hasOwnProperty("pointBuffer")) {
+            settings.calculationSettings.pointBuffer = bufferSettings;
+        } else {
+            settings.calculationSettings.pointBuffer = utils.extend(bufferSettings, settings.calculationSettings.pointBuffer);
         }
-        console.log(settings);
-        // }
-        
-        
-        // bufferSize = bufferSettings.bufferSize || 1;
-        // calcFunction = bufferSettings.calcFunction || CALCULATE_SKIP;
-        
-        // bufferSettings.points = {};
-        // bufferSettings.points.v = [];
-        // bufferSettings.points.h = [];
-        // bufferSettings.points.m = [];
-        // bufferSettings.points.n = [];
     }
     
     
@@ -49,11 +37,20 @@ function PointBufferAnalyzer(utils) {
      * performs the given aggregation function on it
      */
     function aggregate(data) {
-        calcFunction(data);
+        data.calculationSettings.pointBuffer.calcFunction(data);
         count++;
     }
     
     
+    function reset(settings) {
+        settings.calculationSettings.pointBuffer.points = {
+            v: [],
+            h: [],
+            m: [],
+            n: [],
+        }
+        count = 0;
+    }
     
     
     /**
@@ -73,9 +70,14 @@ function PointBufferAnalyzer(utils) {
 	 * aggregated
 	 */
 	function CALCULATE_SKIP(data) {
+        var c = data.calculationSettings;
         bufferSettings = data.calculationSettings.pointBuffer;
         
-        if (count % bufferSize === 0) {
+        var timePeriod = (((c.s1 * c.ns1) + c.s2) * 1.1);
+        var numCalculation = timePeriod / c.timestep;
+        
+        
+        if (count % bufferSettings.bufferSize === 0) {
             // var points = calculator.getPoints();
 
             // // add any uptimes or downtimes
@@ -90,10 +92,14 @@ function PointBufferAnalyzer(utils) {
             // 	variables.downTimes.push(new Point(pointX, pointY));
             // }
 
-            bufferSettings.points.v.push(utils.normalize(data.calculationSettings.v, new Point(-160, 40)));
+            var vNormal = utils.normalize(data.calculationSettings.v, new Point(-90, 30));
+            var vPoint = new Point(count * c.timestep, vNormal);
+            bufferSettings.points.v.push(vPoint);
+            //bufferSettings.points.v.push(utils.normalize(data.calculationSettings.v, new Point(-160, 40)));
             bufferSettings.points.m.push(data.calculationSettings.m);
             bufferSettings.points.h.push(data.calculationSettings.h);
             bufferSettings.points.n.push(data.calculationSettings.n);
+            
         }
 	}
     
@@ -182,13 +188,9 @@ function PointBufferAnalyzer(utils) {
 		}
 	}
     
-    function getPoints() {
-        return points;
-    }
-    
     return {
-        getPoints: getPoints,
         initialize: initialize,
         aggregate: aggregate,
+        reset: reset
     }
 })
