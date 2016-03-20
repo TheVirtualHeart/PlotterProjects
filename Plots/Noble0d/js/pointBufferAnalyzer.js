@@ -95,10 +95,15 @@ function PointBufferAnalyzer(utils) {
             var vNormal = utils.normalize(data.calculationSettings.v, new Point(-90, 30));
             var vPoint = new Point(count * c.timestep, vNormal);
             bufferSettings.points.v.push(vPoint);
-            //bufferSettings.points.v.push(utils.normalize(data.calculationSettings.v, new Point(-160, 40)));
-            bufferSettings.points.m.push(data.calculationSettings.m);
-            bufferSettings.points.h.push(data.calculationSettings.h);
-            bufferSettings.points.n.push(data.calculationSettings.n);
+            
+            var mPoint = new Point(count * c.timestep, data.calculationSettings.m);
+            bufferSettings.points.m.push(mPoint);
+            
+            var hPoint = new Point(count * c.timestep, data.calculationSettings.h);
+            bufferSettings.points.h.push(hPoint);
+            
+            var nPoint = new Point(count * c.timestep, data.calculationSettings.n);
+            bufferSettings.points.n.push(nPoint);
             
         }
 	}

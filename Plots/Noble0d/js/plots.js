@@ -501,7 +501,7 @@ function NoblePlots(utils) {
         labelPrecision: new Point(0, 1),
         labelSize: new Point(0, 0),
     };
-    
+
     
     /**
      * Given settings, create main plot settings based on the 
@@ -540,6 +540,19 @@ function NoblePlots(utils) {
 	}
     
     
+    function _resizePlots(settings) {
+        var c = settings.calculationSettings;
+        var timePeriod = ((c.s1Start + (c.s1 * c.ns1) + c.s2) * 1.1);
+        
+        var currentDomain = app.settings.domain;
+        var targetDomain = new Point(0, timePeriod);
+        
+        if (currentDomain.x !== targetDomain.x || currentDomain.y !== targetDomain.y) {
+            console.log("resizing");
+        }
+    }
+    
+    
     /**
      * Initialize the main plot
      */
@@ -557,12 +570,30 @@ function NoblePlots(utils) {
     function drawPlots(settings) {
         
         app.selectPlot("Noble");
+        _resizePlots(settings);
         
-        // draw V
 		if (settings.formSettings.displayV) {
             app.ctx.strokeStyle = utils.colors.Red;
             app.ctx.lineWidth = 3;
             app.plotPoly(settings.calculationSettings.pointBuffer.points.v, false);
+		}
+        
+        if (settings.formSettings.displayM) {
+            app.ctx.strokeStyle = utils.colors.Green;
+            app.ctx.lineWidth = 3;
+            app.plotPoly(settings.calculationSettings.pointBuffer.points.m, false);
+		}
+        
+		if (settings.formSettings.displayH) {
+            app.ctx.strokeStyle = utils.colors.LightBlue;
+            app.ctx.lineWidth = 3;
+            app.plotPoly(settings.calculationSettings.pointBuffer.points.h, false);
+		}
+        
+		if (settings.formSettings.displayN) {
+            app.ctx.strokeStyle = utils.colors.Indigo;
+            app.ctx.lineWidth = 3;
+            app.plotPoly(settings.calculationSettings.pointBuffer.points.n, false);
 		}
         
     }
