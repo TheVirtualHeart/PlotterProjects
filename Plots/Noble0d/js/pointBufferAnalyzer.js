@@ -3,14 +3,6 @@ function PointBufferAnalyzer(utils) {
     "use strict";
     
     var count = 0;
-    
-    // var points = {
-    //     v: [],
-    //     h: [],
-    //     m: [],
-    //     n: [],
-        
-    // }
     var bufferSettings;
     function initialize(settings) {
         var bufferSettings = {

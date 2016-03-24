@@ -185,14 +185,19 @@ function NobleCalculator(utils) {
 	 * @return {Object} - A JavaScript Object containing an array of s1 values
 	 * and a single value for s2.
 	 */
-	function getStimuliLocations() {
+	function _getStimuliLocations(settings) {
+        var c = settings.calculationSettings; // create a shorter reference variables
+        
+        // store the location of each of the stimuli
 		var stimuli = {};
 		stimuli.s1 = [];
-		for (var i = 0; i < settings.ns1; i++) {
-			stimuli.s1.push(i * settings.s1 + settings.s1Start);
+		for (var i = 0; i < c.ns1; i++) {
+			stimuli.s1.push(i * c.s1 + c.s1Start);
 		}
-		var lastPeriod = settings.s1Start + (settings.s1 * (settings.ns1 - 1));
-		stimuli.s2 = lastPeriod + settings.s2;
+		var lastPeriod = c.s1Start + (c.s1 * (c.ns1 - 1));
+		stimuli.s2 = lastPeriod + c.s2;
+        
+        // return the stimuli
 		return stimuli;
 	}
 
@@ -284,7 +289,7 @@ function NobleCalculator(utils) {
 
 
 		// set stimulus current periodically to be nonzero
-		var istim = s1s2Stimulus(count);
+		var istim = _s1s2Stimulus(count, data);
 
 
 		// calculate derivative of voltage 
@@ -365,20 +370,23 @@ function NobleCalculator(utils) {
 	 * 
 	 * @return {number} - The stimulus that will be applied.
 	 */
-	function s1s2Stimulus(count) {
+	function _s1s2Stimulus(count, settings) {
 		var stim = 0;
-		var stimuli = getStimuliLocations();
-		var dur = utils.round(settings.stimdur / settings.timestep);
+		var stimuli = _getStimuliLocations(settings);
+        
+        var c = settings.calculationSettings;
+		var dur = utils.round(c.stimdur / c.timestep);
 		var periods = stimuli.s1;
 		for (var i = 0; i < periods.length; i++) {
-			var periodX = utils.round(periods[i] / settings.timestep);
+			var periodX = utils.round(periods[i] / c.timestep);
 			if ((count >= periodX) && (count < periodX + dur)) {
-				stim = settings.stimmag;
+                console.log("applying stimulus");
+				stim = c.stimmag;
 			}
 		}
-		var lastPeriodX = utils.round(stimuli.s2 / settings.timestep);
+		var lastPeriodX = utils.round(stimuli.s2 / c.timestep);
 		if ((count >= lastPeriodX) && (count < lastPeriodX + dur)) {
-				stim = settings.stimmag;
+				stim = c.stimmag;
 		}		
 		return stim;
 	}
@@ -417,7 +425,7 @@ function NobleCalculator(utils) {
 		initialize: initialize,
 		getPoints: getPoints,
 		calculateNext: calculateNext,
-		getStimuliLocations: getStimuliLocations,
+		//getStimuliLocations: getStimuliLocations,
 		reset: reset,
 	};
 	return api;

@@ -553,6 +553,17 @@ function NoblePlots(utils) {
     }
     
     
+    function _drawLineOnPlot(xPoint, color) {
+        var currentRange = app.settings.range;
+        var pBottom = new Point(xPoint.x, currentRange.x);
+        console.log(xPoint.x);
+        var pTop = new Point(xPoint.x, currentRange.y);
+        app.ctx.strokeStyle = color;
+        app.ctx.lineWidth = 3;
+        app.plotLine(pBottom, pTop);
+    }
+    
+    
     /**
      * Initialize the main plot
      */
@@ -595,6 +606,17 @@ function NoblePlots(utils) {
             app.ctx.lineWidth = 3;
             app.plotPoly(settings.calculationSettings.pointBuffer.points.n, false);
 		}
+        
+        if (settings.formSettings.displayS1S2) {
+            for (var i = 0; i < settings.calculationSettings.s1s2Points.s1.length; i++) {
+                _drawLineOnPlot(
+                    settings.calculationSettings.s1s2Points.s1[i],
+                    utils.colors.Black);
+            }
+            _drawLineOnPlot(
+                settings.calculationSettings.s1s2Points.s2,
+                utils.colors.Black);
+        }
         
     }
     

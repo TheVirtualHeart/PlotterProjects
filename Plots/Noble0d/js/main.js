@@ -5,7 +5,8 @@ require.config({
 		mediator: "mediator",
 		plots: "plots",
 		pointBufferAnalyzer: "pointBufferAnalyzer",
-		utility: "utility",
+        s1s2Analyzer: "s1s2Analyzer",
+		utility: "utility"
 	},
 });
 
@@ -17,6 +18,7 @@ require(["settings",
          "form", 
          "calculator", 
          "pointBufferAnalyzer",
+         "s1s2Analyzer",
          "plots"],
 function initialize(
     settings, 
@@ -24,6 +26,7 @@ function initialize(
     form, 
     calculator, 
     pointBufferAnalyzer,
+    s1s2Analyzer,
     plots) {
     
     /*
@@ -39,9 +42,8 @@ function initialize(
             }
         }
     });
-    
     var plotSettings = settings.getSettings();
-    console.log(plotSettings);
+
 
     /*
      * Initialize a calculator
@@ -53,7 +55,9 @@ function initialize(
      * Initialize a point buffer analyzer
      */
     pointBufferAnalyzer.initialize(plotSettings);
+    s1s2Analyzer.initialize(plotSettings);
     calculator.addAnalysisFunction(pointBufferAnalyzer);
+    calculator.addAnalysisFunction(s1s2Analyzer);
         
     
     /*
