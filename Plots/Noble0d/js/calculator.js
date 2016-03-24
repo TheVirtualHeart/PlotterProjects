@@ -340,6 +340,7 @@ function NobleCalculator(utils) {
     
     function runCalculations(iterations, settings) {
         var state = settings;  
+        count = 0;
         
         var numCalculations = _getNumIterations(settings);  
         for (var k = 0; k < analyzers.length; k++) {

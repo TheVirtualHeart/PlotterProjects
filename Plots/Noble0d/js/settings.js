@@ -43,42 +43,51 @@ function Settings(utils) {
             secondaryPlot: "il",
         },
         plotSettings: {
-            width: 437.5,
-            height: 240,
-            plots: {
-                mainPlot: {
-                    offset: new Point(0, 0),
-                    range: new Point(-0.1, 1.1),
-                    unitPerTick: new Point(1000, .1),
-                    pixelPerUnit: new Point(.0875, 200),
-                    labelFrequency: new Point(1, 1),
-                    xAxis: "Time (ms)",
-                    yAxis: "V (mv)",
-                    labelPrecision: new Point(0, 1),
-                    labelSize: new Point(0, 0),
-                },
-                ikPlot: {
-                    range: new Point(10, 60),
-                    unitPerTick: new Point(1000, 10),
-                    labelFrequency: new Point(1, 1),
-                    xAxis: "Time (ms)",
-                    yAxis: "ik",
-                    labelPrecision: new Point(0, 0),
-                },
-                inaPlot: {
-                    range: new Point(-60, 0),
-                    unitPerTick: new Point(1000, 5),
-                    labelFrequency: new Point(1, 1),
-                    xAxis: "Time (ms)",
-                    yAxis: "ina",
-                    labelPrecision: new Point(0, 0),
-                },
-                ilPlot: {
-                    range: new Point(-100, 100),
-                    unitPerTick: new Point(1000, 20),
-                    labelFrequency: new Point(1, 1),
-                    xAxis: "Time (ms)",
-                    yAxis: "il",
+            Noble: {
+                width: 437.5,
+                height: 240,
+                offset: new Point(0, 0),
+                plots: {
+                    mainPlot: {
+                        range: new Point(-0.1, 1.1),
+                        unitPerTick: new Point(1000, .1),
+                        labelFrequency: new Point(1, 1),
+                        xAxis: "Time (ms)",
+                        yAxis: "V (mv)",
+                        labelPrecision: new Point(0, 1),
+                        labelSize: new Point(0, 0),
+                    }
+                }
+            },
+            NobleOther: {
+                width: 437.5,
+                height: 240,
+                offset: new Point(0, 300),
+                plots: {
+                    ikPlot: {
+                        range: new Point(10, 60),
+                        unitPerTick: new Point(1000, 10),
+                        labelFrequency: new Point(1, 1),
+                        xAxis: "Time (ms)",
+                        yAxis: "ik",
+                        labelPrecision: new Point(0, 0),
+                    },
+                    inaPlot: {
+                        range: new Point(-60, 0),
+                        unitPerTick: new Point(1000, 5),
+                        labelFrequency: new Point(1, 1),
+                        xAxis: "Time (ms)",
+                        yAxis: "ina",
+                        default: true,
+                        labelPrecision: new Point(0, 0),
+                    },
+                    ilPlot: {
+                        range: new Point(-100, 100),
+                        unitPerTick: new Point(1000, 20),
+                        labelFrequency: new Point(1, 1),
+                        xAxis: "Time (ms)",
+                        yAxis: "il",
+                    }
                 }
             }
         }

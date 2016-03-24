@@ -507,26 +507,67 @@ function NoblePlots(utils) {
      * Given settings, create main plot settings based on the 
      * main plot
      */
-    function _generateMainPlot(settings) {
+    // function _generateMainPlot(settings) {
         
         
-        // create a copy of the main plot base settings
-        var mainPlotSettings = utils.extend({}, mainPlotBase);
+    //     // create a copy of the main plot base settings
+    //     var mainPlotSettings = utils.extend({}, mainPlotBase);
         
         
-        // calculate a new domain based on the s1, ns1, and s2
-        var domain = settings.calculationSettings.ns1 *
-                                  settings.calculationSettings.s1 + 
-                                  settings.calculationSettings.s2;
-        mainPlotSettings.domain = new Point(0, domain);
+    //     // calculate a new domain based on the s1, ns1, and s2
+    //     var domain = settings.calculationSettings.ns1 *
+    //                               settings.calculationSettings.s1 + 
+    //                               settings.calculationSettings.s2;
+    //     mainPlotSettings.domain = new Point(0, domain);
         
         
-        // resize the ppu so that it will remain a constant width
-        var pixelsPerUnitX = settings.plotSettings.width / mainPlotSettings.domain.y - mainPlotSettings.domain.x;
-        mainPlotSettings.pixelPerUnit.x = pixelsPerUnitX;
+    //     // resize the ppu so that it will remain a constant width
+    //     var pixelsPerUnitX = settings.plotSettings.width / mainPlotSettings.domain.y - mainPlotSettings.domain.x;
+    //     mainPlotSettings.pixelPerUnit.x = pixelsPerUnitX;
         
-        return mainPlotSettings;
-    }	
+    //     return mainPlotSettings;
+    // }	
+    
+    
+    /**
+     * Recursively cycle through the plots to generate the settings
+     */
+    function _generatePlot(plotSettings, calculationSettings) {
+        console.log(plotSettings);
+        console.log(calculationSettings);
+        
+        var generatedPlot = {};
+        generatedPlot.offset = plotSettings.offset || new Point(0, 0);
+        
+        // get the display of the default plot if it exists
+        var defaultPlot;
+        for (var plot in plotSettings.plots) {
+            if (plotSettings.plots[plot].hasOwnProperty("default")) {
+                if (plotSettings.plots[plot].default === true) {
+                    defaultPlot = plot;
+                }
+            } 
+        }
+        if (!defaultPlot) {
+            defaultPlot = Object.keys(plotSettings.plots)[0];
+        };
+        
+        // get the settings of the default plot or the first plot
+        generatedPlot = utils.extend(plotSettings.plots[defaultPlot], generatedPlot);
+        
+        // set the domain of the plot
+        generatedPlot.domain = _calculateDomain(calculationSettings);
+        
+        // calculate the pixels per unit of the new plot
+        generatedPlot.pixelPerUnit = _calculatePixelsPerUnit(generatedPlot.domain.x, 
+                                              generatedPlot.range.x,
+                                              generatedPlot.domain.y,
+                                              generatedPlot.range.y,
+                                              plotSettings.width,
+                                              plotSettings.height);
+        
+        return generatedPlot;
+    }
     
     
     /**
@@ -540,23 +581,55 @@ function NoblePlots(utils) {
 	}
     
     
-    function _resizePlots(settings) {
-        var c = settings.calculationSettings;
-        var timePeriod = ((c.s1Start + (c.s1 * c.ns1) + c.s2) * 1.1);
+    /**
+     * calculate what the domain of the plot should be
+     */
+    function _calculateDomain(c) {
+        var start = c.s1Start;
+        var end = ((c.s1Start + (c.s1 * c.ns1) + c.s2) * 1.1);
+        return new Point(start, end);
+    }
+    
+    
+    /**
+     * Calculate the pixels per unit of the plot
+     */
+    function _calculatePixelsPerUnit(x1, y1, x2, y2, width, height) {
+        var ppuX = width / (x2 - x1);
+        var ppuY = height / (y2 - y1);
+        return new Point(ppuX, ppuY);
+    }
+    
+    
+    /**
+     * Resize the plot to fit within the height and width of the plot
+     */
+    function _resizePlots(plotSettings, calculationSettings) {
+        // var c = settings.calculationSettings;
+        // var timePeriod = ((c.s1Start + (c.s1 * c.ns1) + c.s2) * 1.1);
         
-        var currentDomain = app.settings.domain;
-        var targetDomain = new Point(0, timePeriod);
+        // var currentDomain = app.settings.domain;
+        // var targetDomain = new Point(0, timePeriod);
         
-        if (currentDomain.x !== targetDomain.x || currentDomain.y !== targetDomain.y) {
-            console.log("resizing");
+        // if (currentDomain.x !== targetDomain.x || currentDomain.y !== targetDomain.y) {
+        //     app.editPlot("Noble", {
+        //         domain: targetDomain
+        //     });
+        // }
+        
+        var newPlotSettings = _generatePlot(plotSettings, calculationSettings);
+        if (newPlotSettings.domain.x !== app.settings.domain.x || newPlotSettings.domain.y !== app.settings.domain.y) {
+            app.editPlot("Noble", newPlotSettings);
         }
     }
     
     
+    /**
+     * Draws a vertical line on the current plot
+     */
     function _drawLineOnPlot(xPoint, color) {
         var currentRange = app.settings.range;
         var pBottom = new Point(xPoint.x, currentRange.x);
-        console.log(xPoint.x);
         var pTop = new Point(xPoint.x, currentRange.y);
         app.ctx.strokeStyle = color;
         app.ctx.lineWidth = 3;
@@ -570,8 +643,13 @@ function NoblePlots(utils) {
     function initialize(settings) {
         app = createPlotter(document.getElementById("plot"));
         
-        var mainPlotSettings = _generateMainPlot(settings);
-		app.newPlot(mainPlotSettings, "Noble");
+        
+        // var mainPlotSettings = _generatePlot(settings.plotSettings.Noble, settings.calculationSettings);
+        // console.log(mainPlotSettings);
+        for (var graph in settings.plotSettings) {
+            app.newPlot(_generatePlot(settings.plotSettings[graph], settings.calculationSettings), graph);
+        }
+		//app.newPlot(mainPlotSettings, "Noble");
     }
     
 
@@ -581,7 +659,7 @@ function NoblePlots(utils) {
     function drawPlots(settings) {
         
         app.selectPlot("Noble");
-        _resizePlots(settings);
+        _resizePlots(settings.plotSettings.Noble, settings.calculationSettings);
         
 		if (settings.formSettings.displayV) {
             app.ctx.strokeStyle = utils.colors.Red;
