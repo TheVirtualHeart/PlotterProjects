@@ -64,7 +64,7 @@ function Settings(utils) {
                 height: 240,
                 offset: new Point(0, 300),
                 plots: {
-                    ikPlot: {
+                    ik: {
                         range: new Point(10, 60),
                         unitPerTick: new Point(1000, 10),
                         labelFrequency: new Point(1, 1),
@@ -72,16 +72,16 @@ function Settings(utils) {
                         yAxis: "ik",
                         labelPrecision: new Point(0, 0),
                     },
-                    inaPlot: {
+                    ina: {
                         range: new Point(-60, 0),
                         unitPerTick: new Point(1000, 5),
                         labelFrequency: new Point(1, 1),
                         xAxis: "Time (ms)",
                         yAxis: "ina",
-                        default: true,
                         labelPrecision: new Point(0, 0),
                     },
-                    ilPlot: {
+                    il: {
+                        default: true,
                         range: new Point(-100, 100),
                         unitPerTick: new Point(1000, 20),
                         labelFrequency: new Point(1, 1),

@@ -12,7 +12,10 @@ function PointBufferAnalyzer(utils) {
                     v: [],
                     h: [],
                     m: [],
-                    n: []
+                    n: [],
+                    il: [],
+                    ina: [],
+                    ik: []
                 }
         };
         
@@ -40,6 +43,9 @@ function PointBufferAnalyzer(utils) {
             h: [],
             m: [],
             n: [],
+            il: [],
+            ina: [],
+            ik: []
         }
         count = 0;
     }
@@ -96,6 +102,16 @@ function PointBufferAnalyzer(utils) {
             
             var nPoint = new Point(count * c.timestep, data.calculationSettings.n);
             bufferSettings.points.n.push(nPoint);
+            
+            
+            var ilPoint = new Point(count * c.timestep, data.calculationSettings.il);
+            bufferSettings.points.il.push(ilPoint); 
+            
+            var inaPoint = new Point(count * c.timestep, data.calculationSettings.ina);
+            bufferSettings.points.ina.push(inaPoint);
+            
+            var ikPoint = new Point(count * c.timestep, data.calculationSettings.ik);
+            bufferSettings.points.ik.push(ikPoint);
             
         }
 	}

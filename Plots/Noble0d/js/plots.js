@@ -532,25 +532,29 @@ function NoblePlots(utils) {
     /**
      * Recursively cycle through the plots to generate the settings
      */
-    function _generatePlot(plotSettings, calculationSettings) {
-        console.log(plotSettings);
-        console.log(calculationSettings);
+    function _generatePlot(plotSettings, calculationSettings, preset) {
         
         var generatedPlot = {};
         generatedPlot.offset = plotSettings.offset || new Point(0, 0);
         
         // get the display of the default plot if it exists
         var defaultPlot;
-        for (var plot in plotSettings.plots) {
-            if (plotSettings.plots[plot].hasOwnProperty("default")) {
-                if (plotSettings.plots[plot].default === true) {
-                    defaultPlot = plot;
-                }
-            } 
+        
+        if (!preset) {
+            for (var plot in plotSettings.plots) {
+                if (plotSettings.plots[plot].hasOwnProperty("default")) {
+                    if (plotSettings.plots[plot].default === true) {
+                        defaultPlot = plot;
+                    }
+                } 
+            }
+            if (!defaultPlot) {
+                defaultPlot = Object.keys(plotSettings.plots)[0];
+            };
         }
-        if (!defaultPlot) {
-            defaultPlot = Object.keys(plotSettings.plots)[0];
-        };
+        else {
+            defaultPlot = preset;
+        }
         
         // get the settings of the default plot or the first plot
         generatedPlot = utils.extend(plotSettings.plots[defaultPlot], generatedPlot);
@@ -604,23 +608,12 @@ function NoblePlots(utils) {
     /**
      * Resize the plot to fit within the height and width of the plot
      */
-    function _resizePlots(plotSettings, calculationSettings) {
-        // var c = settings.calculationSettings;
-        // var timePeriod = ((c.s1Start + (c.s1 * c.ns1) + c.s2) * 1.1);
-        
-        // var currentDomain = app.settings.domain;
-        // var targetDomain = new Point(0, timePeriod);
-        
-        // if (currentDomain.x !== targetDomain.x || currentDomain.y !== targetDomain.y) {
-        //     app.editPlot("Noble", {
-        //         domain: targetDomain
-        //     });
-        // }
-        
-        var newPlotSettings = _generatePlot(plotSettings, calculationSettings);
-        if (newPlotSettings.domain.x !== app.settings.domain.x || newPlotSettings.domain.y !== app.settings.domain.y) {
-            app.editPlot("Noble", newPlotSettings);
-        }
+    function _resizePlots(plotName, plotSettings, calculationSettings, preset) {
+        var newPlotSettings = _generatePlot(plotSettings, calculationSettings, preset);
+        console.log(newPlotSettings);
+        //if (newPlotSettings.domain.x !== app.settings.domain.x || newPlotSettings.domain.y !== app.settings.domain.y) {
+            app.editPlot(plotName, newPlotSettings, false, false);
+        //}
     }
     
     
@@ -642,14 +635,9 @@ function NoblePlots(utils) {
      */
     function initialize(settings) {
         app = createPlotter(document.getElementById("plot"));
-        
-        
-        // var mainPlotSettings = _generatePlot(settings.plotSettings.Noble, settings.calculationSettings);
-        // console.log(mainPlotSettings);
         for (var graph in settings.plotSettings) {
             app.newPlot(_generatePlot(settings.plotSettings[graph], settings.calculationSettings), graph);
         }
-		//app.newPlot(mainPlotSettings, "Noble");
     }
     
 
@@ -658,8 +646,12 @@ function NoblePlots(utils) {
      */
     function drawPlots(settings) {
         
+        // draw the main plot
         app.selectPlot("Noble");
-        _resizePlots(settings.plotSettings.Noble, settings.calculationSettings);
+        _resizePlots("Noble", 
+                     settings.plotSettings.Noble, 
+                     settings.calculationSettings,
+                     "mainPlot");
         
 		if (settings.formSettings.displayV) {
             app.ctx.strokeStyle = utils.colors.Red;
@@ -695,6 +687,17 @@ function NoblePlots(utils) {
                 settings.calculationSettings.s1s2Points.s2,
                 utils.colors.Black);
         }
+        
+        // draw the secondary plot
+        app.selectPlot("NobleOther");
+        _resizePlots("NobleOther",
+                     settings.plotSettings.NobleOther, 
+                     settings.calculationSettings, 
+                     settings.formSettings.secondaryPlot);
+        
+        app.ctx.strokeStyle = utils.colors.Indigo;
+        app.ctx.lineWidth = 3;
+        app.plotPoly(settings.calculationSettings.pointBuffer.points[settings.formSettings.secondaryPlot], false);
         
     }
     

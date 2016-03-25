@@ -91,13 +91,17 @@ function NobleForm(utils) {
         
         var secondaryPlot = document.getElementById("secondaryPlot");
         secondaryPlot.selectedIndex = settings.formSettings.secondaryPlot;
-        
         for (var i = 0; i < secondaryPlot.options.length; i++) {
             var option = secondaryPlot.options[i];
             if (option.value === settings.formSettings["secondaryPlot"]) {
                 secondaryPlot.selectedIndex = i;
             }
         }
+        secondaryPlot.addEventListener("change", function(e) {
+            settings.formSettings.secondaryPlot = secondaryPlot.options[secondaryPlot.selectedIndex].value;
+            updateDisplay();
+        });
+        
         //secondaryPlot["selected"] = settings.formSettings["secondaryPlot"];
         // displayS1S2.addEventListener("change", function(e) {
         //     settings.formSettings.displayS1S2 = displayS1S2["checked"];
