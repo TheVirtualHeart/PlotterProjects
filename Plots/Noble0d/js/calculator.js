@@ -341,15 +341,45 @@ function NobleCalculator(utils) {
     function runCalculations(iterations, settings) {
         var state = settings;  
         count = 0;
+        var curAnalyzer;
         
+        /**
+         * Reset the calculators to their base states
+         */
         var numCalculations = _getNumIterations(settings);  
-        for (var k = 0; k < analyzers.length; k++) {
-            analyzers[k].reset(state);
+        for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
+            analyzers[curAnalyzer].reset(state);
         }
+        
+        /**
+         * Perform a function before the calculations are run
+         */
+        for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
+            if (analyzers[curAnalyzer].hasOwnProperty("preAggregate")) {
+                analyzers[curAnalyzer].preAggregate(state);
+            }
+        }
+        
+        /**
+         * Run the calculations the appropriate number of times and 
+         * pass these values to the analyzers using their aggregate
+         * function
+         */
         for (var i = 0; i < numCalculations; i++) {
             var data = calculateNext(state);
-            for (var j = 0; j < analyzers.length; j++) {
-                analyzers[j].aggregate(data);
+            for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
+                if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
+                    analyzers[curAnalyzer].aggregate(data);
+                }
+            }
+        }
+        
+        /**
+         * Perform a function after the calculations are run
+         */
+        for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
+            if (analyzers[curAnalyzer].hasOwnProperty("postAggregate")) {
+                analyzers[curAnalyzer].postAggregate(data);
             }
         }
     }

@@ -73,8 +73,7 @@ function PointBufferAnalyzer(utils) {
         
         var timePeriod = (((c.s1 * c.ns1) + c.s2) * 1.1);
         var numCalculation = timePeriod / c.timestep;
-        
-        
+           
         if (count % bufferSettings.bufferSize === 0) {
             // var points = calculator.getPoints();
 
@@ -112,7 +111,6 @@ function PointBufferAnalyzer(utils) {
             
             var ikPoint = new Point(count * c.timestep, data.calculationSettings.ik);
             bufferSettings.points.ik.push(ikPoint);
-            
         }
 	}
     
@@ -144,8 +142,6 @@ function PointBufferAnalyzer(utils) {
 		var ikAvg 	= points.ik;
 		var inaAvg 	= points.ina;
 		var ilAvg 	= points.il;
-
-		console.log(calculator);
 		
 		for (var i = 0; i < iterations; i++) {
 			calculator.calculateNext();

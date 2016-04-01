@@ -6,6 +6,7 @@ require.config({
 		plots: "plots",
 		pointBufferAnalyzer: "pointBufferAnalyzer",
         s1s2Analyzer: "s1s2Analyzer",
+        apdAnalyzer: "APDAnalyzer",
 		utility: "utility"
 	},
 });
@@ -19,6 +20,7 @@ require(["settings",
          "calculator", 
          "pointBufferAnalyzer",
          "s1s2Analyzer",
+         "apdAnalyzer",
          "plots"],
 function initialize(
     settings, 
@@ -27,6 +29,7 @@ function initialize(
     calculator, 
     pointBufferAnalyzer,
     s1s2Analyzer,
+    apdAnalyzer,
     plots) {
     
     /*
@@ -39,6 +42,9 @@ function initialize(
         calculationSettings: {
             pointBuffer: {
                 bufferSize: 1000
+            },
+            apdPoints: {
+                threshhold: -69
             }
         }
     });
@@ -56,8 +62,11 @@ function initialize(
      */
     pointBufferAnalyzer.initialize(plotSettings);
     s1s2Analyzer.initialize(plotSettings);
+    apdAnalyzer.initialize(plotSettings);
+    
     calculator.addAnalysisFunction(pointBufferAnalyzer);
     calculator.addAnalysisFunction(s1s2Analyzer);
+    calculator.addAnalysisFunction(apdAnalyzer);
         
     
     /*
