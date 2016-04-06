@@ -126,23 +126,20 @@ function APDAnalyzer(utils) {
             s2Index--;
         }
         
-        // if (c.apdPoints.s2Point.y >= c.apdPoints.threshhold) {
-            // c.apdPoints.apd.start = c.apdPoints.crossed[s2Index];
-            // c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 1];
-            // c.apdPoints.dl.start = c.apdPoints.crossed[s2Index - 1];
-            // c.apdPoints.dl.end = c.apdPoints.crossed[s2Index];
-        // } else {
-        //     c.apdPoints.apd.start = c.apdPoints.crossed[s2Index + 1];
-        //     c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 2];
-        //     c.apdPoints.dl.start = c.apdPoints.crossed[s2Index];
-        //     c.apdPoints.dl.end = c.apdPoints.crossed[s2Index + 1];
-        // }
+
         console.log(c.apdPoints.crossed.length);
         if (c.apdPoints.crossed.length >= 3) {
-            c.apdPoints.apd.start = c.apdPoints.crossed[s2Index];
-            c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 1];
-            c.apdPoints.dl.start = c.apdPoints.crossed[s2Index - 1];
-            c.apdPoints.dl.end = c.apdPoints.crossed[s2Index];
+            if (c.apdPoints.s2Point.y >= c.apdPoints.threshhold) {
+                c.apdPoints.apd.start = c.apdPoints.crossed[s2Index];
+                c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 1];
+                c.apdPoints.dl.start = c.apdPoints.crossed[s2Index - 1];
+                c.apdPoints.dl.end = c.apdPoints.crossed[s2Index];
+            } else {
+                c.apdPoints.apd.start = c.apdPoints.crossed[s2Index + 1];
+                c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 2];
+                c.apdPoints.dl.start = c.apdPoints.crossed[s2Index];
+                c.apdPoints.dl.end = c.apdPoints.crossed[s2Index + 1];
+            }
         }
     }
     

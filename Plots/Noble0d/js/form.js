@@ -179,6 +179,7 @@ function NobleForm(utils) {
     
     
     function updateCalculations() {
+        console.log(settings);
         mediator.updateCalculator(_.cloneDeep(settings));
     }
     
@@ -367,6 +368,8 @@ function NobleForm(utils) {
 	 */
 	var api = {
 		initialize: initialize,
+        updateCalculations: updateCalculations,
+        updateDisplay: updateDisplay
 		//exportValues: exportValues,
 	};
 	return api;

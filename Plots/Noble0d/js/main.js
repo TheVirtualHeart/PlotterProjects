@@ -89,7 +89,9 @@ function initialize(
         mediator
     );
     
-    mediator.updateCalculator(plotSettings);
+    form.updateCalculations();
+    
+    //mediator.updateCalculator(plotSettings);
     
     
     window.calculator = calculator;
