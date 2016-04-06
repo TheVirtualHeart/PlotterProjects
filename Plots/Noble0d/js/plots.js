@@ -610,7 +610,6 @@ function NoblePlots(utils) {
      */
     function _resizePlots(plotName, plotSettings, calculationSettings, preset) {
         var newPlotSettings = _generatePlot(plotSettings, calculationSettings, preset);
-        console.log(newPlotSettings);
         //if (newPlotSettings.domain.x !== app.settings.domain.x || newPlotSettings.domain.y !== app.settings.domain.y) {
             app.editPlot(plotName, newPlotSettings, false, false);
         //}
@@ -683,22 +682,18 @@ function NoblePlots(utils) {
                      "mainPlot");
                      
         
-        // TEST STUFF ASKDJFL;KASJDF;AKJSDF;A;        
-        app.ctx.strokeStyle = utils.colors.Yellow;
-        app.ctx.lineWidth = 3;
-        var p1 = new Point(app.settings.domain.x, utils.normalize(-69, new Point(-160, 40)));
-        var p2 = new Point(app.settings.domain.y, utils.normalize(-69, new Point(-160, 40)));
-        app.plotLine(p1, p2);
-        
-        app.ctx.strokeStyle = utils.colors.LightBlue;
-        app.ctx.lineWidth = 3;
-        console.log("APD POINTS");
-        console.log(settings);
-        _drawHorizontalLine(settings.calculationSettings.apdPoints.dl.start, settings.calculationSettings.apdPoints.dl.end);
-        
-        app.ctx.strokeStyle = utils.colors.Orange;
-        app.ctx.lineWidth = 3;
-        _drawHorizontalLine(settings.calculationSettings.apdPoints.apd.start, settings.calculationSettings.apdPoints.apd.end);
+        // TEST STUFF ASKDJFL;KASJDF;AKJSDF;A;      
+        console.log(settings.calculationSettings.apdPoints.dl.start);    
+        if (!!settings.calculationSettings.apdPoints.dl.start) {
+            app.ctx.strokeStyle = utils.colors.LightBlue;
+            app.ctx.lineWidth = 3;
+            _drawHorizontalLine(settings.calculationSettings.apdPoints.dl.start, settings.calculationSettings.apdPoints.dl.end);
+        }
+        if (!!settings.calculationSettings.apdPoints.apd.start) {
+            app.ctx.strokeStyle = utils.colors.Orange;
+            app.ctx.lineWidth = 3;
+            _drawHorizontalLine(settings.calculationSettings.apdPoints.apd.start, settings.calculationSettings.apdPoints.apd.end);
+        }
         
         
 		if (settings.formSettings.displayV) {
@@ -752,11 +747,10 @@ function NoblePlots(utils) {
     
     
     function drawDI(settings) {
-        console.log("drawingDI)");
-        app.selectPlot("Noble");
-        app.ctx.strokeStyle = utils.colors.LightBlue;
-        app.ctx.lineWidth = 3;
-        _drawHorizontalLine(settings.calculationSettings.apdPoints.dl.start, settings.calculationSettings.apdPoints.dl.end);
+        // app.selectPlot("Noble");
+        // app.ctx.strokeStyle = utils.colors.LightBlue;
+        // app.ctx.lineWidth = 3;
+        // _drawHorizontalLine(settings.calculationSettings.apdPoints.dl.start, settings.calculationSettings.apdPoints.dl.end);
     }
     
     

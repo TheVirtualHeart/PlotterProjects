@@ -3,6 +3,7 @@ function APDAnalyzer(utils) {
     "use strict";
     
     var bufferSettings;
+    var vInitial
     var vOld;
     var crossed;
     var count;
@@ -36,6 +37,16 @@ function APDAnalyzer(utils) {
     
     
     /**
+     * This function is called before the calculations are performed
+     * 
+     * Record the initial value of V
+     */
+    function preAggregate(settings) {
+        vInitial = settings.calculationSettings.v;
+    }
+    
+    
+    /**
      * This function takes output from the calculator and 
      * performs the given aggregation function on it.
      * 
@@ -56,13 +67,13 @@ function APDAnalyzer(utils) {
             if (vOld <= c.apdPoints.threshhold && vCur > c.apdPoints.threshhold) {
                 var eventtime = c.timestep * (count - ((c.v - c.apdPoints.threshhold)/(c.v - vOld)));
                 var vAvg = (c.v + vOld) / 2;
-                var vNorm = utils.normalize(vAvg, new Point(-160, 40));
+                var vNorm = utils.normalize(vAvg, new Point(-90, 30));
                 var p = new Point(eventtime, vNorm);
                 c.apdPoints.crossed.push(p);
             } else if (vOld >= c.apdPoints.threshhold && vCur < c.apdPoints.threshhold) {
                 var eventtime = c.timestep * (count - ((c.v - c.apdPoints.threshhold)/(c.v - vOld)));
                 var vAvg = (c.v + vOld) / 2;
-                var vNorm = utils.normalize(vAvg, new Point(-160, 40));
+                var vNorm = utils.normalize(vAvg, new Point(-90, 30));
                 var p = new Point(eventtime, vNorm);
                 c.apdPoints.crossed.push(p);
             }
@@ -70,9 +81,9 @@ function APDAnalyzer(utils) {
         
         // determine whether or not the function has reached the value of s2
         // if so determine where the last "up" threshhold was.
-        var s2Location = ((c.s1 * (c.ns1-1) + c.s2));
+        var s2Location = ((c.s1 * (c.ns1-1) + c.s2)) / c.timestep;
         if (count >= s2Location && !crossed) {
-            c.apdPoints.s2Point = new Point(s2Location, vCur);
+            c.apdPoints.s2Point = new Point(s2Location * c.timestep, vCur);
             crossed = true;
             
             // if (c.apdPoints.crossed.length > 0) {
@@ -97,7 +108,6 @@ function APDAnalyzer(utils) {
      * calculate the APD and DI values
      */
     function postAggregate(settings) {
-        console.log("POST");
         var c = settings.calculationSettings;
         var s2Index = 0;
         var s2 = c.apdPoints.s2Point;
@@ -107,16 +117,32 @@ function APDAnalyzer(utils) {
                 s2Index++;
             }
         }
-        if (c.apdPoints.s2Point.y >= c.apdPoints.threshhold) {
+        
+        // account for an initial crossover from a low initial value of v
+        console.log(vInitial);
+        console.log(c.apdPoints.threshhold);
+        if (vInitial < c.apdPoints.threshhold) {
+            console.log(vInitial);
+            s2Index--;
+        }
+        
+        // if (c.apdPoints.s2Point.y >= c.apdPoints.threshhold) {
+            // c.apdPoints.apd.start = c.apdPoints.crossed[s2Index];
+            // c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 1];
+            // c.apdPoints.dl.start = c.apdPoints.crossed[s2Index - 1];
+            // c.apdPoints.dl.end = c.apdPoints.crossed[s2Index];
+        // } else {
+        //     c.apdPoints.apd.start = c.apdPoints.crossed[s2Index + 1];
+        //     c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 2];
+        //     c.apdPoints.dl.start = c.apdPoints.crossed[s2Index];
+        //     c.apdPoints.dl.end = c.apdPoints.crossed[s2Index + 1];
+        // }
+        console.log(c.apdPoints.crossed.length);
+        if (c.apdPoints.crossed.length >= 3) {
             c.apdPoints.apd.start = c.apdPoints.crossed[s2Index];
             c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 1];
             c.apdPoints.dl.start = c.apdPoints.crossed[s2Index - 1];
             c.apdPoints.dl.end = c.apdPoints.crossed[s2Index];
-        } else {
-            c.apdPoints.apd.start = c.apdPoints.crossed[s2Index + 1];
-            c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 2];
-            c.apdPoints.dl.start = c.apdPoints.crossed[s2Index];
-            c.apdPoints.dl.end = c.apdPoints.crossed[s2Index + 1];
         }
     }
     
@@ -144,6 +170,7 @@ function APDAnalyzer(utils) {
         initialize: initialize,
         aggregate: aggregate,
         postAggregate: postAggregate,
+        preAggregate: preAggregate,
         reset: reset
     }
 })

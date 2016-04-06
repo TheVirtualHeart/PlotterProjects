@@ -290,7 +290,6 @@ function NobleMediator(pointBufferAnalyzer) {
      * update the display of the plot
      */
     function updateDisplay(settings) {
-        console.log(settings.calculationSettings.apdPoints);
         //plots.drawDI(settings);
         plots.drawPlots(settings);
     }

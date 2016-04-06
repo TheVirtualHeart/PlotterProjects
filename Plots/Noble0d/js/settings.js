@@ -118,7 +118,7 @@ function Settings(utils) {
          */
         getSettings: function() {
             //return utils.extend({}, defaultSettings);
-            return utils.deepCopy(defaultSettings);
+            return _.cloneDeep(defaultSettings);
         }
     }
     

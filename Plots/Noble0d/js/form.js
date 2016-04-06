@@ -179,12 +179,12 @@ function NobleForm(utils) {
     
     
     function updateCalculations() {
-        mediator.updateCalculator(settings);
+        mediator.updateCalculator(_.cloneDeep(settings));
     }
     
     
     function updateDisplay() {
-        mediator.updateDisplay(settings);
+        mediator.updateDisplay(_.cloneDeep(settings));
     }
     
 	// /**

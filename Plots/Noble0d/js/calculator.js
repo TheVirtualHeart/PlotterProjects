@@ -411,7 +411,6 @@ function NobleCalculator(utils) {
 		for (var i = 0; i < periods.length; i++) {
 			var periodX = utils.round(periods[i] / c.timestep);
 			if ((count >= periodX) && (count < periodX + dur)) {
-                console.log("applying stimulus");
 				stim = c.stimmag;
 			}
 		}

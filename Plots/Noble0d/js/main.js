@@ -44,7 +44,7 @@ function initialize(
                 bufferSize: 1000
             },
             apdPoints: {
-                threshhold: -69
+                threshhold: -60
             }
         }
     });
