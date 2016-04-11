@@ -54,7 +54,7 @@ function NobleForm(utils) {
         displayV.addEventListener("change", function(e) {
             settings.formSettings.displayV = displayV["checked"];
             
-            updateDisplay();
+            updateCalculations();
         });
         
         var displayM = document.getElementById("displayM");
@@ -62,7 +62,7 @@ function NobleForm(utils) {
         displayM.addEventListener("change", function(e) {
             settings.formSettings.displayM = displayM["checked"];
             
-            updateDisplay();
+            updateCalculations();
         });
         
         var displayH = document.getElementById("displayH");
@@ -70,7 +70,7 @@ function NobleForm(utils) {
         displayH.addEventListener("change", function(e) {
             settings.formSettings.displayH = displayH["checked"];
             
-            updateDisplay();
+            updateCalculations();
         });
         
         var displayN = document.getElementById("displayN");
@@ -78,7 +78,7 @@ function NobleForm(utils) {
         displayN.addEventListener("change", function(e) {
             settings.formSettings.displayN = displayN["checked"];
             
-            updateDisplay();
+            updateCalculations();
         });
         
         var displayS1S2 = document.getElementById("displayS1S2");
@@ -86,7 +86,7 @@ function NobleForm(utils) {
         displayS1S2.addEventListener("change", function(e) {
             settings.formSettings.displayS1S2 = displayS1S2["checked"];
             
-            updateDisplay();
+            updateCalculations();
         });
         
         var secondaryPlot = document.getElementById("secondaryPlot");
@@ -99,7 +99,7 @@ function NobleForm(utils) {
         }
         secondaryPlot.addEventListener("change", function(e) {
             settings.formSettings.secondaryPlot = secondaryPlot.options[secondaryPlot.selectedIndex].value;
-            updateDisplay();
+            updateCalculations();
         });
         
         //secondaryPlot["selected"] = settings.formSettings["secondaryPlot"];
@@ -179,7 +179,7 @@ function NobleForm(utils) {
     
     
     function updateCalculations() {
-        console.log(settings);
+        console.log(_.cloneDeep(settings));
         mediator.updateCalculator(_.cloneDeep(settings));
     }
     

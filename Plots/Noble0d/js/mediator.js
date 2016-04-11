@@ -291,6 +291,8 @@ function NobleMediator(pointBufferAnalyzer) {
      */
     function updateDisplay(settings) {
         //plots.drawDI(settings);
+        console.log("display");
+        console.log(settings);
         plots.drawPlots(settings);
     }
 
