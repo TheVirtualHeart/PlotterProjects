@@ -88,7 +88,6 @@ function initialize(
         plotSettings,
         mediator
     );
-    
     form.updateCalculations();
     
     //mediator.updateCalculator(plotSettings);
