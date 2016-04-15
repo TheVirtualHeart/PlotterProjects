@@ -27,7 +27,7 @@ plot: true
 		<fieldset>
 			<div class="plotter_inputgroup plotter_inputgroup-black">
 				<input id="displayS1S2" name="displayV" type="checkbox" checked/>
-				<label for="displayS1S2">Display S1-S2 Locations</label>
+				<label for="displayS1S2">Timings</label>
 			</div>
 			<div class="plotter_inputgroup plotter_inputgroup-red">
 				<input id="displayV" name="displayV" type="checkbox" checked/>
@@ -48,20 +48,33 @@ plot: true
 			<div class="plotter_inputgroup">
 				<select id="secondaryPlot" name="secondaryPlot">
 					<option value=""> -- none -- </option>
-					<option id="displayIna" value="ina">ina</option>
-					<option id="displayIk" value="ik">ik</option>
-					<option id="displayIl" value-"il">il</option>
+					<option id="displayIna" value="ina">INa</option>
+					<option id="displayIk" value="ik">IK</option>
+					<option id="displayIl" value-"il">Il</option>
 				</select>
-				<label for="secondaryPlot">Secondary Plot</label>
+				<label for="secondaryPlot">Current Plot</label>
 			</div>
 		</fieldset>
 		<fieldset>
+            <div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1" value="500" />
+			</div>
 			<div class="plotter_inputgroup">
-				<label for="gna1">gna1</label>
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1" value="4"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2" value="2000"/>
+			</div>
+            
+			<div class="plotter_inputgroup">
+				<label for="gna1">gNa1</label>
 				<input type="text" name="gna1" value="400" />
 			</div>
 			<div class="plotter_inputgroup">
-				<label for="gna2">gna2</label>
+				<label for="gna2">gNa2</label>
 				<input type="text" name="gna2" value=".14" />
 			</div>
 
@@ -71,21 +84,8 @@ plot: true
 			</div>
 
 			<div class="plotter_inputgroup">
-				<label for="gkMod">gk</label>
+				<label for="gkMod">gK</label>
 				<input type="text" name="gkMod" value="0.0" />
-			</div>
-
-			<div class="plotter_inputgroup">
-				<label for="s1">s1</label>
-				<input type="text" name="s1" value="500" />
-			</div>
-			<div class="plotter_inputgroup">
-				<label for="ns1">n</label>
-				<input type="text" name="ns1" value="4"/>
-			</div>
-			<div class="plotter_inputgroup">
-				<label for="s2">s2</label>
-				<input type="text" name="s2" value="2000"/>
 			</div>
 		</fieldset>
 		<!-- Buttons -->

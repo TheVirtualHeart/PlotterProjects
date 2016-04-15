@@ -37,7 +37,8 @@ function initialize(
      */
     settings.initialize({
         formSettings: {
-            displayV: true
+            displayV: true,
+            secondaryPlot: "ik",
         }, 
         calculationSettings: {
             pointBuffer: {
