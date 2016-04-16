@@ -89,6 +89,14 @@ function NobleForm(utils) {
             updateCalculations();
         });
         
+        var displayAPDDI = document.getElementById("displayAPDDI");
+        displayAPDDI["checked"] = settings.formSettings["displayAPDDI"];
+        displayAPDDI.addEventListener("change", function(e) {
+            settings.formSettings.displayAPDDI = displayAPDDI["checked"];
+            
+            updateCalculations();
+        });
+        
         var secondaryPlot = document.getElementById("secondaryPlot");
         secondaryPlot.selectedIndex = settings.formSettings.secondaryPlot;
         for (var i = 0; i < secondaryPlot.options.length; i++) {

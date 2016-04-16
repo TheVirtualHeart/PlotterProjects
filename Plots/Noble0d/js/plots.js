@@ -622,7 +622,7 @@ function NoblePlots(utils) {
     function _drawLineOnPlot(xPoint, color) {
         var currentRange = app.settings.range;
         var pBottom = new Point(xPoint.x, currentRange.x);
-        var pTop = new Point(xPoint.x, currentRange.y);
+        var pTop = new Point(xPoint.x, -0.01);
         app.ctx.strokeStyle = color;
         app.ctx.lineWidth = 3;
         app.plotLine(pBottom, pTop);
@@ -669,11 +669,6 @@ function NoblePlots(utils) {
     }
     
     
-    function _drawTextOverlay() {
-        
-    }
-    
-    
     /**
      * Draws all of the plots based on the given settings
      */
@@ -687,7 +682,7 @@ function NoblePlots(utils) {
                      "mainPlot");
                      
         
-        // Draw the APD and DI points
+        // Draw the APD and DI line segments
         if (settings.formSettings.displayAPDDI) {
             if (!!settings.calculationSettings.apdPoints.dl.start) {
                 app.ctx.strokeStyle = utils.colors.LightBlue;
@@ -701,43 +696,50 @@ function NoblePlots(utils) {
             }
         }
         
-        
+        // Draw the voltage plots
 		if (settings.formSettings.displayV) {
             app.ctx.strokeStyle = utils.colors.Red;
             app.ctx.lineWidth = 3;
             app.plotPoly(settings.calculationSettings.pointBuffer.points.v, false);
 		}
-        
         if (settings.formSettings.displayM) {
             app.ctx.strokeStyle = utils.colors.Green;
             app.ctx.lineWidth = 3;
             app.plotPoly(settings.calculationSettings.pointBuffer.points.m, false);
 		}
-        
 		if (settings.formSettings.displayH) {
             app.ctx.strokeStyle = utils.colors.LightBlue;
             app.ctx.lineWidth = 3;
             app.plotPoly(settings.calculationSettings.pointBuffer.points.h, false);
 		}
-        
 		if (settings.formSettings.displayN) {
             app.ctx.strokeStyle = utils.colors.Indigo;
             app.ctx.lineWidth = 3;
             app.plotPoly(settings.calculationSettings.pointBuffer.points.n, false);
 		}
         
+        // draw the S1-S2 lines
         if (settings.formSettings.displayS1S2) {
+            var textPoint;
             for (var i = 0; i < settings.calculationSettings.s1s2Points.s1.length; i++) {
                 _drawLineOnPlot(
                     settings.calculationSettings.s1s2Points.s1[i],
                     utils.colors.Black);
+                textPoint = new Point(settings.calculationSettings.s1s2Points.s1[i].x, -0.01);
+                app.ctx.font = "12pt Arial";
+                app.ctx.textAlign = "left";
+                app.plotText(" S1", textPoint);
             }
             _drawLineOnPlot(
                 settings.calculationSettings.s1s2Points.s2,
-                utils.colors.Black);
+                utils.colors.Black);                
+            textPoint = new Point(settings.calculationSettings.s1s2Points.s2.x, -0.01);
+            app.ctx.font = "12pt Arial";
+            app.ctx.textAlign = "left";
+            app.plotText(" S2", textPoint);
         }        
         
-        
+        // draw the readings of the APD and DI values
         if (settings.formSettings.displayAPDDI) {
             // Draw the DI
             var DIText;
@@ -783,17 +785,8 @@ function NoblePlots(utils) {
     }
     
     
-    function drawDI(settings) {
-        // app.selectPlot("Noble");
-        // app.ctx.strokeStyle = utils.colors.LightBlue;
-        // app.ctx.lineWidth = 3;
-        // _drawHorizontalLine(settings.calculationSettings.apdPoints.dl.start, settings.calculationSettings.apdPoints.dl.end);
-    }
-    
-    
     return {
         initialize: initialize,
         drawPlots: drawPlots,
-        drawDI: drawDI
     }
 });
