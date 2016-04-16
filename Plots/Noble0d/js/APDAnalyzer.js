@@ -21,11 +21,13 @@ function APDAnalyzer(utils) {
             s2Point: null,
             apd: {
                 start: null,
-                end: null
+                end: null,
+                length: null,
             },
             dl: {
                 start: null,
-                end: null
+                end: null,
+                length: null,
             }
         };
         if (!settings.calculationSettings.hasOwnProperty("apdPoints")) {
@@ -130,15 +132,27 @@ function APDAnalyzer(utils) {
         console.log(c.apdPoints.crossed.length);
         if (c.apdPoints.crossed.length >= 3) {
             if (c.apdPoints.s2Point.y >= c.apdPoints.threshhold) {
+                // calculate apd values
                 c.apdPoints.apd.start = c.apdPoints.crossed[s2Index];
                 c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 1];
+                c.apdPoints.apd.length = c.apdPoints.apd.end.x - c.apdPoints.apd.start.x;
+
+                // calculate dl values
                 c.apdPoints.dl.start = c.apdPoints.crossed[s2Index - 1];
                 c.apdPoints.dl.end = c.apdPoints.crossed[s2Index];
+                c.apdPoints.dl.length = c.apdPoints.dl.end.x - c.apdPoints.dl.start.x;
+                console.log(c.apdPoints.dl.length);
             } else {
+                // calculate apd values
                 c.apdPoints.apd.start = c.apdPoints.crossed[s2Index + 1];
                 c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 2];
+                c.apdPoints.apd.length = c.apdPoints.apd.end.x - c.apdPoints.apd.start.x;
+                
+                // calculate dl values
                 c.apdPoints.dl.start = c.apdPoints.crossed[s2Index];
                 c.apdPoints.dl.end = c.apdPoints.crossed[s2Index + 1];
+                c.apdPoints.dl.length = c.apdPoints.dl.end.x - c.apdPoints.dl.start.x;
+                console.log(c.apdPoints.dl.length);
             }
         }
     }
@@ -154,11 +168,13 @@ function APDAnalyzer(utils) {
         settings.calculationSettings.apdPoints.s2Point = null;
         settings.calculationSettings.apdPoints.apd = {
             start: null,
-            end: null
+            end: null,
+            length: null,
         };
         settings.calculationSettings.apdPoints.dl = {
             start: null,
-            end: null
+            end: null,
+            length: null,
         };
     }
     

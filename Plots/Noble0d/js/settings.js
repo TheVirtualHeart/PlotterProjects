@@ -35,6 +35,7 @@ function Settings(utils) {
             timestep: 0.01
         },
         formSettings: {
+            displayAPDDI: false,
             displayV: false,
             displayM: false,
             displayH: false,

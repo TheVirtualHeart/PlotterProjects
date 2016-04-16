@@ -37,6 +37,7 @@ function initialize(
      */
     settings.initialize({
         formSettings: {
+            displayAPDDI: true,
             displayV: true,
             secondaryPlot: "ik",
         }, 
@@ -46,6 +47,15 @@ function initialize(
             },
             apdPoints: {
                 threshhold: -60
+            }
+        },
+        plotSettings: {
+            Noble: {
+                plots: {
+                    mainPlot: {
+                        yAxis: "Normalized V",
+                    }
+                }
             }
         }
     });

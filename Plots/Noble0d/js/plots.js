@@ -669,6 +669,11 @@ function NoblePlots(utils) {
     }
     
     
+    function _drawTextOverlay() {
+        
+    }
+    
+    
     /**
      * Draws all of the plots based on the given settings
      */
@@ -682,17 +687,18 @@ function NoblePlots(utils) {
                      "mainPlot");
                      
         
-        // TEST STUFF ASKDJFL;KASJDF;AKJSDF;A;      
-        console.log(settings.calculationSettings.apdPoints.dl.start);    
-        if (!!settings.calculationSettings.apdPoints.dl.start) {
-            app.ctx.strokeStyle = utils.colors.LightBlue;
-            app.ctx.lineWidth = 3;
-            _drawHorizontalLine(settings.calculationSettings.apdPoints.dl.start, settings.calculationSettings.apdPoints.dl.end);
-        }
-        if (!!settings.calculationSettings.apdPoints.apd.start) {
-            app.ctx.strokeStyle = utils.colors.Orange;
-            app.ctx.lineWidth = 3;
-            _drawHorizontalLine(settings.calculationSettings.apdPoints.apd.start, settings.calculationSettings.apdPoints.apd.end);
+        // Draw the APD and DI points
+        if (settings.formSettings.displayAPDDI) {
+            if (!!settings.calculationSettings.apdPoints.dl.start) {
+                app.ctx.strokeStyle = utils.colors.LightBlue;
+                app.ctx.lineWidth = 3;
+                _drawHorizontalLine(settings.calculationSettings.apdPoints.dl.start, settings.calculationSettings.apdPoints.dl.end);
+            }
+            if (!!settings.calculationSettings.apdPoints.apd.start) {
+                app.ctx.strokeStyle = utils.colors.Orange;
+                app.ctx.lineWidth = 3;
+                _drawHorizontalLine(settings.calculationSettings.apdPoints.apd.start, settings.calculationSettings.apdPoints.apd.end);
+            }
         }
         
         
@@ -729,6 +735,37 @@ function NoblePlots(utils) {
             _drawLineOnPlot(
                 settings.calculationSettings.s1s2Points.s2,
                 utils.colors.Black);
+        }        
+        
+        
+        if (settings.formSettings.displayAPDDI) {
+            // Draw the DI
+            var DIText;
+            if (!!settings.calculationSettings.apdPoints.dl.length) {
+                DIText = settings.calculationSettings.apdPoints.dl.length;
+                DIText = Math.floor(DIText * 10) / 10;
+                DIText = "DI: " + DIText + "ms";
+            } else {
+                DIText = "no DI";
+            }
+            app.ctx.fillStyle = utils.colors.LightBlue;
+            app.ctx.font = "12pt Arial";
+            app.ctx.textAlign = "left";
+            app.ctx.fillText(DIText, 400, 50);
+            
+            // Draw the APD
+            var APDText;
+            if (!!settings.calculationSettings.apdPoints.apd.length) {
+                APDText = settings.calculationSettings.apdPoints.apd.length;
+                APDText = Math.floor(APDText * 10) / 10;
+                APDText = "APD: " + APDText + "ms";
+            } else {
+                APDText = "no APD";
+            }
+            app.ctx.fillStyle = utils.colors.Orange;
+            app.ctx.font = "12pt Arial";
+            app.ctx.textAlign = "left";
+            app.ctx.fillText(APDText, 400, 30);
         }
         
         
