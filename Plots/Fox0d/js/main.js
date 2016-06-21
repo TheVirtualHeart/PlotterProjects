@@ -6,10 +6,13 @@ require.config({
 		plots: "plots",
 		pointBufferAnalyzer: "pointBufferAnalyzer",
         s1s2Analyzer: "../../Noble0d/js/s1s2Analyzer",
-        utility: "../../Noble0d/js/utility"
+        apdAnalyzer: "../../Noble0d/js/APDAnalyzer",
+		utility: "../../Noble0d/js/utility"
 	},
 });
 
+// require(["plots", "calculator", "mediator", "form"],
+// function initialize(plots, calculator, mediator, form) {
 
 require(["settings", 
          "mediator", 
@@ -17,7 +20,9 @@ require(["settings",
          "calculator", 
          "pointBufferAnalyzer",
          "s1s2Analyzer",
-         "plots"],
+         "apdAnalyzer",
+         "plots"
+         ],
 function initialize(
     settings, 
     mediator,
@@ -25,7 +30,9 @@ function initialize(
     calculator, 
     pointBufferAnalyzer,
     s1s2Analyzer,
-    plots) {
+    apdAnalyzer,
+    plots
+    ) {
 
     
     /*
@@ -33,19 +40,22 @@ function initialize(
      */
     settings.initialize({
         formSettings: {
+            displayAPDDI: true,
             displayV: true,
-            displayU: true,
+            secondaryPlot: "xikr",
         }, 
         calculationSettings: {
             pointBuffer: {
                 bufferSize: 1000
             },
+            apdPoints: {
+                threshhold: -80
+            }
         },
         plotSettings: {
-            Barkley: {
+            Fox: {
                 plots: {
                     mainPlot: {
-
                         xAxis: "Time (ms)",
                         yAxis: "",
                     }
@@ -53,18 +63,18 @@ function initialize(
             }
         }
     });
-
+    
    /*
     * Create an analyzer array that holds all the 
     * analyzers to be processed
     */
-    var analyzers = [pointBufferAnalyzer, s1s2Analyzer],
+    var analyzers = [pointBufferAnalyzer, s1s2Analyzer, apdAnalyzer],
         plotSettings = settings.getSettings();
-
+    
     /*
      * Initialize a calculator
      */
-    calculator.initialize(plotSettings);
+     calculator.initialize(plotSettings);
         
     
     /*
@@ -75,24 +85,23 @@ function initialize(
     });
 
     /*
-     * Add analyzers to calculators
+     * Add analyzers to calculator
      */
     analyzers.forEach(function(analyzer){
         calculator.addAnalysisFunction(analyzer);
-    });    
+    });
+        
     
     /*
      * Initialize the plot
      */
     plots.initialize(plotSettings);
-    
-    
+        
     /*
      * Initialize a mediator with the calculator
      */
     mediator.initialize(calculator, plots);
-    
-    
+        
     /*
      * Initialize a form
      */
@@ -100,6 +109,7 @@ function initialize(
         plotSettings,
         mediator
     );
+    
     form.updateCalculations();
-
+    
 });

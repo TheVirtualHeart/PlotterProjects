@@ -12,7 +12,6 @@ define(["utility"],
 				points: {
                     u: [],
                     v: [],
-                    myPoints: ["u","v"],
                     
                 }
             };

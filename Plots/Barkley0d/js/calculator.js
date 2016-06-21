@@ -227,6 +227,10 @@
 	 	return stim;
 	}
 
+	/*
+	 * This function is responsible for udpating the settings object properties.
+	 *
+	 */
 	function updateSettingsWithAnalyzers(settings){
 		analyzers.forEach(function(analyzer){
 			analyzer.getSettings(settings);
