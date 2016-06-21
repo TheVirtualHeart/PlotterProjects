@@ -54,7 +54,7 @@
 
     var printButton = document.getElementById("print");
     printButton.addEventListener("click", function(e) {           
-      mediator.printPoints(_fetchPointsToPrint());
+      mediator.printPoints(settings, _fetchPointsToPrint());
     });
 
     /*
