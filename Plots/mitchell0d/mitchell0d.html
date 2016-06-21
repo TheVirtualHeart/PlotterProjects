@@ -1,0 +1,81 @@
+---
+title: Mitchell0d
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Mitchell Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-330px;margin-left:550px;">
+		<!-- inputs -->
+		<fieldset>
+			<div class="plotter_inputgroup plotter_inputgroup-black">
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
+				<label for="displayS1S2">Display Timings</label>
+			</div>		
+			<div class="plotter_inputgroup plotter_inputgroup-red">
+				<input id="displayV" name="displayV" type="checkbox" checked/>
+				<label for="displayV">Display V</label>
+			</div>
+
+			<div class="plotter_inputgroup plotter_inputgroup-green">
+				<input id="displayH" name="displayH" type="checkbox" checked/>
+				<label for="displayH">Display h</label>
+			</div>		
+		</fieldset>
+		<fieldset>
+            <div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1" value="500" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1" value="4"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2" value="1000"/>
+			</div> 
+
+			<div class="plotter_inputgroup">
+				<label for="tau_in">tau_in</label>
+				<input type="text" name="tau_in" value="0.3"/>
+			</div>  
+			<div class="plotter_inputgroup">
+				<label for="tau_out">tau_out</label>
+				<input type="text" name="tau_out" value="6"/>
+			</div> 
+			<div class="plotter_inputgroup">
+				<label for="tau_open">tau_open</label>
+				<input type="text" name="tau_open" value="120"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tau_close">tau_close</label>
+				<input type="text" name="tau_close" value="150"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="v_gate">v_gate</label>
+				<input type="text" name="v_gate" value="0.13"/>
+			</div> 
+		</fieldset>
+		<!-- Buttons -->
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<button id="update">Update</button>
+				<button id="default">Defaults</button>
+				<button id="print">Print Data</button>
+			</div>
+		</fieldset>
+	</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>

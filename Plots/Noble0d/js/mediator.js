@@ -2,10 +2,10 @@
  * provide a series of functions to easily mediate between the calculator, the
  * pointBuffer, and the plots.
  */
-define(["pointBufferAnalyzer"],
-function NobleMediator(pointBufferAnalyzer) {
+define([],
+function NobleMediator() {
 	"use strict";
-
+     
 	// var calculator;
 	// var plots;
 	// var displayOverlay = true;
@@ -287,25 +287,100 @@ function NobleMediator(pointBufferAnalyzer) {
 
 
     /**
-     * update the display of the plot
+     * This function is used to update the display of the plot
+     * @param {settings} - consists of values used by the plot
      */
-    function updateDisplay(settings) {
-        //plots.drawDI(settings);
-        console.log("display");
-        console.log(settings);
+    function updateDisplay(settings) {        
+        //console.log("display");
+        //console.log(settings); 
+        calculator.updateSettingsWithAnalyzers(settings);     	   	    
         plots.drawPlots(settings);
     }
 
 
-    /**
-     * recalculate based on the settings
-     */
+	/*
+    * This function is used to recalculate settings and draw plots synchronously.  
+    * @param {settings} - consists of settings to store calculated values
+	*/
     function updateCalculator(settings) {
-        calculator.runCalculations(500000, settings);
-        updateDisplay(settings);
+         calculator.runCalculations(500000, settings);
+         plots.drawPlots(settings);
+     
     }
+
+
+    /*
+    * This function is used to recalculate settings and draw plots asynchronously.
+    * @param {settings} - consists of settings to store calculated values
+	*/
+
+    function updateCalculatorAsync(settings) {
+        calculator.runCalculations(500000, settings, function(){
+        	plots.drawPlots(settings);
+        });
+    }
+
+    /*
+     * This function is used to prepare the format for he points 
+     * to be displayed on the screen 
+     * @param {settings}   -  consists of the points in pointbuffer
+     * @param {pointNames} -  the selected attributes from the UI for which the 
+                              points need to be displayed
+     * function
+     */ 
+
+    function printPoints(settings, pointNames){
+
+    	calculator.updateSettingsWithAnalyzers(settings);
+
+    	var points = settings.calculationSettings.pointBuffer.points,
+    	    precision = 3,
+    	    counter = (pointNames.length>0)?points[pointNames[0]].length:0;
+
+    	var concat="time &emsp; &emsp;";
+    	for(var i = 0, len = pointNames.length; i< len ; i++){              
+			concat += [pointNames[i]] + "&emsp; &emsp; &emsp;";
+		} 
+		concat+="<br>";
+    	
+		for(var i = 0; i < counter; i++){
+			var line = (points[pointNames[0]][i]["x"]).toFixed(precision)  + "&emsp;&emsp;";
+	    	 pointNames.forEach(function(name){
+	    	 	line += (points[name][i]["y"]).toFixed(precision) + "&emsp;&emsp;";
+	    	 });
+	    	 concat+=line+"<br>";
+    	 }
+
+    	/*var concat="time";
+    	for(var i = 0, len = pointNames.length; i< len ; i++){              
+			concat +=  ',' + [pointNames[i]];
+		} 
+		concat += '\r\n';
+    	
+		for(var i = 0; i < counter; i++){
+			var line = (points[pointNames[0]][i]["x"]).toFixed(precision);
+	    	 pointNames.forEach(function(name){
+	    	 	line += ',' + (points[name][i]["y"]).toFixed(precision);
+	    	 });
+	    	 concat+=line + '\r\n'; 
+	    	 }*/
     
-    
+    	 openWin(concat);
+    }
+
+     /*
+     * This function opens a new window and display points for attributes selected 
+     * on the user interface (UI)
+     * @param {data}  - coma separated point vaules for selected attributes
+     * function
+     */   
+
+     function openWin(data) {
+		var myWindow=window.open('','','width=2000,height=650');
+		myWindow.document.write(data);
+		myWindow.focus();		
+	}
+        
     /**
      * return the functions that can be 
      * interacted with.
@@ -313,7 +388,9 @@ function NobleMediator(pointBufferAnalyzer) {
     return {
         initialize: initialize,
         updateDisplay: updateDisplay,
-        updateCalculator: updateCalculator  
+        printPoints : printPoints,
+        updateCalculator: updateCalculator,
+        updateCalculatorAsync : updateCalculatorAsync
     }
 
 });
