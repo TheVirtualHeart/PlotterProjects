@@ -61,6 +61,9 @@ function APDAnalyzer(utils) {
         var c = settings.calculationSettings; 
         var vCur = settings.calculationSettings.v;
         
+        // pointing reference to buffersettings
+        bufferSettings = c.apdPoints;
+        
         // edge case. There should not be an initial value
         // of v to check against. We must wait until after
         // the first pass
@@ -111,6 +114,9 @@ function APDAnalyzer(utils) {
      */
     function postAggregate(settings) {
         var c = settings.calculationSettings;
+
+        // pointing reference to buffersettings
+        bufferSettings = c.apdPoints;
         var s2Index = 0;
         var s2 = c.apdPoints.s2Point;
         for (var i = 0; i < c.apdPoints.crossed.length; i++) {
@@ -177,6 +183,14 @@ function APDAnalyzer(utils) {
             length: null,
         };
     }
+
+
+    function getSettings(settings){
+        if (!settings.calculationSettings.hasOwnProperty("apdPoints")) {
+            settings.calculationSettings.apdPoints = {};
+        }                  
+        settings.calculationSettings.apdPoints = utils.extend(settings.calculationSettings.apdPoints, bufferSettings);         
+    }
     
     
     return {
@@ -184,6 +198,7 @@ function APDAnalyzer(utils) {
         aggregate: aggregate,
         postAggregate: postAggregate,
         preAggregate: preAggregate,
+        getSettings :  getSettings,
         reset: reset
     }
 })

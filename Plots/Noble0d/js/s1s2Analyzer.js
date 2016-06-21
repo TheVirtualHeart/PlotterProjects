@@ -23,6 +23,8 @@ function S1S2Analyzer(utils) {
      */
     function aggregate(data) {
         var c = data.calculationSettings;
+
+        bufferSettings = c.s1s2Points;
         
         // create an array of all s1 values
         var s1Array = [];
@@ -49,11 +51,19 @@ function S1S2Analyzer(utils) {
             s2: null
         };
     }
+
+    function getSettings(settings){
+        if (!settings.calculationSettings.hasOwnProperty("s1s2Points")) {
+                    settings.calculationSettings.s1s2Points = {};
+                } 
+        settings.calculationSettings.s1s2Points = utils.extend(settings.calculationSettings.s1s2Points, bufferSettings);
+    }
     
     
     return {
         initialize: initialize,
         aggregate: aggregate,
+        getSettings:  getSettings,
         reset: reset
     }
 })

@@ -4,6 +4,7 @@ function PointBufferAnalyzer(utils) {
     
     var count = 0;
     var bufferSettings;
+    var mySettings;
     function initialize(settings) {
         var bufferSettings = {
                 bufferSize: 100,
@@ -15,10 +16,12 @@ function PointBufferAnalyzer(utils) {
                     n: [],
                     il: [],
                     ina: [],
-                    ik: []
+                    ik: [],
+                    myPoints: ["v","h","m","n","il","ina","ik"],
                 }
         };
         
+        mySettings=settings;
         if (!settings.calculationSettings.hasOwnProperty("pointBuffer")) {
             settings.calculationSettings.pointBuffer = bufferSettings;
         } else {
@@ -43,6 +46,7 @@ function PointBufferAnalyzer(utils) {
             h: [],
             m: [],
             n: [],
+            
             il: [],
             ina: [],
             ik: []
@@ -200,6 +204,12 @@ function PointBufferAnalyzer(utils) {
     return {
         initialize: initialize,
         aggregate: aggregate,
-        reset: reset
+        reset: reset,
+        getPoints : function(){
+        	return {
+        		myPoints: mySettings.calculationSettings.pointBuffer.points.myPoints,
+        		points: bufferSettings.points
+        	}
+        }
     }
 })

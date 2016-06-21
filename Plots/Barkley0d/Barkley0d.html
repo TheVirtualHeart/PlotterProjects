@@ -1,0 +1,79 @@
+---
+title: Barkley0d
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Barkley Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<h1><center>Barkley0d</center></h1>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-330px;margin-left:550px;">
+
+		<fieldset>
+			<!-- <div class="plotter_inputgroup plotter_inputgroup-orange">
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" checked/>
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div> -->
+			<div class="plotter_inputgroup plotter_inputgroup-black">
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-green">
+				<input id="displayU" name="displayU" type="checkbox" checked/>
+				<label for="displayU">Display u</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-red">
+				<input id="displayV" name="displayV" type="checkbox" checked/>
+				<label for="displayV">Display v</label>
+			</div>
+		</fieldset>
+		<fieldset>
+            <div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1" value="15" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1" value="4"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2" value="30"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="a">a</label>
+				<input type="text" name="a" value="000" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="b">b</label>
+				<input type="text" name="b" value="000" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="eps">eps</label>
+				<input type="text" name="eps" value="000" />
+			</div>
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<center>
+				<!-- <button id="update">Update</button> -->
+				<button id="default" name="default">Defaults</button>
+				<button id="print" name="print">Print Data</button>
+				</center>
+			</div>
+		</fieldset>
+		</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
+	
