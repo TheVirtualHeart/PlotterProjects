@@ -190,6 +190,21 @@ define(function NobleUtilities() {
 		LightBlue: "rgb(0, 153, 255)",
 		Red: "rgb(255, 0, 0)",
 		Green: "rgb(19, 171, 19)",
+		/* Amit Shah
+		 * 06/13/2016
+		 * Description: Adding more colors.
+		 */
+		LightCoral: "#F08080",
+		LightSlateGray: "#778899",
+		Maroon: "#800000",
+		MidnightBlue: "#191970",
+		OrangeRed: "#FF4500",
+		SandyBrown: "#F4A460",
+		Teal: "#008080",
+		Violet: "#EE82EE",
+		SpringGreen: "#00FF7F",
+		Olive: "#808000"
+		/* Colors Added till here. */
 	};
 
 	/**
