@@ -173,19 +173,20 @@ function getCurrentVariables(){
 
 
  /* This function {constructor} is used to initiate Plot object
-  * @param {range, unitPerTick, labelFrequency, xAxis, yAxis, labelPrecision, labelSize, defaultFlag}
-  *
-  */
-  function Plot (range, unitPerTick, labelFrequency, xAxis, yAxis, labelPrecision, labelSize, defaultFlag) {		
-  	this.range = range,
-  	this.unitPerTick = unitPerTick,
-  	this.labelFrequency = labelFrequency,
-  	this.xAxis = xAxis,
-  	this.yAxis = yAxis,
-  	this.labelPrecision = labelPrecision,
-  	this.labelSize = labelSize,
-  	this.default = defaultFlag
-  };
+        * @param {xAxis, yAxis, defaultFlag}
+        *
+        */
+
+        function Plot (xAxis, yAxis, defaultFlag) {     
+            this.range          =  new Point(-0.1, 1.1),     
+            this.unitPerTick    =  new Point(200, 0.10), 
+            this.labelFrequency = new Point(1, 1),
+            this.xAxis          = xAxis,
+            this.yAxis          = yAxis,
+            this.labelPrecision =  new Point(0,1), 
+            this.labelSize      = new Point(0, 0),
+            this.default        = defaultFlag
+        };
 
 /* This function is responsible for creating plot-settings object;
  * a nested object in the settings object. One or more plot objects are nested under baseplot
@@ -203,13 +204,42 @@ function getCurrentVariables(){
  	plotSettings;
 
 		//foxPlots
-		foxPlots.push({key:"mainPlot",
-			value: new Plot(new Point(-0.2, 1.5), new Point(200, 0.15), new Point(1, 1), "Time (ms)",
+		foxPlots.push({key:"mainPlot",value: new Plot("Time (ms)", " ", false)});
+        foxBasePlot = new BasePlot( 437.5, 240, new Point(0, 0), foxPlots);
+
+		/*foxPlots.push({key:"mainPlot",
+			value: new Plot(new Point(-0.1, 1.1), new Point(200, 0.1), new Point(1, 1), "Time (ms)",
 				"V_m", new Point(0, 1), new Point(0, 0), false)});
 		foxBasePlot = new BasePlot( 437.5, 240, new Point(0, 0), foxPlots);
-		
+		*/
 		// foxOtherPlots
 
+		var fOtherPlotsInit = [ {key : "xica",	value:  {name: "I_Ca",	showDefault:false}},
+                                {key : "xicab", value:  {name: "I_Cab", showDefault:false}},
+                                {key : "xicak", value:  {name: "I_CaK", showDefault:false}},
+                                {key : "xik1",  value:  {name: "I_K1", 	showDefault:false}},
+                                {key : "xikp",  value:  {name: "I_Kp",  showDefault:false}},
+                                {key : "xikr",  value:  {name: "I_Kr", 	showDefault:false}},
+                                {key : "xiks",  value:  {name: "I_Ks",  showDefault:false}},
+                                {key : "xina",  value:  {name: "I_Na",  showDefault:false}},
+                                {key : "xinab", value:  {name: "I_Nab", showDefault:false}},
+                                {key : "xinaca",value:  {name: "I_NaCa",showDefault:false}},
+                                {key : "xinak", value:  {name: "I_NaK", showDefault:false}},
+                                {key : "xipca", value:  {name: "I_pCa",	showDefault:false}},
+                                {key : "xito", 	value:  {name: "I_to",	showDefault:false}} ];
+
+       fOtherPlotsInit.forEach(function(plotItem){
+        foxOtherPlots.push({key: plotItem["key"], value: new Plot("Time (ms)", plotItem["value"]["name"], 
+                            plotItem["value"]["showDefault"])}); });
+        foxOtherBasePlot = new BasePlot( 437.5, 240, new Point(0, 300), foxOtherPlots);
+
+        basePlots.push({key:"Fox", value : foxBasePlot});
+        basePlots.push({key:"FoxOther", value :foxOtherBasePlot});
+
+        plotSettings = new PlotSettings(basePlots);
+        return plotSettings;
+    }; 
+/*
 		foxOtherPlots.push({key:"xica",
 			value: new Plot(new Point(-1.6, 0), new Point(200, .15), new Point(1, 1), "Time (ms)",
 				"I_Ca", new Point(0, 2), new Point(0, 0), false)});
@@ -259,7 +289,7 @@ function getCurrentVariables(){
 
 		foxOtherPlots.push({key:"xipca",
 			value: new Plot(new Point(0, 0.05), new Point(200, .005), new Point(1, 1), "Time (ms)",
-				"I_pCa", new Point(0, 3), false)});	
+				"I_pCa", new Point(0, 3), new Point(0, 0), false)});	
 		
 		foxOtherPlots.push({key:"xito",
 			value: new Plot(new Point(0, 3), new Point(200, .3), new Point(1, 1), "Time (ms)",
@@ -273,7 +303,7 @@ function getCurrentVariables(){
 		
 		plotSettings = new PlotSettings(basePlots);
 		return plotSettings;
-	};
+	};*/
 
 
 	/*

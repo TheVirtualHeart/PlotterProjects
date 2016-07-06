@@ -32,7 +32,7 @@ define(function NobleUtilities() {
     
     function deepExtend(target, source) {
         for (var prop in source) {
-            if (typeof prop === "object") {
+        	if (typeof source[prop] === "object" && source[prop] !== null) {
                 target[prop] = deepExtend(target[prop], source[prop]);
             }
             else {
@@ -167,6 +167,7 @@ define(function NobleUtilities() {
 	 * between 0 and 1.
 	 */
 	function normalize(value, range) {
+
 		var norm = (value - range.x)/(range.y - range.x);
 		return norm;
 	}
@@ -177,6 +178,7 @@ define(function NobleUtilities() {
 	 * graph.
 	 */
 	var Colors  = {
+		
         Blue: "#0099FF",
 		Aqua: "rgb(29, 239, 242)",
 		Yellow: "rgb(254, 238, 0)",
@@ -203,7 +205,36 @@ define(function NobleUtilities() {
 		Teal: "#008080",
 		Violet: "#EE82EE",
 		SpringGreen: "#00FF7F",
-		Olive: "#808000"
+		Olive: "#808000",
+		/* Colors Added till here. */
+		
+		/* Amit Shah
+		 * 07/01/2016
+		 * Description: Adding more colors.
+		 */
+
+		BlueViolet: "#8A2BE2",
+		Brown: 	"#A52A2A",
+		BurlyWood: "#DEB887",
+		Chartreuse: "#7FFF00",
+		Chocolate: "#D2691E",
+		CornflowerBlue: "#6495ED",
+		DarkGoldenRod: 	"#B8860B",
+		DarkMagenta:    "#8B008B",
+		DarkSlateGrey: 	"#2F4F4F",
+		FireBrick: 	"#B22222",
+		Lime: 	"#00FF00",
+		SaddleBrown: "#8B4513",
+		Turquoise: 	"#40E0D0",
+		CadetBlue: 	"#5F9EA0",
+		DarkGreen: 	"#006400",
+		DarkRed: 	"#8B0000",
+		DarkSalmon: 	"#E9967A",
+		DeepPink: 	"#FF1493",
+		DodgerBlue: 	"#1E90FF",
+		ForestGreen: 	"#228B22",
+		Gold: 	"#FFD700"
+
 		/* Colors Added till here. */
 	};
 

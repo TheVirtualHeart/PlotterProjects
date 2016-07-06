@@ -3,19 +3,19 @@
  * provides a more convenient way for the form to interact with the graphs and
  * wraps some complex behavior into more convenient functions.
  */
-define(["utility"],
-function FoxPlots(utils) {
-	"use strict";
+ define(["utility"],
+    function NygrenPlots(utils) {
+       "use strict";
 
-	var app;
-    var mainPlotBase = {
+       var app;
+       var mainPlotBase = {
         offset: new Point(0, 0),
         range: new Point(-100, 100),
         unitPerTick: new Point(200, 40),
         pixelPerUnit: new Point(.0875, 200),
         labelFrequency: new Point(1, 1),
         xAxis: "Time (ms)",
-        yAxis: "V (mv)",
+        yAxis: " ",
         labelPrecision: new Point(0, 1),
         labelSize: new Point(0, 0),
     };
@@ -23,11 +23,11 @@ function FoxPlots(utils) {
     /**
      * Recursively cycle through the plots to generate the settings
      */
-    function _generatePlot(plotSettings, calculationSettings, preset) {
+     function _generatePlot(plotSettings, calculationSettings, preset) {
         
         var generatedPlot = {};
 
-       generatedPlot.offset = plotSettings.offset || new Point(0, 0);
+        generatedPlot.offset = plotSettings.offset || new Point(0, 0);
         
         // get the display of the default plot if it exists
         var defaultPlot;
@@ -47,7 +47,6 @@ function FoxPlots(utils) {
         else {
             defaultPlot = preset;
         }
-       
         // get the settings of the default plot or the first plot
         generatedPlot = utils.extend(plotSettings.plots[defaultPlot], generatedPlot);
         
@@ -56,11 +55,11 @@ function FoxPlots(utils) {
         
         // calculate the pixels per unit of the new plot
         generatedPlot.pixelPerUnit = _calculatePixelsPerUnit(generatedPlot.domain.x, 
-                                              generatedPlot.range.x,
-                                              generatedPlot.domain.y,
-                                              generatedPlot.range.y,
-                                              plotSettings.width,
-                                              plotSettings.height);
+          generatedPlot.range.x,
+          generatedPlot.domain.y,
+          generatedPlot.range.y,
+          plotSettings.width,
+          plotSettings.height);
         
         return generatedPlot;
     }
@@ -70,15 +69,15 @@ function FoxPlots(utils) {
 	 * array.
 	 * @return {number} - the value of the array for the current time.
 	 */
-	function _arrayAtTime(currentTime, timestep, array) {
-		var index = Math.floor(currentTime);
-		return array[index];
-	}
-    
+    function _arrayAtTime(currentTime, timestep, array) {
+      var index = Math.floor(currentTime);
+      return array[index];
+  }
+  
      /**
      * calculate what the domain of the plot should be
      */
-    function _calculateDomain(c) {
+     function _calculateDomain(c) {
         var start = c.s1Start;
         var end = ((c.s1Start + (c.s1 * c.ns1) + c.s2) * 1.1);
         return new Point(start, end);
@@ -87,7 +86,7 @@ function FoxPlots(utils) {
      /**
      * Calculate the pixels per unit of the plot
      */
-    function _calculatePixelsPerUnit(x1, y1, x2, y2, width, height) {
+     function _calculatePixelsPerUnit(x1, y1, x2, y2, width, height) {
         var ppuX = width / (x2 - x1);
         var ppuY = height / (y2 - y1);
         return new Point(ppuX, ppuY);
@@ -97,15 +96,16 @@ function FoxPlots(utils) {
     /**
      * Resize the plot to fit within the height and width of the plot
      */
-    function _resizePlots(plotName, plotSettings, calculationSettings, preset) {
+     function _resizePlots(plotName, plotSettings, calculationSettings, preset) {
         var newPlotSettings = _generatePlot(plotSettings, calculationSettings, preset);
-            app.editPlot(plotName, newPlotSettings, false, false);
+        app.editPlot(plotName, newPlotSettings, false, false);
+      
     }
     
      /**
      * Draws a vertical line on the current plot
      */
-    function _drawLineOnPlot(xPoint, color) {
+     function _drawLineOnPlot(xPoint, color) {
         var currentRange = app.settings.range;
         var pBottom = new Point(xPoint.x, currentRange.x);
         var pTop = new Point(xPoint.x, -0.01);
@@ -117,17 +117,18 @@ function FoxPlots(utils) {
     /**
      * Initialize the main plot
      */
-    function initialize(settings) {
+     function initialize(settings) {
         app = createPlotter(document.getElementById("plot"));
         for (var graph in settings.plotSettings) {            
             app.newPlot(_generatePlot(settings.plotSettings[graph], settings.calculationSettings), graph);
+          
         }
     }
     
     /**
      * Draw a horizontal line on the plot
      */
-    function _drawHorizontalLine(start, end) {
+     function _drawHorizontalLine(start, end) {
         
         // check to see that there is at least one height
         var height;
@@ -156,14 +157,14 @@ function FoxPlots(utils) {
     /**
      * Draws all of the plots based on the given settings
      */
-    function drawPlots(settings) {
-        
-        // draw the main plot
-        app.selectPlot("Fox");
-        _resizePlots("Fox", 
-                     settings.plotSettings.Fox, 
-                     settings.calculationSettings,
-                     "mainPlot");
+     function drawPlots(settings) {
+            
+            // draw the main plot
+        app.selectPlot("Nygren");
+        _resizePlots("Nygren", 
+           settings.plotSettings.Nygren, 
+           settings.calculationSettings,
+           "mainPlot");
         
         // Draw the APD and DI line segments
         if (settings.formSettings.displayAPDDI) {
@@ -179,8 +180,8 @@ function FoxPlots(utils) {
             }
         }
 
-        // draw the readings of the APD and DI values
-        if (settings.formSettings.displayAPDDI) {            
+                // draw the readings of the APD and DI values
+                if (settings.formSettings.displayAPDDI) {            
             // Draw the DI
             var DIText;
             if (!!settings.calculationSettings.apdPoints.dl.length) {
@@ -211,19 +212,24 @@ function FoxPlots(utils) {
         }
         
         // Draw the voltage plots
-        var voltagePlots = [{key: "v",value: "Red"},{key: "ccasr",value: "SpringGreen"},{key: "ccai",value: "Aqua"},{key: "xfca",value: "Yellow"},
-        			{key: "xd",value: "YellowGreen"},{key: "xf",value: "Purple"},{key: "yto",value: "Pink"},
-        			{key: "xto",value: "Gray"},{key: "xks",value: "Olive"},{key: "xkr",value: "LightCoral"},
-        			{key: "xj",value: "Maroon"},{key: "xh",value: "LightSlateGray"},{key: "xm",value: "SandyBrown"}];
+        var voltagePlots =  [{key: "v",value: "Red"} ,{key: "xm",value: "Aqua"},
+            {key: "xh1",value: "Gray"},{key: "xh2",value: "Pink"},
+            {key: "xdl",value: "Purple"},{key: "xr",value: "YellowGreen"},
+            {key: "xfl1",value: "Indigo"}, {key: "xfl2",value: "LightCoral"},
+            {key: "xs",value: "Maroon"}, {key: "rsus",value: "MidnightBlue"},
+            {key: "ssus",value: "SandyBrown"},{key: "xn",value: "Teal"},
+            {key: "xpa",value: "Violet"}, {key: "ccai", value: "OrangeRed"},
+            {key: "ccad", value: "LightBlue"}, {key: "ccaup", value: "Olive"},
+            {key: "ccarel", value: "LightSlateGray"},];
 
         voltagePlots.forEach(function(item){
-        	var display = "display"+item.key.charAt(0).toUpperCase() + item.key.slice(1);
-        	if (settings.formSettings[display]) {                
-	            app.ctx.strokeStyle = utils.colors[item.value];
-	            app.ctx.lineWidth = 3;
-	            app.plotPoly(settings.calculationSettings.pointBuffer.points[item.key], false);
-			}	
-        });
+            var display = "display"+item.key.charAt(0).toUpperCase() + item.key.slice(1);
+            if (settings.formSettings[display]) {                
+               app.ctx.strokeStyle = utils.colors[item.value];
+               app.ctx.lineWidth = 3;
+               app.plotPoly(settings.calculationSettings.pointBuffer.points[item.key], false);
+           }    
+       });
 
         // draw the S1-S2 lines
         if (settings.formSettings.displayS1S2) {        
@@ -249,34 +255,33 @@ function FoxPlots(utils) {
             app.ctx.textAlign = "left";
             app.plotText(" S2", textPoint);
         }        
-
+        
         // draw the secondary plot
-        app.selectPlot("FoxOther");
+        app.selectPlot("NygrenOther");
 
         //check if minmax points exist
         if(settings.calculationSettings.pointBuffer.minMaxPoints){
           // reset points based on minmax for selected secondaryPlot 
-          _resetPointsForSecondaryPlot(settings, "FoxOther")
+          _resetPointsForSecondaryPlot(settings, "NygrenOther")
         }
 
-        app.selectPlot("FoxOther");
-        _resizePlots("FoxOther",
-                     settings.plotSettings.FoxOther, 
-                     settings.calculationSettings, 
-                     settings.formSettings.secondaryPlot);
-        
+        _resizePlots("NygrenOther",
+        settings.plotSettings.NygrenOther, 
+        settings.calculationSettings, 
+        settings.formSettings.secondaryPlot);
+
         app.ctx.strokeStyle = utils.colors.Indigo;
         app.ctx.lineWidth = 3;
         app.plotPoly(settings.calculationSettings.pointBuffer.points[settings.formSettings.secondaryPlot], false);
-       
-    }
 
-    /*
+      }
+
+      /*
       * This function is used to recalculate sub plot settings.  
       * @param {settings, plotName} - consists of settings to store calculated values
       */
 
-    function _resetPointsForSecondaryPlot(settings, plotName){
+      function _resetPointsForSecondaryPlot(settings, plotName){
         var  secondaryPlot  = settings.formSettings.secondaryPlot,
         secondaryPlotMinMax = settings.calculationSettings.pointBuffer.minMaxPoints[secondaryPlot],
         selectedPlot;
@@ -296,11 +301,11 @@ function FoxPlots(utils) {
                                                 (Math.abs(secondaryPlotMinMax["y"] - secondaryPlotMinMax["x"]) >= .1 
                                                 && Math.abs(secondaryPlotMinMax["y"] - secondaryPlotMinMax["x"]) < .5) ? 3 : 4); 
         }
-    }
-        
+      }
+      
     return {
         initialize: initialize,
         drawPlots: drawPlots,
     }
 });
-        
+   

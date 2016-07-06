@@ -7,23 +7,22 @@ require.config({
 		pointBufferAnalyzer: "pointBufferAnalyzer",
         s1s2Analyzer: "../../Noble0d/js/s1s2Analyzer",
         apdAnalyzer: "../../Noble0d/js/APDAnalyzer",
-		utility: "../../Noble0d/js/utility"
-	},
+        utility: "../../Noble0d/js/utility"
+    },
 });
 
-// require(["plots", "calculator", "mediator", "form"],
-// function initialize(plots, calculator, mediator, form) {
 
 require(["settings", 
-         "mediator", 
-         "form", 
-         "calculator", 
-         "pointBufferAnalyzer",
-         "s1s2Analyzer",
-         "apdAnalyzer",
-         "plots"
-         ],
-function initialize(
+   "mediator", 
+   "form", 
+   "calculator", 
+   "pointBufferAnalyzer",
+   "s1s2Analyzer",
+   "apdAnalyzer",
+   "plots"
+   ],
+   
+   function initialize(
     settings, 
     mediator,
     form, 
@@ -38,26 +37,26 @@ function initialize(
     /*
      * Initialize the default settings for the plot
      */
-    settings.initialize({
+     settings.initialize({
         formSettings: {
             displayAPDDI: true,
             displayV: true,
-            secondaryPlot: "xikr",
-        }, 
+            secondaryPlot: "xcal",
+        },
         calculationSettings: {
             pointBuffer: {
-                bufferSize: 10,
-                normalPoints: {
-                    v: new Point( -95 , 43)
+                bufferSize: 20,
+                normalPoints:{
+                    v: new Point( -74 , 44 )
                 }
             },
             apdPoints: {
-                threshhold: -80,
-                vNormalize: new Point( -95 , 43)
+                threshhold: -62.42,
+                vNormalize: new Point( -74 , 44 )
             }
         },
         plotSettings: {
-            Fox: {
+            Nygren: {
                 plots: {
                     mainPlot: {
                         xAxis: "Time (ms)",
@@ -67,53 +66,53 @@ function initialize(
             }
         }
     });
-    
-   /*
+
+     /*
     * Create an analyzer array that holds all the 
     * analyzers to be processed
     */
     var analyzers = [pointBufferAnalyzer, s1s2Analyzer, apdAnalyzer],
-        plotSettings = settings.getSettings();
+    plotSettings = settings.getSettings();
     
     /*
      * Initialize a calculator
      */
      calculator.initialize(plotSettings);
-        
-    
+     
+     
     /*
      * Initialize analyzers
      */
-    analyzers.forEach(function(analyzer){
+     analyzers.forEach(function(analyzer){
         analyzer.initialize(plotSettings);
     });
 
     /*
      * Add analyzers to calculator
      */
-    analyzers.forEach(function(analyzer){
+     analyzers.forEach(function(analyzer){
         calculator.addAnalysisFunction(analyzer);
     });
-        
-    
+     
+     
     /*
      * Initialize the plot
      */
-    plots.initialize(plotSettings);
-        
+     plots.initialize(plotSettings);
+     
     /*
      * Initialize a mediator with the calculator
      */
-    mediator.initialize(calculator, plots);
-        
+     mediator.initialize(calculator, plots);
+     
     /*
      * Initialize a form
      */
-    form.initialize(
-        plotSettings,
-        mediator
-    );
-    
-    form.updateCalculations();
-    
-});
+     form.initialize(
+            plotSettings,
+            mediator
+        );
+     
+     form.updateCalculations();
+     
+ });

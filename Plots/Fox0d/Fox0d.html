@@ -32,15 +32,6 @@ plot: true
 			<label for="displayV">Display Voltage</label>
 		</div>
 
-		<div class="plotter_inputgroup plotter_inputgroup-aqua">
-			<input id="displayCcai" name="displayCcai" type="checkbox" checked/>
-			<label for="displayCcai"> Display [Ca]i gate</label>
-		</div>
-
-		<div class="plotter_inputgroup plotter_inputgroup-springGreen">
-			<input id="displayCcasr" name="displayCcasr" type="checkbox" checked/>
-			<label for="displayCcasr"> Display [Ca]sr</label>
-		</div>
 		<div class="plotter_inputgroup plotter_inputgroup-purple">
 			<input id="displayXf" name="displayXf" type="checkbox" checked/>
 			<label for="displayXf">Display xf gate</label>
@@ -81,9 +72,17 @@ plot: true
 			<input id="displayYto" name="displayYto" type="checkbox" checked/>
 			<label for="displayYto">Display yto gate</label>
 		</div>
+		<div class="plotter_inputgroup plotter_inputgroup-aqua">
+			<input id="displayCcai" name="displayCcai" type="checkbox" checked/>
+			<label for="displayCcai"> Display [Ca<sup>2+</sup>]<sub>i</sub></label>
+		</div>
+
+		<div class="plotter_inputgroup plotter_inputgroup-springGreen">
+			<input id="displayCcasr" name="displayCcasr" type="checkbox" checked/>
+			<label for="displayCcasr"> Display [Ca]sr</label>
+		</div>
 		 <div class="plotter_inputgroup" >
 				<select id="secondaryPlot" name="secondaryPlot">
-					<option value=""> -- none -- </option>
 					<option id='displayXiCa'  value='xica' >I_Ca</option>
 					<option id='displayXiCaB' value='xicab' >I_Cab</option>
 					<option id='displayXiCaK' value='xicak' >I_CaK</option>

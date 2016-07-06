@@ -7,6 +7,10 @@ function PointBufferAnalyzer(utils) {
     function initialize(settings) {
         var bufferSettings = {
             bufferSize: 100,
+            normalPoints: {
+                v:     new Point(-90 ,30),
+                ccasr: new Point(310, 325)
+            },
             calcFunction: CALCULATE_SKIP,
             points: {   
                 v: [],
@@ -36,11 +40,12 @@ function PointBufferAnalyzer(utils) {
                 xicak: [],
                 xinak: [],
                 xikr: []
-            }
-
-            /*,
+            },
             minMaxPoints : {
                 // min : x and max : y
+                v:     new Point(1000, -10), 
+                ccasr: new Point(1000, -10), 
+
                 xina: new Point(1000, -10),
                 xik1: new Point(1000, -10),
                 xito: new Point(1000, -10),
@@ -54,13 +59,13 @@ function PointBufferAnalyzer(utils) {
                 xicak: new Point(1000, -10),
                 xinak: new Point(1000, -10),
                 xikr: new Point(1000, -10)
-            }*/
+            }
         };
         
         if (!settings.calculationSettings.hasOwnProperty("pointBuffer")) {
             settings.calculationSettings.pointBuffer = bufferSettings;
             } else {
-            settings.calculationSettings.pointBuffer = utils.extend(bufferSettings, settings.calculationSettings.pointBuffer);
+            settings.calculationSettings.pointBuffer = utils.deepExtend(bufferSettings, settings.calculationSettings.pointBuffer);
         }
     }
     
@@ -103,8 +108,26 @@ function PointBufferAnalyzer(utils) {
             xicak: [],
             xinak: [],
             xikr: []
-            
-        }
+        };
+        settings.calculationSettings.pointBuffer.minMaxPoints = {
+                // min : x and max : y
+                v:     new Point(1000, -10), 
+                ccasr: new Point(1000, -10), 
+
+                xina: new Point(1000, -10),
+                xik1: new Point(1000, -10),
+                xito: new Point(1000, -10),
+                xikp: new Point(1000, -10),
+                xinab: new Point(1000, -10),
+                xiks: new Point(1000, -10),
+                xica: new Point(1000, -10),
+                xinaca: new Point(1000, -10),
+                xipca: new Point(1000, -10),
+                xicab: new Point(1000, -10),
+                xicak: new Point(1000, -10),
+                xinak: new Point(1000, -10),
+                xikr: new Point(1000, -10)
+        };
         count = 0;
     }
     
@@ -132,19 +155,19 @@ function PointBufferAnalyzer(utils) {
         // set page level variable bufferSettings 
         bufferSettings = data.calculationSettings.pointBuffer;
         
+
         // In each iteration a new point is added to each voltage dependant point
         c.voltageVariables.forEach(function(item){
             
-            if(item == "v"){
-                bufferSettings.points[item].push(
-                new Point(count * c.timestep, 
-                utils.normalize(c[item], new Point(-95, 43))));                            
+            if ( bufferSettings.normalPoints[item]){
+                        
+                        bufferSettings.minMaxPoints[item]["x"] = (c[item] < bufferSettings.minMaxPoints[item]["x"]) ? c[item] : bufferSettings.minMaxPoints[item]["x"];
+                        bufferSettings.minMaxPoints[item]["y"] = (c[item] > bufferSettings.minMaxPoints[item]["y"]) ? c[item] : bufferSettings.minMaxPoints[item]["y"];
+
+                        bufferSettings.points[item].push( new Point(count * c.timestep, 
+                                                        utils.normalize(c[item], bufferSettings.normalPoints[item])));
             }
-            else if(item == "ccasr"){
-                bufferSettings.points[item].push(
-                new Point(count * c.timestep, 
-                utils.normalize(c[item], new Point(310, 325))));                            
-            }
+
             else{
                 bufferSettings.points[item].push(
                 new Point(count * c.timestep, c[item]));
@@ -157,12 +180,12 @@ function PointBufferAnalyzer(utils) {
             
             // here 'x' corresponds to minimum value
             // 'y' corresponds to maximum value 
-            // bufferSettings.minMaxPoints[item]["x"] = (c[item] < bufferSettings.minMaxPoints[item]["x"]) ? c[item] : bufferSettings.minMaxPoints[item]["x"];
-            // bufferSettings.minMaxPoints[item]["y"] = (c[item] > bufferSettings.minMaxPoints[item]["y"]) ? c[item] : bufferSettings.minMaxPoints[item]["y"];
+            bufferSettings.minMaxPoints[item]["x"] = (c[item] < bufferSettings.minMaxPoints[item]["x"]) ? c[item] : bufferSettings.minMaxPoints[item]["x"];
+            bufferSettings.minMaxPoints[item]["y"] = (c[item] > bufferSettings.minMaxPoints[item]["y"]) ? c[item] : bufferSettings.minMaxPoints[item]["y"];
 
             bufferSettings.points[item].push(
-            new Point(count * c.timestep, c[item]));                    
-        });              
+                    new Point(count * c.timestep, c[item]));                    
+        }); 
     }
 
   /**

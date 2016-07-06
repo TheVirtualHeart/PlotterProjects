@@ -1,13 +1,14 @@
 /**
   * This module describes the Form element. This form can alter the appearance
-  * of the plot, describing what variables are plotted and how the Noble 
+  * of the plot, describing what variables are plotted and how the Nygren 
   * differential equation is calculated.
   */
+
 define(["utility"],
-    function FoxForm(utils) {
+    function NygrenForm(utils) {
       "use strict";
 
-        var mediator;
+      var mediator;
 
         /**
         * This object describes the settings for the form.
@@ -34,18 +35,22 @@ define(["utility"],
           */
 
           // Stores all the variables that are displayed on the webpage.
-          var  formCtrls    = ["displayV", "displayCcai", "displayCcasr",
-                "displayXf","displayXd","displayXm","displayXh","displayXj",
-                "displayXfca","displayXkr","displayXks","displayXto",
-                "displayYto","displayAPDDI","displayS1S2", "secondaryPlot"],
-          settingCtrls = ["s1","s2","ns1", "gna","gk1","gkr","gks","gto",
-                          "pca","xknaca"];
+          var  formCtrls    = [ "displayAPDDI", "displayS1S2", "displayV",
+           						"displayXm",	"displayXh1",	"displayXh2",
+           						"displayXdl",	"displayXfl1",	"displayXfl2",
+           						"displayXr",	"displayXs",	"displayRsus",
+           						"displaySsus",	"displayXn",	"displayXpa",
+                      "displayCcai", "displayCcad", "displayCcaup",
+                      "displayCcarel","secondaryPlot"],
 
-          /**
+           		settingCtrls = ["s1","s2","ns1","pna","gcal","gt","gsus",
+                              "gks", "gkr", "gk1","xknaca"];
+
+           		/**
              * These methods initialize the variables on the webpage.
              */
-          _initializeFormCtrls(settings.formSettings);
-          _initializeSettingCtrls(settings.calculationSettings);
+             _initializeFormCtrls(settings.formSettings);
+             _initializeSettingCtrls(settings.calculationSettings);
 
           // On-click Action listener for the default button.
           var defaultButton = document.getElementById("default");
@@ -67,9 +72,9 @@ define(["utility"],
          * 
          * @param {settingsParam} - an object that holds the default form settings
          */
-          function _initializeFormCtrls(settingsParam){
-            formCtrls.forEach(function(ctrl){
-              var ele = document.getElementsByName(ctrl)[0];  
+         function _initializeFormCtrls(settingsParam){
+          formCtrls.forEach(function(ctrl){
+            var ele = document.getElementsByName(ctrl)[0];  
               if(ele.type == "select-one"){ // For the currents drop down
                 for (var i = 0, j = ele.options.length; i < j ; i++) {
                   var option = ele.options[i];
@@ -84,21 +89,21 @@ define(["utility"],
               }                                            
               _appendHandler(ele, settingsParam);           
             });
-          }
+        }
 
          /**
            * This method initializes the parameter settings to their default values.
            * 
            * @param {settingsParam} - an object that holds the default parameter settings
            */
-          function _initializeSettingCtrls(settingsParam){
+           function _initializeSettingCtrls(settingsParam){
             settingCtrls.forEach( function(ctrl){
               var ele = document.getElementsByName(ctrl)[0];                                                  
               ele.value = settingsParam[ele.name];
               _appendHandler(ele, settingsParam); 
             });
           }
-        
+          
         /**
           * This method adds an action listener that tracks change to the form and 
           * the parameter variables that are passed to it one element at a time
@@ -113,12 +118,11 @@ define(["utility"],
             var propName = (ele.type === "checkbox")?  "checked" : "value";
             ele.addEventListener("change", function(e) {             
               settingsParam[ele.name] = (ele.type == "select-one")? ele.options[ele.selectedIndex][propName]: utils.numericValue(ele[propName]);                                                        
-
               if(ele.type === "checkbox" || ele.type == "select-one") {
-                updateDisplay();
+                  updateDisplay();
               }
               else{
-                updateCalculations();
+                  updateCalculations();
               }  
             });
           } 
@@ -231,8 +235,6 @@ define(["utility"],
           initialize: initialize,
           updateCalculations: updateCalculations,
           updateDisplay: updateDisplay
-        //exportValues: exportValues,
-      };
+        };
       return api;
-});
-
+    });
