@@ -28,7 +28,8 @@ function APDAnalyzer(utils) {
                 start: null,
                 end: null,
                 length: null,
-            }
+            },
+            vNormalize: new Point( -90 , 30)
         };
         if (!settings.calculationSettings.hasOwnProperty("apdPoints")) {
             settings.calculationSettings.apdPoints = bufferSettings;
@@ -63,7 +64,12 @@ function APDAnalyzer(utils) {
         
         // pointing reference to buffersettings
         bufferSettings = c.apdPoints;
+        // console.dir(bufferSettings);
         
+        // if (bufferSettings.hasOwnProperty("vMin")){
+        //     vMin = bufferSettings.vMin;
+        //     vMax = bufferSettings.vMax;
+        // }
         // edge case. There should not be an initial value
         // of v to check against. We must wait until after
         // the first pass
@@ -72,13 +78,13 @@ function APDAnalyzer(utils) {
             if (vOld <= c.apdPoints.threshhold && vCur > c.apdPoints.threshhold) {
                 var eventtime = c.timestep * (count - ((c.v - c.apdPoints.threshhold)/(c.v - vOld)));
                 var vAvg = (c.v + vOld) / 2;
-                var vNorm = utils.normalize(vAvg, new Point(-90, 30));
+                var vNorm = utils.normalize(vAvg, bufferSettings.vNormalize);
                 var p = new Point(eventtime, vNorm);
                 c.apdPoints.crossed.push(p);
             } else if (vOld >= c.apdPoints.threshhold && vCur < c.apdPoints.threshhold) {
                 var eventtime = c.timestep * (count - ((c.v - c.apdPoints.threshhold)/(c.v - vOld)));
                 var vAvg = (c.v + vOld) / 2;
-                var vNorm = utils.normalize(vAvg, new Point(-90, 30));
+                var vNorm = utils.normalize(vAvg, bufferSettings.vNormalize);
                 var p = new Point(eventtime, vNorm);
                 c.apdPoints.crossed.push(p);
             }
