@@ -292,9 +292,9 @@ function NobleMediator() {
      */
     function updateDisplay(settings) {        
         //console.log("display");
-        //console.log(settings); 
-        calculator.updateSettingsWithAnalyzers(settings);     	   	    
-        plots.drawPlots(settings);
+        console.log(settings); 
+        calculator.updateSettingsWithAnalyzers(settings);        
+        plots.drawPlots(settings);       
     }
 
 
@@ -303,11 +303,12 @@ function NobleMediator() {
     * @param {settings} - consists of settings to store calculated values
 	*/
     function updateCalculator(settings) {
-         calculator.runCalculations(500000, settings);
-         plots.drawPlots(settings);
-     
+         calculator.runCalculations(500000, settings);              
+         plots.drawPlots(settings);        
     }
 
+
+    
 
     /*
     * This function is used to recalculate settings and draw plots asynchronously.
@@ -335,50 +336,60 @@ function NobleMediator() {
 
     	var points = settings.calculationSettings.pointBuffer.points,
     	    precision = 3,
-    	    counter = (pointNames.length>0)?points[pointNames[0]].length:0;
+    	    counter = (pointNames.length>0)?points[pointNames[0]].length:0,
+    	    pBuffer = settings.calculationSettings.pointBuffer,
+    	    normalPoints = settings.calculationSettings.pointBuffer.normalPoints,
+            fileName = Object.keys(settings.plotSettings)[0];
 
-    	var concat="time &emsp; &emsp;";
-    	for(var i = 0, len = pointNames.length; i< len ; i++){              
-			concat += [pointNames[i]] + "&emsp; &emsp; &emsp;";
-		} 
-		concat+="<br>";
-    	
-		for(var i = 0; i < counter; i++){
-			var line = (points[pointNames[0]][i]["x"]).toFixed(precision)  + "&emsp;&emsp;";
-	    	 pointNames.forEach(function(name){
-	    	 	line += (points[name][i]["y"]).toFixed(precision) + "&emsp;&emsp;";
-	    	 });
-	    	 concat+=line+"<br>";
-    	 }
+    	    var a = ["time"],
+    	        A = [],
+    	        temp = [];
 
-    	/*var concat="time";
-    	for(var i = 0, len = pointNames.length; i< len ; i++){              
-			concat +=  ',' + [pointNames[i]];
-		} 
-		concat += '\r\n';
-    	
-		for(var i = 0; i < counter; i++){
-			var line = (points[pointNames[0]][i]["x"]).toFixed(precision);
-	    	 pointNames.forEach(function(name){
-	    	 	line += ',' + (points[name][i]["y"]).toFixed(precision);
-	    	 });
-	    	 concat+=line + '\r\n'; 
-	    	 }*/
-    
-    	 openWin(concat);
+    	    for(var i = 0, count = pointNames.length; i < count; i++ ){
+    	    	a.push(pointNames[i]);
+    	    }
+
+    	    A.push(a);
+
+    	    for(var i = 0; i < counter; i++ ){
+    	          temp.push(points[pointNames[0]][i]["x"]); 	    	
+    	    	for(var j =0, count = pointNames.length; j < count; j++ ){	
+    	    		if(normalPoints[pointNames[j]])
+    	    		{
+    	    			temp.push((points[pointNames[j]][i]["y"] * (normalPoints[pointNames[j]]["y"] - normalPoints[pointNames[j]]["x"])) + normalPoints[pointNames[j]]["x"]);
+    	    		}
+    	    		else{
+    	    			temp.push(points[pointNames[j]][i]["y"]);
+    	    		}			   
+
+    	    	}
+    	    	A.push(temp);
+    	    	temp = [];
+    	    }
+
+
+			var csvRows = [];
+
+			for(var i=0, l=A.length; i<l; ++i){
+			    csvRows.push(A[i].join(','));
+			}
+
+    	 downloadFile(csvRows.join("\r\n"), fileName);
     }
 
      /*
-     * This function opens a new window and display points for attributes selected 
-     * on the user interface (UI)
-     * @param {data}  - coma separated point vaules for selected attributes
-     * function
+     * This function downloads the file
      */   
 
-     function openWin(data) {
-		var myWindow=window.open('','','width=2000,height=650');
-		myWindow.document.write(data);
-		myWindow.focus();		
+     function downloadFile(csvString, fileName) {
+		var a         = document.createElement('a');
+        a.id          = "dwnLink"
+		a.href        = 'data:attachment/csv,' +  encodeURIComponent(csvString);
+		a.target      = '_blank';
+		a.download    = fileName +'.csv';
+		document.body.appendChild(a);
+		a.click();
+        document.body.removeChild(a);
 	}
         
     /**
