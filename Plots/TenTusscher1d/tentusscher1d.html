@@ -1,0 +1,183 @@
+---
+title: Ten Tusscher Updated
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Ten Tusscher Updated Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-635px;margin-left:550px;">
+
+		<fieldset>
+			<div class="plotter_inputgroup plotter_inputgroup-orange">
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" checked/>
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-black">
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-red">
+				<input id="displayV" name="displayV" type="checkbox" checked/>
+				<label for="displayV">Display v</label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-sandyBrown">
+				<input id="displaySm" name="displaySm" type="checkbox" checked/>
+				<label for="displaySm">Display m</label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-midnightBlue">
+				<input id="displaySh" name="displaySh" type="checkbox" checked/>
+				<label for="displaySh">Display h</label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-pink">
+				<input id="displaySj" name="displaySj" type="checkbox" checked/>
+				<label for="displaySj">Display j</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-lightSlateGray">
+				<input id="displaySd" name="displaySd" type="checkbox" checked/>
+				<label for="displaySd">Display d</label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-aqua">
+				<input id="displaySf" name="displaySf" type="checkbox" checked/>
+				<label for="displaySf">Display f</label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-indigo">
+				<input id="displaySf2" name="displaySf2" type="checkbox" checked/>
+				<label for="displaySf2">Display f2</label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-maroon">
+				<input id="displaySfcass" name="displaySfcass" type="checkbox" checked/>
+				<label for="displaySfcass">Display f<sub>Ca</sub></label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-purple">
+				<input id="displaySr" name="displaySr" type="checkbox" checked/>
+				<label for="displaySr">Display r</label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-gray">
+				<input id="displaySrr" name="displaySrr" type="checkbox" checked/>
+				<label for="displaySrr">Display r<sub>r</sub></label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-teal">
+				<input id="displaySs" name="displaySs" type="checkbox" checked/>
+				<label for="displaySs">Display s</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-yellowGreen">
+				<input id="displaySxr1" name="displaySxr1" type="checkbox" checked/>
+				<label for="displaySxr1">Display x<sub>r1</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-violet">
+				<input id="displaySxr2" name="displaySxr2" type="checkbox" checked/>
+				<label for="displaySxr2">Display x<sub>r2</sub></label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-springGreen">
+				<input id="displaySxs" name="displaySxs" type="checkbox" checked/>
+				<label for="displaySxs">Display x<sub>s</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-lightCoral">
+				<input id="displayCai" name="displayCai" type="checkbox" checked/>
+				<label for="displayCai">[Ca<sup>2+</sup>]<sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-olive">
+				<input id="displayCasr" name="displayCasr" type="checkbox" checked/>
+				<label for="displayCasr">[Ca]<sub>SR</sub></label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-lightblue">
+				<input id="displayCass" name="displayCass" type="checkbox" checked/>
+				<label for="displayCass">[Ca]<sub>SS</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-orangeRed">
+				<input id="displayNai" name="displayNai" type="checkbox" checked/>
+				<label for="displayNai">[Na]<sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup  plotter_inputgroup-yellow">
+				<input id="displayKi" name="displayKi" type="checkbox" checked/>
+				<label for="displayKi">[K]<sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup" >
+				<select id="secondaryPlot" name="secondaryPlot">					
+					<option id = 'displayIna'  	value = 'ina'>I_Na</option>
+					<option id = 'displayIcal'  value = 'ical'>I_CaL</option>
+					<option id = 'displayIto'  	value = 'ito'>I_to</option>
+					<option id = 'displayIkr'  	value = 'ikr'>I_Kr</option>
+					<option id = 'displayIks'  	value = 'iks'>I_Ks</option>
+					<option id = 'displayIk1'  	value = 'ik1'>I_K1</option>
+					<option id = 'displayIpca'  value = 'ipca'>I_pCa</option>
+					<option id = 'displayIpk'  	value = 'ipk'>I_pK</option>	
+					<option id = 'displayInaca' value = 'inaca'>I_NaCa</option>		
+					<option id = 'displayInak'  value = 'inak'>I_NaK</option>
+					<option id = 'displayIbna'  value = 'ibna'>I_bNa</option>				
+					<option id = 'displayIbca'  value = 'ibca'>I_bCa</option>			
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>		
+		</fieldset>
+		<fieldset>
+            <div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="GNa">g_Na</label>
+				<input type="text" name="GNa" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="GCaL">g_CaL</label>
+				<input type="text" name="GCaL" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="Gto">g_to</label>
+				<input type="text" name="Gto" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="Gkr">g_Kr</label>
+				<input type="text" name="Gkr" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="Gks">g_Ks</label>
+				<input type="text" name="Gks" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="GK1">g_K1</label>
+				<input type="text" name="GK1" />
+			</div>
+			<div class="plotter_inputgroup">
+				<select id="iType" name="iType">					
+					<option id = 'displayEpi'   value = 'epi' >epi</option>
+					<option id = 'displayM'     value ='M' >M</option>
+					<option id = 'displayEndo'  value ='endo' >endo</option>
+				</select>
+				<label for="iType">iType</label>
+			</div>			
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<center>
+				<!-- <button id="update">Update</button> -->
+				<button id="default" name="default">Defaults</button>
+				<button id="print" name="print">Print Data</button>
+				</center>
+			</div>
+		</fieldset>
+		</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
+	
