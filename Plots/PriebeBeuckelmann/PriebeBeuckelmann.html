@@ -1,0 +1,160 @@
+---
+title: Priebe-Beuckelmann
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Priebe-Beuckelmann Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-635px;margin-left:550px;">
+
+		<fieldset>
+			<div class="plotter_inputgroup plotter_inputgroup-orange">
+				<input id="displayAPDDI"  name="displayAPDDI" type="checkbox" checked/>
+				<label for="">Display APDDI</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-black">
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-red">
+				<input id="displayV" name ="displayV"  type="checkbox" checked/>
+				<label for="displayV">Display Voltage</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-purple">
+				<input id="displayM" name="displayM" type="checkbox" checked/>
+				<label for="displayM">Display m</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-teal">
+				<input id="displayH" name="displayH" type="checkbox" checked/>
+				<label for="displayH">Display h</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-yellowGreen">
+				<input id="displayJ" name="displayJ"  type="checkbox" checked/>
+				<label for="displayJ">Display j</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-pink">
+				<input id="displayD" name="displayD" type="checkbox" checked/>
+				<label for="displayD">Display d</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-sandyBrown">
+				<input id="displayF" name="displayF" type="checkbox" checked/>
+				<label for="displayF">Display f</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-violet">
+				<input id="displayR" name="displayR" type="checkbox" checked/>
+				<label for="displayR">Display r</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-springGreen">
+				<input id="displayTo" name="displayTo" type="checkbox" checked/>
+				<label for="displayTo">Display t</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-lightCoral">
+				<input id="displayXr" name="displayXr" type="checkbox" checked/>
+				<label for="displayXr">Display X<sub>r</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-olive">
+				<input id="displayXs" name="displayXs" type="checkbox" checked/>
+				<label for="displayXs">Display X<sub>s</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-orangeRed">
+				<input id="displayCai" name="displayCai" type="checkbox" checked/>
+				<label for="displayCai">Display Ca<sup>2+</sup><sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-maroon">
+				<input id="displayCansr" name="displayCansr" type="checkbox" checked/>
+				<label for="displayCansr">Display Ca<sup>2+</sup><sub>NSR</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-yellow">
+				<input id="displayCajsr" name="displayCajsr" type="checkbox" checked/>
+				<label for="displayCajsr">Display Ca<sup>2+</sup><sub>JSR</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-gray">
+				<input id="displayNai" name="displayNai" type="checkbox" checked/>
+				<label for="displayNai">Display Na<sup>+</sup><sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-midnightBlue">
+				<input id="displayKi"  name="displayKi" type="checkbox" checked/>
+				<label for="displayKi">Display K<sup>+</sup><sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup" >
+				<select id="secondaryPlot" name="secondaryPlot">
+					<option id = 'displayIna'  value ='ina' >I_Na</option>
+					<option id = 'displayIca'  value ='ica' >I_Ca</option>
+					<option id = 'displayIto'  value ='ito' >I_to</option>
+					<option id = 'displayIkr'  value ='ikr' >I_Kr</option>
+					<option id = 'displayIks'  value ='iks' >I_Ks</option>
+					<option id = 'displayIk1'  value ='ik1'>I_K1</option>	
+					<option id = 'displayInaca' value ='inaca'>I_NaCa</option>
+					<option id = 'displayInak'  value ='inak'>I_NaK</option>
+					<option id = 'displayIcab'  value ='icab'>I_Cab</option>
+					<option id = 'displayInab'  value ='inab'>I_Nab</option>				
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>		
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gna">g_Na</label>
+				<input type="text" name="gna"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gca">g_Ca</label>
+				<input type="text" name="gca"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gto">g_to</label>
+				<input type="text" name="gto"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gkr">g_Kr</label>
+				<input type="text" name="gkr"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gks">g_Ks</label>
+				<input type="text" name="gks"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gk1">g_K1</label>
+				<input type="text" name="gk1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gnaca">g_NaCa</label>
+				<input type="text" name="gnaca"/>
+			</div>
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<center>
+					<!-- <button id="update">Update</button> -->
+					<button id="default" name="default">Defaults</button>
+					<button id="print" name="print">Print Data</button>
+				</center>
+			</div>
+		</fieldset>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
