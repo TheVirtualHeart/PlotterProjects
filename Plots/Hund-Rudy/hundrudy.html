@@ -1,0 +1,223 @@
+---
+title: Hund-rudy
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Hundrudy Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-620px;margin-left:550px;">
+		<!-- inputs -->
+		<fieldset>
+			<div class='plotter_inputgroup plotter_inputgroup-orange'>
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" checked/>
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-black">
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+
+			<div class="plotter_inputgroup plotter_inputgroup-red">
+				<input id="displayV" name="displayV" type="checkbox" checked/>
+				<label for="displayV">Display Voltage</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-darkGoldenRod">
+				<input id="displayXm" name="displayXm" type="checkbox" checked/>
+				<label for="displayXm"> Display m gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-brown">
+				<input id="displayXh" name="displayXh" type="checkbox" checked/>
+				<label for="displayXh"> Display h gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-cornflowerBlue">
+				<input id="displayXj" name="displayXj" type="checkbox" checked/>
+				<label for="displayXj"> Display j gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-orangeRed">
+				<input id="displayXd" name="displayXd" type="checkbox" checked/>
+				<label for="displayXd"> Display d gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-lightblue">
+				<input id="displayXdpower" name="displayXdpower" type="checkbox" checked/>
+				<label for="displayXdpower"> Display d power</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-olive">
+				<input id="displayXf" name="displayXf" type="checkbox" checked/>
+				<label for="displayXf"> Display f gate </label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-lightSlateGray">
+				<input id="displayXf2" name="displayXf2" type="checkbox" checked/>
+				<label for="displayXf2"> Display f<sub>2</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-blueViolet">
+				<input id="displayXfca" name="displayXfca" type="checkbox" checked/>
+				<label for="displayXfca"> Display f<sub>Ca</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-cadetBlue">
+				<input id="displayXfca2" name="displayXfca2" type="checkbox" checked/>
+				<label for="displayXfca2"> Display f<sub>Ca2</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-teal">
+				<input id="displayXa" name="displayXa" type="checkbox" checked/>
+				<label for="displayXa"> Display a gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-chartreuse">
+				<input id="displayXi" name="displayXi" type="checkbox" checked/>
+				<label for="displayXi"> Display i gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-maroon">
+				<input id="displayXi2" name="displayXi2" type="checkbox" checked/>
+				<label for="displayXi2"> Display i<sub>2</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-darkSlateGrey">
+				<input id="displayXr" name="displayXr" type="checkbox" checked/>
+				<label for="displayXr"> Display X<sub>r</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-saddleBrown">
+				<input id="displayXs1" name="displayXs1" type="checkbox" checked/>
+				<label for="displayXs1"> Display X<sub>s1</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-turquoise">
+				<input id="displayXs2" name="displayXs2" type="checkbox" checked/>
+				<label for="displayXs2"> Display X<sub>s2</sub> gate</label>
+			</div>
+			
+			<div class="plotter_inputgroup plotter_inputgroup-violet">
+				<input id="displayXaa" name="displayXaa" type="checkbox" checked/>
+				<label for="displayXaa"> Display aa gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-darkMagenta">
+				<input id="displayXml" name="displayXml" type="checkbox" checked/>
+				<label for="displayXml"> Display m<sub>L</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-burlyWood">
+				<input id="displayXhl" name="displayXhl" type="checkbox" checked/>
+				<label for="displayXhl"> Display h<sub>L</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-lime">
+				<input id="displayXro" name="displayXro" type="checkbox" checked/>
+				<label for="displayXro"> Display ro gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-fireBrick">
+				<input id="displayXri" name="displayXri" type="checkbox" checked/>
+				<label for="displayXri"> Display ri gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-aqua">
+				<input id="displayCai" name="displayCai" type="checkbox" checked/>
+				<label for="displayCai"> Display [Ca<sup>2+</sup>]<sub>i</sub> </label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-indigo">
+				<input id="displayCar" name="displayCar" type="checkbox" checked/>
+				<label for="displayCar"> Display [Ca<sup>2+</sup>]<sub>r</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-yellowGreen">
+				<input id="displayCansr" name="displayCansr" type="checkbox" checked/>
+				<label for="displayCansr"> Display [Ca<sup>2+</sup>]<sub>NSR</sub> </label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-gray">
+				<input id="displayCajsr" name="displayCajsr" type="checkbox" checked/>
+				<label for="displayCajsr"> Display [Ca<sup>2+</sup>]<sub>JSR</sub> </label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-sandyBrown">
+				<input id="displayNai" name="displayNai" type="checkbox" checked/>
+				<label for="displayNai"> Display [Na<sup>+</sup>]<sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-midnightBlue">
+				<input id="displayKi" name="displayKi" type="checkbox" checked/>
+				<label for="displayKi"> Display [K<sup>+</sup>]<sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-lightCoral">
+				<input id="displayCli" name="displayCli" type="checkbox" checked/>
+				<label for="displayCli"> Display [Cl<sup>-</sup>]<sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-purple">
+				<input id="displayCamktrap" name="displayCamktrap" type="checkbox" checked/>
+				<label for="displayCamktrap"> Display CamK<sub>trap</sub> </label>
+			</div>
+			<div class="plotter_inputgroup" >
+				<select id="secondaryPlot" name="secondaryPlot">
+					<option id = "displayIna" value = "ina" >I_Na</option>
+					<option id = "displayIcalca" value = "icalca" >I_Ca</option>
+					<option id = "displayIto1" value = "ito1" >I_to1</option>
+					<option id = "displayIto2" value = "ito2" >I_to2</option>
+					<option id = "displayIkr" value = "ikr" >I_Kr</option>
+					<option id = "displayIks" value = "iks" >I_Ks</option>
+					<option id = "displayIkp" value = "ikp" >I_Kp</option>
+					<option id = "displayIk1" value = "ik1" >I_K1</option>
+					<option id = "displayInal" value = "inal" >I_Na,l</option>
+					<option id = "displayInaca" value = "inaca" >I_NaCa</option>
+					<option id = "displayInak" value = "inak" >I_NaK</option>
+					<option id = "displayIpca" value = "ipca" >I_pCa</option>
+					<option id = "displayIcab" value = "icab" >I_Ca,b</option>
+					<option id = "displayIclb" value = "iclb" >I_Cl,b</option>
+					
+					
+					
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gna">g_Na</label>
+				<input type="text" name="gna"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="pca">p_Ca</label>
+				<input type="text" name="pca"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gbarto1">g_to1</label>
+				<input type="text" name="gbarto1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gbarkr">g_Kr</label>
+				<input type="text" name="gbarkr"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gks">g_Ks</label>
+				<input type="text" name="gks"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gbark1">g_K1</label>
+				<input type="text" name="gbark1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gbarnal">g_Na,L</label>
+				<input type="text" name="gbarnal"/>
+			</div>
+
+		</fieldset>
+		<!-- Buttons -->
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<button id="default">Defaults</button>
+				<button id="print">Print Data</button>
+			</div>
+		</fieldset>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
