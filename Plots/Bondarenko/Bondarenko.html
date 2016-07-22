@@ -1,0 +1,216 @@
+---
+title: Bondarenko
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Bondarenko Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+		<div id="controls" class="plotter_form" style="position:absolute;margin-top:-635px;margin-left:550px;">
+		<fieldset>
+			<div class="plotter_inputgroup plotter_inputgroup-orange">
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" checked/>
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-black">
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+
+			<div class="plotter_inputgroup plotter_inputgroup-red">
+				<input id="displayV" name="displayV" type="checkbox" checked/>
+				<label for="displayV">Display Voltage</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-cadetBlue">
+				<input id = "displayOna"  name="displayOna"  type="checkbox" checked/> 
+				<label for="displayOna">Display O_Na</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-lightblue">
+				<input id = "displayOl"  name="displayOl"  type="checkbox" checked/> 
+				<label for="displayOl">Display O_CaL</label>
+				</div>
+			<div class="plotter_inputgroup plotter_inputgroup-maroon">
+				<input id = "displayAtof"  name="displayAtof"  type="checkbox" checked/> 
+				<label for="displayAtof">Display a_to,f</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-midnightBlue">
+				<input id = "displayItof"  name="displayItof"  type="checkbox" checked/> 
+				<label for="displayItof">Display i_to,f</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-violet">
+				<input id = "displayItos"  name="displayItos"  type="checkbox" checked/> 
+				<label for="displayItos">Display i_to,s</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-teal">
+				<input id = "displayAtos"  name="displayAtos"  type="checkbox" checked/> 
+				<label for="displayAtos">Display a_to,s</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-springGreen">
+				<input id = "displayAur"  name="displayAur"  type="checkbox" checked/> 
+				<label for="displayAur">Display a_ur</label>
+			</div>
+
+			<div class="plotter_inputgroup plotter_inputgroup-olive">
+				<input id = "displayIur"  name="displayIur"  type="checkbox" checked/> 
+				<label for="displayIur">Display i_ur</label>
+			</div>
+
+			<div class="plotter_inputgroup plotter_inputgroup-yellow">
+				<input id = "displayXakss"  name="displayXakss"  type="checkbox" checked/> 
+				<label for="displayXakss">Display a_Kss</label>
+			</div>
+
+			<div class="plotter_inputgroup plotter_inputgroup-orangeRed">
+				<input id = "displayXikss"  name="displayXikss"  type="checkbox" checked/> 
+				<label for="displayXikss">Display i_Kss</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-darkGreen">
+				<input id = "displayOk"  name="displayOk"  type="checkbox" checked/> 
+				<label for="displayOk">Display O_Kr</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-sandyBrown">
+				<input id = "displayNks"  name="displayNks"  type="checkbox" checked/> 
+				<label for="displayNks">Display n_Ks</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-darkSalmon ">
+				<input id = "displayPo12"  name="displayPo12"  type="checkbox" checked/> 
+				<label for="displayPo12">Display P_O1 + P_O2</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-darkRed">
+				<input id = "displayPryr"  name="displayPryr"  type="checkbox" checked/> 
+				<label for="displayPryr">Display P_RyR</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-aqua">
+				<input id = "displayCai"  name="displayCai"  type="checkbox" checked/> 
+				<label for="displayCai">Display [Ca<sup>2+</sup>]<sub>i</sub></label>
+			</div>
+
+			<div class="plotter_inputgroup plotter_inputgroup-gray">
+				<input id = "displayCass"  name="displayCass"  type="checkbox" checked/> 
+				<label for="displayCass">Display [Ca<sup>2+</sup>]<sub>ss</sub></label>
+			</div>
+
+			<div class="plotter_inputgroup plotter_inputgroup-pink ">
+				<input id = "displayCajsr"  name="displayCajsr"  type="checkbox" checked/> 
+				<label for="displayCajsr">Display [Ca<sup>2+</sup>]<sub>JSR</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-purple">
+				<input id = "displayCansr"  name="displayCansr"  type="checkbox" checked/> 
+				<label for="displayCansr">Display [Ca<sup>2+</sup>]<sub>NSR</sub> </label>
+			</div>
+
+			<div class="plotter_inputgroup plotter_inputgroup-yellowGreen">
+				<input id = "displayLtrpn"  name="displayLtrpn"  type="checkbox" checked/> 
+				<label for="displayLtrpn">Display [LTRPNCa]</label>
+			</div>
+
+			<div class="plotter_inputgroup plotter_inputgroup-indigo">
+				<input id = "displayHtrpn"  name="displayHtrpn"  type="checkbox" checked/> 
+				<label for="displayHtrpn">Display [HTRPNCa]</label>
+			</div>
+
+			<div class="plotter_inputgroup plotter_inputgroup-lightCoral">
+				<input id = "displayNai"  name="displayNai"  type="checkbox" checked/> 
+				<label for="displayNai">Display [Na<sup>+</sup>]<sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-lightSlateGray">
+				<input id = "displayKi"  name="displayKi"  type="checkbox" checked/> 
+				<label for="displayKi">Display [K<sup>+</sup>]<sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup" >
+				<select id="secondaryPlot" name="secondaryPlot">
+					<option id = 'displayIna'  value ='ina'>I_Na</option>
+					<option id = 'displayIcal'  value ='ical'>I_CaL</option>
+					<option id = 'displayIktof'  value ='iktof'>I_to,f</option>
+					<option id = 'displayIktos'  value ='iktos'>I_to,s</option>
+					<option id = 'displayIkur'  value ='ikur'>I_Kur</option>
+					<option id = 'displayIkss'  value ='ikss'>I_Kss</option>
+					<option id = 'displayIkr'  value ='ikr'>I_Kr</option>
+					<option id = 'displayIks'  value ='iks'>I_Ks</option>
+					<option id = 'displayIk1'  value ='ik1'>I_K1</option>
+					<option id = 'displayInaca'  value ='inaca'>I_NaCa</option>
+					<option id = 'displayInak'  value ='inak'>I_NaK</option>
+					<option id = 'displayIpca'  value ='ipca'>I_pCa</option>
+					<option id = 'displayIclca'  value ='iclca'>I_Cl,Ca</option>
+					<option id = 'displayInab'  value ='inab'>I_Nab</option>
+					<option id = 'displayIcab'  value ='icab'>I_Cab</option>			
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>			
+		</fieldset>
+		<fieldset>
+				<div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1" value="50" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1" value="3"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2" value="100"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gna">g_Na</label>
+				<input type="text" name="gna" value="13"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gcal">g_CaL</label>
+				<input type="text" name="gcal" value="0.1729"/>
+			</div>	
+
+			<div class="plotter_inputgroup">
+				<label for="gktof">g_to,f</label>
+				<input type="text" name="gktof" value="0.0798"/>
+			</div>	
+			<div class="plotter_inputgroup">
+				<label for="gktos">g_to,s</label>
+				<input type="text" name="gktos" value="0.0629"/>
+			</div>	
+
+			<div class="plotter_inputgroup">
+				<label for="gkr">g_Kr</label>
+				<input type="text" name="gkr" value="0.078"/>
+			</div>	
+			<div class="plotter_inputgroup">
+				<label for="gks">g_Ks</label>
+				<input type="text" name="gks" value="0.00575"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gk1">g_K1</label>
+				<input type="text" name="gk1" value="0.2938"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="knaca">K_NaCa</label>
+				<input type="text" name="knaca" value="292.8"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<select id="paramType" name="paramType">					
+					<option id = 'displaySeptum'   value = 'septum'>septum</option>
+					<option id = 'displayApex'     value ='apex' >apex</option>
+				</select>
+				<label for="paramType">Parameter Type</label>
+			</div>			
+		</fieldset>
+		<!-- Buttons -->
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<button id="default">Defaults</button>
+				<button id="print">Print Data</button>
+			</div>
+		</fieldset>
+		</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
+	
