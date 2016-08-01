@@ -1,0 +1,152 @@
+---
+title: Sanode Central 
+plot: true
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Sanode Central Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-620px;margin-left:550px;">
+		<!-- inputs -->
+		<fieldset id="formControls">
+			<div class="plotter_inputgroup plotter_inputgroup-orange">
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" checked/>
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<!-- <div class="plotter_inputgroup plotter_inputgroup-black">
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
+				<label for="displayS1S2">Display Timings</label>
+			</div> -->
+
+			<div class="plotter_inputgroup plotter_inputgroup-red">
+				<input id="displayV" name="displayV" type="checkbox" checked/>
+				<label for="displayV">Display Voltage</label>
+			</div>	
+			<div class="plotter_inputgroup plotter_inputgroup-aqua">
+				<input id="displaySdl" name="displaySdl" type="checkbox" checked/>
+				<label for="displaySdl"> Display d<sub>L</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-pink">
+				<input id="displaySfl" name="displaySfl" type="checkbox" checked/>
+				<label for="displaySfl"> Display f<sub>L</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-gray">
+				<input id="displaySdt" name="displaySdt" type="checkbox" checked/>
+				<label for="displaySdt"> Display d<sub>T</sub> gate</label>
+			</div>
+			
+			<div class="plotter_inputgroup plotter_inputgroup-purple">
+				<input id="displaySft" name="displaySft" type="checkbox" checked/>
+				<label for="displaySft"> Display f<sub>T</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-violet">
+				<input id="displaySr" name="displaySr" type="checkbox" checked/>
+				<label for="displaySr"> Display r gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-teal">
+				<input id="displaySq" name="displaySq" type="checkbox" checked/>
+				<label for="displaySq"> Display q gate</label>
+			</div>
+			
+			<div class="plotter_inputgroup plotter_inputgroup-maroon">
+				<input id="displaySpaf" name="displaySpaf" type="checkbox" checked/>
+				<label for="displaySpaf"> Display p<sub>a</sub>f gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-midnightBlue">
+				<input id="displaySpas" name="displaySpas" type="checkbox" checked/>
+				<label for="displaySpas"> Display p<sub>a</sub>s gate</label>
+			</div>
+			<div class="plotter_inputgroup plotter_inputgroup-sandyBrown">
+				<input id="displaySpii" name="displaySpii" type="checkbox" checked/>
+				<label for="displaySpii"> Display p<sub>i</sub> gate</label>
+			</div>
+			
+			<div class="plotter_inputgroup plotter_inputgroup-orangeRed">
+				<input id="displaySxs" name="displaySxs" type="checkbox" checked/>
+				<label for="displaySxs"> Display x<sub>s</sub> gate</label>
+			</div>
+			
+			
+			<div class="plotter_inputgroup plotter_inputgroup-olive"> 
+				<input id="displaySy" name="displaySy" type="checkbox" checked/>
+				<label for="displaySy"> Display y gate</label>
+			</div>
+
+			<div class="plotter_inputgroup" name="secondaryPlotHolder">
+				<select id="secondaryPlot" name="secondaryPlot">
+				<!-- <option id = "displayIna" value = "ina" >I_Na</option> -->
+				<option id = "displayIcal" value = "ical" >I_Cal</option>
+				<option id = "displayIcat" value = "icat" >I_Cat</option>
+				<option id = "displayIto" value = "ito" >I_to</option>
+				<option id = "displayIkp" value = "ikp" >I_sus</option>
+				<option id = "displayIkr" value = "ikr"> I_Kr</option>
+				<option id = "displayIks" value = "iks"> I_Ks</option>
+				<option id = "displayInaca" value = "inaca" >I_NaCa</option>
+				<option id = "displayInak" value = "inak" >I_NaK</option>
+				<option id = "displayIf" value = "if"> I_f</option>
+				<option id = "displayIb" value = "ibna"> I_bNa</option>
+				<option id = "displayIb" value = "ibca"> I_bCa</option>
+				<option id = "displayIb" value = "ibk"> I_bK</option>
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<label for="gcal">g<sub>Cal</sub></label>
+				<input type="text" name="gcal" />			
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gcat">g<sub>CaT</sub></label>
+				<input type="text" name="gcat" />			
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gto">g<sub>to</sub></label>
+				<input type="text" name="gto" />			
+			</div>
+			<!-- <div class="plotter_inputgroup">
+				<label for="gto">g<sub>sus</sub></label>
+				<input type="text" name="gsus" />			
+			</div> -->
+			<div class="plotter_inputgroup">
+				<label for="gkr">g<sub>Kr</sub></label>
+				<input type="text" name="gkr" />			
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gks">g<sub>Ks</sub></label>
+				<input type="text" name="gks" />			
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="endTime">endTime</label>
+				<input type="text" name="endTime" />			
+			</div>
+			<div class="plotter_inputgroup">
+			<label for="sanodeType">SaNode Type</label>
+				<select id="sanodeType" name="sanodeType">					
+					<option id = 'displaySanodeC'   value = 'sanodeC' >Sanode Central</option>
+					<option id = 'displaySanodeP'   value ='sanodeP' >Sanode Peripheral</option>
+				</select>
+			</div>
+		</fieldset>
+		
+		<!-- Buttons -->
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<button id="default">Defaults</button>
+				<button id="print">Print Data</button>
+			</div>
+		</fieldset>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
