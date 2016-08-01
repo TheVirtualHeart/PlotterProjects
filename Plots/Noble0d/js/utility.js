@@ -239,6 +239,20 @@ define(function NobleUtilities() {
 	};
 
 	/**
+	 * An object that contains references to the different TimeUnits used by the
+	 * graph.
+	 */
+
+	var timeUnit = {
+		nanoseconds : 1e-6,
+		microseconds :0.001,
+		milliseconds : 1,
+		seconds : 1000,
+		minutes : 60000,
+		hours :3.6e+6
+	};
+
+	/**
 	 * This api contains the functions and properties that the user can interact
 	 * with when using this module.
 	 * @type {Object}
@@ -254,6 +268,7 @@ define(function NobleUtilities() {
 		normalize: normalize,
 		colors: Colors,
 		extend: extend,
+		timeUnit: timeUnit
 	};
 	return api;
 });
