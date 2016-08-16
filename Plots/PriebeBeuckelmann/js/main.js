@@ -2,12 +2,12 @@ require.config({
     paths: {
         calculator: "calculator",
         form: "form",
-        mediator: "../../Noble0d/js/mediator",
-        plots: "plots",
-        pointBufferAnalyzer: "pointBufferAnalyzer",
-        s1s2Analyzer: "../../Noble0d/js/s1s2Analyzer",
-        apdAnalyzer: "../../Noble0d/js/APDAnalyzer",
-        utility: "../../Noble0d/js/utility"
+        mediator: "../../commonJs/mediator",
+        plots: "../../commonJs/plots",
+        pointBufferAnalyzer: "../../commonJs/pointBufferAnalyzer",
+        s1s2Analyzer: "../../commonJs/s1s2Analyzer",
+        apdAnalyzer: "../../commonJs/APDAnalyzer",
+        utility: "../../commonJs/utility"
     },
 });
 
@@ -46,23 +46,19 @@ plots)
             pointBuffer: {
                 bufferSize: 20,
                 normalPoints :{
-                    v : new Point(-91, 47)
-                }
+                    v : new Point(-91, 47),
+                    cai : new Point(0.0001, 0.001),
+                    cajsr : new Point(2.5, 3.5),
+                    cansr : new Point(2.5, 3.5),
+                    ki : new Point(139.0, 140.0),
+                    nai : new Point(9.0, 10.0)
+                },
+                 minMaxPoints : {}  
             },
             
             apdPoints: {
                 threshhold: -76.0,
                 vNormalize : new Point(-91, 47)
-            }
-        },
-        plotSettings: {
-            PriebeBeuck: {
-                plots: {
-                    mainPlot: {
-                        xAxis: "Time (ms)",
-                        yAxis: ""
-                    }
-                }
             }
         }
     });

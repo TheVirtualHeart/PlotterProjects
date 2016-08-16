@@ -28,9 +28,7 @@
         * @param  {Object} newSettings
         */
         function initialize(newSettings) {               
-          settings    =    utils.extend(newSettings);
-          cS         =   _.cloneDeep(settings.calculationSettings);      
-          cC         =   new CalcConstants(settings.calculationSettings);   
+          settings    =    utils.extend(newSettings);         
         }
 
         /**
@@ -90,23 +88,8 @@
           exptauf2t_t, inakcoefft_t, ipkcoefft_t, ical1t_t, ical2t_t, inaca1t_t, inaca2t_t,
           ik1coefft_t, fcassinft_t, exptaufcasst_t; 
 
-            // sets voltage variables after calculations
-            data.calculationSettings.voltageVariables.forEach(function (item){
-              cS[item]  =    data.calculationSettings[item];                        
-            });
 
-            // sets current variables after calculations
-            data.calculationSettings.currentVariables.forEach(function (item){
-             cS[item]  =    data.calculationSettings[item];
-           });
-
-            data.calculationSettings.parameters.forEach(function (item){
-             cS[item]  =    data.calculationSettings[item];
-           });
-
-
-
-               sOO = ( cS[iType] === 'epi') ? 8.958e-8 : ( cS[iType] === 'endo' )  ? 8.848e-8 : 1.142e-7;  // (cS.itype === 'M')
+          sOO = ( cS[iType] === 'epi') ? 8.958e-8 : ( cS[iType] === 'endo' )  ? 8.848e-8 : 1.142e-7;  // (cS.itype === 'M')
                
 
           //table setup starts
@@ -333,26 +316,18 @@
           dNai   =  -(cS.ina+cS.ibna+3.*cS.inak+3.*cS.inaca)*cC.inverseVcF*cS.CAPACITANCE;
           cS.nai =   cS.nai+cS.timestep*dNai;
 
-          dKi = -(cS.Istim+cS.ik1+cS.ito+cS.ikr+cS.iks-2.*cS.inak+cS.ipk)*cC.inverseVcF*cS.CAPACITANCE;                
+          dKi = -(cS.Istim+cS.ik1+cS.ito+cS.ikr+cS.iks-2.*cS.inak+cS.ipk)*cC.inverseVcF*cS.CAPACITANCE;                     
           cS.ki = cS.ki+cS.timestep*dKi;
           cS.v =  cS.v - cS.sItot * cS.timestep ;
           
 
           //cal ends
-          // sets voltage variables after calculations
-          data.calculationSettings.voltageVariables.forEach(function (item){
-            data.calculationSettings[item]  =    cS[item];
-          });
-
-          // sets current variables after calculations
-          data.calculationSettings.currentVariables.forEach(function (item){
-            data.calculationSettings[item]  =    cS[item];
-          });
-
-          data.calculationSettings.parameters.forEach(function (item){
-           data.calculationSettings[item] = cS[item];
-         });
-
+         // sets voltage variables after calculations
+        utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
+        
+    // sets current variables after calculations
+        utils.copySpecific(data.calculationSettings, cS, data.calculationSettings.currentVariables);
+      
                 // iterate the count
                 count++;
 
@@ -392,11 +367,14 @@
           function runCalculations(iterations, settings) {
             var state   =   settings,
             data,
-            initValues = {},
             curAnalyzer; 
 
             //here 'count' is global variable
             count   =    0;
+
+             cS         =   _.cloneDeep(settings.calculationSettings);      
+             cC         =   new CalcConstants(settings.calculationSettings); 
+
 
             /**
             * Reset the calculators to their base states
@@ -406,34 +384,7 @@
               analyzers[curAnalyzer].reset(state);
             }
 
-            //iTYpe initializations 
-              // will remain same across iterations
-              
-              initValues =  { "v"      : {"epi": -85.46,      "M": -84.53,    "endo" : -84.70},
-              "cai"    : {"epi": 0.0001029,   "M": 0.0001156, "endo" : 0.0001021},
-              "casr"   : {"epi": 3.432,       "M": 4.130,     "endo" : 3.385},
-              "cass"   : {"epi": 0.0002120,   "M": 0.0002331, "endo" : 0.0002111},
-              "nai"    : {"epi": 9.293,       "M": 9.322,     "endo" : 9.413},
-              "ki"     : {"epi": 136.2,       "M": 136.0,     "endo" : 136.1},
-              "sm"     : {"epi": 0.001633,    "M": 0.001694,  "endo" : 0.001634},
-              "sh"     : {"epi": 0.7512,      "M": 0.7466,    "endo" : 0.7512},
-              "sj"     : {"epi": 0.7508,      "M": 0.7457,    "endo" : 0.7508},
-              "sxr1"   : {"epi": 0.0002052,   "M": 0.0002140, "endo" : 0.0002051},
-              "sxr2"   : {"epi": 0.4736,      "M": 0.4718,    "endo" : 0.4736},
-              "sxs"    : {"epi": 0.003214,    "M": 0.003343,  "endo" : 0.003213},
-              "sr"     : {"epi": 2.326e-8,    "M": 2.392e-8,  "endo" : 2.326e-8},
-              "ss"     : {"epi": 1.000,       "M": 1.000,     "endo" : 0.6401},
-              "sd"     : {"epi": 3.270e-5,    "M": 3.345e-5,  "endo" : 3.270e-5},
-              "sf"     : {"epi": 0.9767,      "M": 0.9595,    "endo" : 0.9771},
-              "sf2"    : {"epi": 0.9995,      "M": 0.9995,    "endo" : 0.9995},
-              "sfcass" : {"epi": 1.000,       "M": 1.000,    "endo" : 1.000},
-              "srr"    : {"epi": 0.9891,      "M": 0.9874,    "endo" : 0.9891}};
-              
 
-             //initialize 
-             settings.calculationSettings.voltageVariables.forEach(function(item){
-              state.calculationSettings[item] =  initValues[item][state.calculationSettings["iType"]];                              
-            });
 
             /**
             * Perform a function before the calculations are run
@@ -448,15 +399,18 @@
             * Run the calculations the appropriate number of times and 
             * pass these values to the analyzers using their aggregate
             * function
-            */               
+            */         
             for (var i = 0; i < numCalculations; i++) {
              data = calculateNext(state);         
              for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
               if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-                analyzers[curAnalyzer].aggregate(data);
+                if(    (analyzers[curAnalyzer].analyzerName === "PointBufferAnalyzer" || analyzers[curAnalyzer].analyzerName === "APDAnalyzer") 
+                 || (analyzers[curAnalyzer].analyzerName === "S1S2Analyzer" && i >= numCalculations-2)){
+                  analyzers[curAnalyzer].aggregate(data);
               }
             }
           }
+        }
 
             /**
             * Perform a function after the calculations are run
@@ -466,7 +420,7 @@
                 analyzers[curAnalyzer].postAggregate(data);
               }
             } 
-            
+            //console.dir(settings);
           } 
 
           /* adding analyzers */
@@ -526,7 +480,6 @@
         var api   =    {
           addAnalysisFunction: addAnalysisFunction,
           runCalculations: runCalculations,
-          timestep: settings.timestep,
           initialize: initialize,            
           calculateNext: calculateNext,
           updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,

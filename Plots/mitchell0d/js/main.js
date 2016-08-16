@@ -2,11 +2,11 @@ require.config({
 	paths: {
 		calculator: "calculator",
 		form: "form",
-		mediator: "../../Noble0d/js/mediator",
-		plots: "plots",
-		pointBufferAnalyzer: "pointBufferAnalyzer",
-        s1s2Analyzer: "../../Noble0d/js/s1s2Analyzer",
-        utility: "../../Noble0d/js/utility"
+		 mediator: "../../commonJs/mediator",
+        plots: "../../commonJs/plots",
+        pointBufferAnalyzer: "../../commonJs/pointBufferAnalyzer",
+        s1s2Analyzer: "../../commonJs/s1s2Analyzer",
+        utility: "../../commonJs/utility"
     },
 });
 
@@ -30,22 +30,12 @@ require(["settings",
      */
      settings.initialize({
         formSettings: {
-            displayV: true,
-            displayH: true           
+            displayV: true         
         }, 
 
         calculationSettings: {
             pointBuffer: {
-                bufferSize: 1000
-            }
-        },
-        plotSettings: {
-            Mitchell: {
-                plots: {
-                    mainPlot: {                        
-                        yAxis: " "                        
-                    }
-                }
+                bufferSize: 4     
             }
         }
     });

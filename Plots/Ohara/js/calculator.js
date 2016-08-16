@@ -93,23 +93,6 @@ function OharaCalculator(utils) {
         
         var vffrt_t, vfrt_t;
         
-        
-        // sets current variables after calculations
-        data.calculationSettings.currentVariables.forEach(function (item){
-            cS[item]  =    data.calculationSettings[item];
-        });
-        
-        
-        // sets parameters after calculations
-        data.calculationSettings.voltageVariables.forEach(function (item){
-            cS[item]  =    data.calculationSettings[item];
-        });
-        
-        // sets additional parameters after calculations
-        data.calculationSettings.additionalVariables.forEach(function (item){
-            cS[item]  =    data.calculationSettings[item];
-        });
-        
         //time loop
         
         vffrt_t = cS.v*cS.F*cS.F/(cS.R*cS.T);
@@ -170,7 +153,8 @@ function OharaCalculator(utils) {
         dhLp = (hLssp-cS.xhlp)/thLp;
         cS.xhlp = cS.xhlp+cS.timestep*dhLp;
         
-        /*if (cS.icelltype === 1){
+        /* Calculations implemented in  _setCellTypeDependents in settings
+         if (cS.icelltype === 1){
             cS.GNaL = cS.GNaL*0.6;
         }*/
         fINaLp = (1.0/(1.0+cS.KmCaMK/CaMKa));
@@ -183,7 +167,7 @@ function OharaCalculator(utils) {
         da = (ass-cS.xa)/ta;
         cS.xa = cS.xa+cS.timestep*da;
         iss = 1.0/(1.0+Math.exp((cS.v+43.94)/5.711));
-        delta_epi = (cS.icelltype === 1)? 1.0-(0.95/(1.0+Math.exp((cS.v+70.0)/5.0))) : 1.0;
+        delta_epi = (cS.icelltype === "epi")? 1.0-(0.95/(1.0+Math.exp((cS.v+70.0)/5.0))) : 1.0;
         tiF = 4.562+1/(0.3933*Math.exp((-(cS.v+100.0))/100.0)+0.08004*Math.exp((cS.v+50.0)/16.59));
         tiS = 23.62+1/(0.001416*Math.exp((-(cS.v+96.52))/59.05)+1.780e-8*Math.exp((cS.v+114.1)/8.079));
         tiF = tiF*delta_epi;
@@ -210,7 +194,8 @@ function OharaCalculator(utils) {
         cS.xisp = cS.xisp+cS.timestep*diSp;
         ip = AiF*cS.xifp+AiS*cS.xisp;
        
-       /* if((cS.icelltype === 1) || (cS.icelltype === 2)){
+       /* Calculations implemented in  _setCellTypeDependents in settings 
+        if((cS.icelltype === 1) || (cS.icelltype === 2)){
             cS.Gto = cS.Gto*4.0;
         } */
         
@@ -261,7 +246,8 @@ function OharaCalculator(utils) {
         PhiCaNa = 1.0*vffrt_t*(0.75*cS.nass*Math.exp(1.0*vfrt_t)-0.75*cS.nao)/(Math.exp(1.0*vfrt_t)-1.0);
         PhiCaK = 1.0*vffrt_t*(0.75*cS.kss*Math.exp(1.0*vfrt_t)-0.75*cS.ko)/(Math.exp(1.0*vfrt_t)-1.0);
             
-        /*if(cS.icelltype === 1){
+        /* Calculations implemented in  _setCellTypeDependents in settings
+          if(cS.icelltype === 1){
             cS.PCa = cS.PCa*1.2;
         }
         else if (cS.icelltype === 2){
@@ -290,7 +276,8 @@ function OharaCalculator(utils) {
         xr = Axrf*cS.xrf+Axrs*cS.xrs;
         rkr = 1.0/(1.0+Math.exp((cS.v+55.0)/75.0))*1.0/(1.0+Math.exp((cS.v-10.0)/30.0));
         
-        /*if(cS.icelltype === 1){
+        /* Calculations implemented in  _setCellTypeDependents in settings
+         if(cS.icelltype === 1){
             cS.GKr = cS.GKr*1.3;
         }
         else if(cS.icelltype === 2){
@@ -309,7 +296,8 @@ function OharaCalculator(utils) {
         cS.xs2 = cS.xs2+cS.timestep*dxs2;
         KsCa = 1.0+0.6/(1.0+Math.pow((3.8e-5/cS.cai),1.4));   
         
-        /*if(cS.icelltype === 1){
+        /* Calculations implemented in  _setCellTypeDependents in settings
+         if(cS.icelltype === 1){
             cS.GKs = cS.GKs*1.4;
         }*/
         cS.iks = cS.GKs*KsCa*cS.xs1*cS.xs2*(cS.v-EKs);
@@ -321,12 +309,13 @@ function OharaCalculator(utils) {
         cS.xk1 = cS.xk1+cS.timestep*dxk1;
         rk1 = 1.0/(1.0+Math.exp((cS.v+105.8-2.6*cS.ko)/9.493));
         
-        if(cS.icelltype === 1) {
+        /* Calculations implemented in  _setCellTypeDependents in settings
+         if(cS.icelltype === 1) {
             cS.GK1 = cS.GK1*1.2;
         }
         else if(cS.icelltype === 2){
             cS.GK1 = cS.GK1*1.3;
-        }
+        }*/
         cS.ik1 = cS.GK1*Math.sqrt(cS.ko)*rk1*cS.xk1*(cS.v-EK);
                 
         //calculate INaCa_i
@@ -367,7 +356,9 @@ function OharaCalculator(utils) {
         allo = 1.0/(1.0+Math.pow((cS.KmCaAct/cS.cai),2)); 
         JncxNa = 3.0*(E4*k7-E1*k8)+E3*k4pp-E2*k3pp;
         JncxCa = E2*k2-E1*k1;
-        /*if(cS.icelltype === 1){
+        
+        /* Calculations implemented in  _setCellTypeDependents in settings
+         if(cS.icelltype === 1){
             cS.Gncx = cS.Gncx*1.1;
         }
         else if(icelltype === 2){
@@ -437,10 +428,10 @@ function OharaCalculator(utils) {
         cS.jnakna = 3.0*(E1*a3-E2*b3);
         cS.jnakk = 2.0*(E4*b1-E3*a1);
         Pnak = 30.;
-        if(cS.icelltype === 1){
+        if(cS.icelltype === "epi"){
             Pnak = Pnak*0.9;
         }   
-        else if(cS.icelltype === 2){
+        else if(cS.icelltype === "M"){
             Pnak = Pnak*0.7;
         }
         
@@ -448,7 +439,7 @@ function OharaCalculator(utils) {
         //calculate IKb
         xkb = 1.0/(1.0+Math.exp(-(cS.v-14.48)/18.34));
         GKb = 0.003; 
-        if(cS.icelltype === 1){  
+        if(cS.icelltype === "epi"){  
             GKb = GKb*0.6;
         }
         cS.ikb = GKb*xkb*(cS.v-EK);
@@ -479,7 +470,7 @@ function OharaCalculator(utils) {
         //calculate ryanodione receptor calcium induced calcium release from the jsr
         a_rel = 0.5*cS.bt;
         Jrel_inf = a_rel*(-cS.ical)/(1.0+Math.pow((1.5/cS.cajsr),8));
-        if(cS.icelltype === 2){
+        if(cS.icelltype === "M"){
             Jrel_inf = Jrel_inf*1.7;
         }
         tau_rel = cS.bt/(1.0+0.0123/cS.cajsr);
@@ -493,7 +484,7 @@ function OharaCalculator(utils) {
         btp = 1.25*cS.bt;
         a_relp = 0.5*btp;
         Jrel_infp = a_relp*(-cS.ical)/(1.0+Math.pow((1.5/cS.cajsr),8)); 
-        if(cS.icelltype === 2){
+        if(cS.icelltype === "M"){
             Jrel_infp = Jrel_infp*1.7;
         }
         tau_relp = btp/(1.0+0.0123/cS.cajsr);
@@ -511,7 +502,7 @@ function OharaCalculator(utils) {
         //calculate serca pump, ca uptake flux
         Jupnp = 0.004375*cS.cai/(cS.cai+0.00092);
         Jupp = 2.75*0.004375*cS.cai/(cS.cai+0.00092-0.00017);
-        if(cS.icelltype === 1){
+        if(cS.icelltype === "epi"){
             Jupnp = Jupnp*1.3;
             Jupp = Jupp*1.3;
         }
@@ -524,8 +515,8 @@ function OharaCalculator(utils) {
         
         //calcium buffer constants
         cmdnmax = 0.05;
-        
-        if(cS.icelltype === 1){
+
+        if(cS.icelltype === "epi"){ 
             cmdnmax = cmdnmax*1.3;
         }
         
@@ -560,20 +551,10 @@ function OharaCalculator(utils) {
 
         //cal ends
         // sets voltage variables after calculations
-        data.calculationSettings.voltageVariables.forEach(function (item){
-            data.calculationSettings[item]  =    cS[item];
-        });
+        utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
         
-        // sets current variables after calculations
-        data.calculationSettings.currentVariables.forEach(function (item){
-            data.calculationSettings[item]  =    cS[item];
-        });
-        
-        
-        // sets additional variables after calculations
-        data.calculationSettings.additionalVariables.forEach(function (item){
-            data.calculationSettings[item] = cS[item];
-        });
+    // sets current variables after calculations
+        utils.copySpecific(data.calculationSettings, cS, data.calculationSettings.currentVariables);
         
         // iterate the count
         count++;
@@ -616,8 +597,8 @@ function OharaCalculator(utils) {
         count   =    0;
         
 
-        cS         =   _.cloneDeep(settings.calculationSettings);
-        cC         =   new CalcConstants(settings.calculationSettings); 
+        cS   =   _.cloneDeep(settings.calculationSettings);
+        cC   =   new CalcConstants(settings.calculationSettings); 
         /**
             * Reset the calculators to their base states
         */
@@ -639,15 +620,18 @@ function OharaCalculator(utils) {
             * Run the calculations the appropriate number of times and 
             * pass these values to the analyzers using their aggregate
             * function
-        */        
+        */   
         for (var i = 0; i < numCalculations; i++) {
             var data = calculateNext(state);         
             for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
                 if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-                    analyzers[curAnalyzer].aggregate(data);
+                    if(    (analyzers[curAnalyzer].analyzerName === "PointBufferAnalyzer" || analyzers[curAnalyzer].analyzerName === "APDAnalyzer") 
+                       || (analyzers[curAnalyzer].analyzerName === "S1S2Analyzer" && i >= numCalculations-2)){
+                        analyzers[curAnalyzer].aggregate(data);
                 }
             }
         }
+    }
         
         /**
             * Perform a function after the calculations are run
@@ -717,7 +701,6 @@ function OharaCalculator(utils) {
     var api   =    {
         addAnalysisFunction: addAnalysisFunction,
         runCalculations: runCalculations,
-        timestep: settings.timestep,
         initialize: initialize,            
         calculateNext: calculateNext,
         updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,

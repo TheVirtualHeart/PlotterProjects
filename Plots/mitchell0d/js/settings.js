@@ -28,38 +28,45 @@ var defaultSettings = {
    },
 
    formSettings: {  
-	    displayV : true,
-	    displayH : true,
-        displayS1S2 :false
+	    displayV : false,
+	    displayH : false,
+        displayS1S2 :false,
+         colors  : {
+             s1S2 : "Black",
+             v    : "Red"
+            }     
  	},
 
-   plotSettings:{
-	Mitchell: {
-                width: 437.5,
-                height: 240,
-                offset: new Point(0, 0),
-                plots: {
-                        mainPlot: {
-                        range: new Point(-0.1, 1),
-                        unitPerTick: new Point(1000, .1),
-                        labelFrequency: new Point(1, 1),
-                        xAxis: "Time (ms)",
-                        yAxis: " ",
-                        labelPrecision: new Point(0, 1),
-                        labelSize: new Point(0, 0),
-                    }
-                }
-            }
-   },
-
 };
+
+ // The function return an array of voltage variables
+    function _getVoltageVariables(){
+        return ["v", "h"];
+    }
+
+    function _initialize(override){ 
+        var plotParams = {
+         unitPerTick : new Point(1000, .1)            
+        }       
+        defaultSettings = _.merge(defaultSettings, override);         
+    //Adding additional properties    
+        defaultSettings.calculationSettings.voltageVariables = _getVoltageVariables();
+
+    //Setting plot setting dynamically            
+        defaultSettings["plotSettings"] = utils.initializePlotSettings( null, defaultSettings.formSettings, plotParams);
+
+     // assign colors            
+        defaultSettings["formSettings"]["colors"] =  utils.extend(defaultSettings["formSettings"]["colors"],
+                                                     utils.assignColors(utils.removeArrayItems(_getVoltageVariables(), ["v"]))); 
+        return defaultSettings;                                              
+    }
 
 return {
         /**
          * This function modifies any default settings
          */
         initialize: function(override) {
-            defaultSettings = _.merge(defaultSettings, override);
+            return _initialize(override);
         },   
        
         /**

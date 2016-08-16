@@ -29,9 +29,7 @@ function PriebeBeuckCalculator(utils) {
         * @param  {Object} newSettings
     */
     function initialize(newSettings) {               
-        settings    =    utils.extend(newSettings);
-        cS         =   _.cloneDeep(settings.calculationSettings);      
-        cC         =   new CalcConstants(settings.calculationSettings);   
+        settings    =    utils.extend(newSettings);        
     }
     
     /**
@@ -89,30 +87,9 @@ function PriebeBeuckCalculator(utils) {
         expxrt_t, xrit_t, expxst_t, xsit_t, zIK1t_t;
         
         // sets voltage variables after calculations
-        data.calculationSettings.voltageVariables.forEach(function (item){
-            //set value for vold
-            if(item === 'v'){
-                vold = data.calculationSettings[item]
-            }
-            
-            cS[item]  =    data.calculationSettings[item];        
-        });
+         vold = data.calculationSettings["v"];
         
-        // sets current variables after calculations
-        data.calculationSettings.currentVariables.forEach(function (item){
-            cS[item]  =    data.calculationSettings[item];
-        });
-        
-        
-        // sets parameters after calculations
-        data.calculationSettings.parameters.forEach(function (item){
-            cS[item]  =    data.calculationSettings[item];
-        });
-        
-        // sets additional parameters after calculations
-        data.calculationSettings.additionalVariables.forEach(function (item){
-            cS[item]  =    data.calculationSettings[item];
-        });
+
         
         Ek    = cC.RTonF * Math.log(cS.ke/cS.ki);    
         Eks   = cC.RTonF * Math.log( (cS.ke + 0.01833 * cS.nae) / (cS.ki+0.01833*cS.nai) );
@@ -355,24 +332,10 @@ function PriebeBeuckCalculator(utils) {
         
         //cal ends
         // sets voltage variables after calculations
-        data.calculationSettings.voltageVariables.forEach(function (item){
-            data.calculationSettings[item]  =    cS[item];
-        });
+        utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
         
-        // sets current variables after calculations
-        data.calculationSettings.currentVariables.forEach(function (item){
-            data.calculationSettings[item]  =    cS[item];
-        });
-        
-        // sets parameters after calculations
-        data.calculationSettings.parameters.forEach(function (item){
-            data.calculationSettings[item] = cS[item];
-        });
-        
-        // sets additional variables after calculations
-        data.calculationSettings.additionalVariables.forEach(function (item){
-            data.calculationSettings[item] = cS[item];
-        });
+    // sets current variables after calculations
+        utils.copySpecific(data.calculationSettings, cS, data.calculationSettings.currentVariables);
         
         // iterate the count
         count++;
@@ -412,6 +375,9 @@ function PriebeBeuckCalculator(utils) {
         
         //here 'count' is global variable
         count   =    0;
+
+        cS  =   _.cloneDeep(settings.calculationSettings);      
+        cC  =   new CalcConstants(settings.calculationSettings); 
         
         /**
             * Reset the calculators to their base states
@@ -440,7 +406,10 @@ function PriebeBeuckCalculator(utils) {
             var data = calculateNext(state);         
             for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
                 if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-                    analyzers[curAnalyzer].aggregate(data);
+                    if(    (analyzers[curAnalyzer].analyzerName === "PointBufferAnalyzer" || analyzers[curAnalyzer].analyzerName === "APDAnalyzer") 
+                       || (analyzers[curAnalyzer].analyzerName === "S1S2Analyzer" && i >= numCalculations-2)){
+                        analyzers[curAnalyzer].aggregate(data);
+            }
                 }
             }
         }
@@ -513,7 +482,6 @@ function PriebeBeuckCalculator(utils) {
     var api   =    {
         addAnalysisFunction: addAnalysisFunction,
         runCalculations: runCalculations,
-        timestep: settings.timestep,
         initialize: initialize,            
         calculateNext: calculateNext,
         updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,

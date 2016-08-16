@@ -16,16 +16,16 @@ plot: true
 	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-330px;margin-left:550px;">
 		<!-- inputs -->
 		<fieldset>
-			<div class="plotter_inputgroup plotter_inputgroup-black">
+			<div>
 				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
 				<label for="displayS1S2">Display Timings</label>
 			</div>		
-			<div class="plotter_inputgroup plotter_inputgroup-red">
+			<div>
 				<input id="displayV" name="displayV" type="checkbox" checked/>
 				<label for="displayV">Display V</label>
 			</div>
 
-			<div class="plotter_inputgroup plotter_inputgroup-green">
+			<div>
 				<input id="displayH" name="displayH" type="checkbox" checked/>
 				<label for="displayH">Display h</label>
 			</div>		
@@ -45,30 +45,29 @@ plot: true
 			</div> 
 
 			<div class="plotter_inputgroup">
-				<label for="tau_in">tau_in</label>
+				<label for="tau_in">tau<sub>in</sub></label>
 				<input type="text" name="tau_in" value="0.3"/>
 			</div>  
 			<div class="plotter_inputgroup">
-				<label for="tau_out">tau_out</label>
+				<label for="tau_out">tau<sub>out</sub></label>
 				<input type="text" name="tau_out" value="6"/>
 			</div> 
 			<div class="plotter_inputgroup">
-				<label for="tau_open">tau_open</label>
+				<label for="tau_open">tau<sub>open</sub></label>
 				<input type="text" name="tau_open" value="120"/>
 			</div>
 			<div class="plotter_inputgroup">
-				<label for="tau_close">tau_close</label>
+				<label for="tau_close">tau<sub>close</sub></label>
 				<input type="text" name="tau_close" value="150"/>
 			</div>
 			<div class="plotter_inputgroup">
-				<label for="v_gate">v_gate</label>
+				<label for="v_gate">v<sub>gate</sub></label>
 				<input type="text" name="v_gate" value="0.13"/>
 			</div> 
 		</fieldset>
 		<!-- Buttons -->
 		<fieldset>
 			<div class="plotter_inputgroup">
-				<button id="update">Update</button>
 				<button id="default">Defaults</button>
 				<button id="print">Print Data</button>
 			</div>

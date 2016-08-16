@@ -2,12 +2,12 @@
         paths: {
             calculator: "calculator",
             form: "form",
-            mediator: "../../Noble0d/js/mediator",
-            plots: "plots",
-            pointBufferAnalyzer: "pointBufferAnalyzer",
-            s1s2Analyzer: "../../Noble0d/js/s1s2Analyzer",
-            apdAnalyzer: "../../Noble0d/js/APDAnalyzer",
-            utility: "../../Noble0d/js/utility"
+            mediator: "../../commonJs/mediator",
+            plots: "../../commonJs/plots",
+            pointBufferAnalyzer: "../../commonJs/pointBufferAnalyzer",
+            s1s2Analyzer: "../../commonJs/s1s2Analyzer",
+            apdAnalyzer: "../../commonJs/APDAnalyzer",
+            utility: "../../commonJs/utility"
         },
     });
 
@@ -40,28 +40,24 @@
             formSettings: {
                 displayAPDDI: true,
                 displayV: true,
-                //secondaryPlot: "ical",
+                secondaryPlot: "ical"
             }, 
             calculationSettings: {
                 pointBuffer: {
                     bufferSize: 10,
-                        normalPoints :{
-                            v : new Point(-86, 42)
-                        }
+                    normalPoints :{
+                        v : new Point(-86, 38),
+                        cai: new Point(0.0001, 0.001),
+                        casr: new Point(2.0, 4.0),
+                        cass :  new Point(0.0001, 2.5),
+                        ki : new Point(136.0, 136.5),
+                        nai :new Point(9.15, 9.50)
+                    },
+                    minMaxPoints : {}                    
                 },                
                 apdPoints: {
-                    threshhold: -75.0,
-                    vNormalize : new Point(-86, 42)
-                }
-            },
-            plotSettings: {
-                Tuscher: {
-                    plots: {
-                        mainPlot: {
-                            xAxis: "Time (ms)",
-                            yAxis: ""
-                        }
-                    }
+                    threshhold: -73.5,
+                    vNormalize : new Point(-86, 38)
                 }
             }
         });

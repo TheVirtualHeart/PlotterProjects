@@ -2,12 +2,12 @@ require.config({
     paths: {
         calculator: "calculator",
         form: "form",
-        mediator: "../../Noble0d/js/mediator",
-        plots: "plots",
-        pointBufferAnalyzer: "pointBufferAnalyzer",
-        s1s2Analyzer: "../../Noble0d/js/s1s2Analyzer",
-        apdAnalyzer: "../../Noble0d/js/APDAnalyzer",
-        utility: "../../Noble0d/js/utility"
+        mediator: "../../commonJs/mediator",
+        plots: "../../commonJs/plots",
+        pointBufferAnalyzer: "../../commonJs/pointBufferAnalyzer",
+        s1s2Analyzer: "../../commonJs/s1s2Analyzer",
+        apdAnalyzer: "../../commonJs/APDAnalyzer",
+        utility: "../../commonJs/utility"
     },
 });
 
@@ -30,9 +30,7 @@ calculator,
 pointBufferAnalyzer,
 s1s2Analyzer,
 apdAnalyzer,
-plots)
-{
-    
+plots){    
     /*
         * Initialize the default settings for the plot
     */
@@ -45,24 +43,18 @@ plots)
         calculationSettings: {
             pointBuffer: {
                 bufferSize: 10,
-                normalPoints:{
-                    v : new Point(-82, 38) 
-                }
+                normalPoints :{
+                    v       : new Point(-81, 38),
+                    ccaup   : new Point(1.4, 1.8),
+                    ccarel  : new Point(0, 2),
+                    ccai    : new Point(0.0001, 0.0006),
+                },
+                minMaxPoints : {}       
                 
             },
             apdPoints: {
                 threshhold: -68.84,
-                vNormalize : new Point(-82, 38)
-            }
-        },
-        plotSettings: {
-            Court: {
-                plots: {
-                    mainPlot: {
-                        xAxis: "Time (ms)",
-                        yAxis: ""
-                    }
-                }
+                vNormalize : new Point(-81, 38)
             }
         }
     });
@@ -107,8 +99,8 @@ plots)
         * Initialize a form
     */
     form.initialize(
-        plotSettings,
-        mediator
+    plotSettings,
+    mediator
     );
     
     /*

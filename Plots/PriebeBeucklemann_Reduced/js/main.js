@@ -36,29 +36,23 @@
         /*
         * Initialize the default settings for the plot
         */
-
         settings.initialize({
             formSettings: {
                 displayAPDDI: true,
                 displayV: true,
-                secondaryPlot: "ical",
+                secondaryPlot: "ina"                         
             }, 
             calculationSettings: {
                 pointBuffer: {
-                    bufferSize: 10,
+                    bufferSize: 20,
                         normalPoints :{
-                            v :  new Point(-88, 40),
-                            cai : new Point(0.00004, 0.0007),
-                            nai : new Point(11.50,11.75),
-                            ki : new Point(138.00, 138.50)
-
+                            v : new Point(-90, 53)
                         },
                         minMaxPoints : {}  
-                },
-                
+                },                
                 apdPoints: {
-                    threshhold: -75.0,
-                    vNormalize : new Point(-88, 40)
+                    threshhold: -75.5,
+                    vNormalize : new Point(-90, 53)
                 }
             }
         });
@@ -111,5 +105,5 @@
     /*
     * Call update calculations
     */
-    form.updateCalculations();     
+    form.updateCalculations();   
 });

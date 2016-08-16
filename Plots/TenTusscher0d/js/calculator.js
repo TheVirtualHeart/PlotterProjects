@@ -28,9 +28,7 @@ function TenTusscherCalculator(utils) {
         * @param  {Object} newSettings
   */
   function initialize(newSettings) {               
-    settings    =    utils.extend(newSettings);
-    cS         =   _.cloneDeep(settings.calculationSettings);      
-    cC         =   new CalcConstants(settings.calculationSettings);   
+    settings    =    utils.extend(newSettings);    
   }
   
   /**
@@ -92,21 +90,7 @@ function TenTusscherCalculator(utils) {
     d_inft_t, exptaudt_t, f_inft_t, exptauft_t, INaCa1t_t, INaCa2t_t, exp2vfortt_t, IK1t_t,
     fcainft_t, ginft_t;
     
-    // sets voltage variables after calculations
-    data.calculationSettings.voltageVariables.forEach(function (item){
-            cS[item]  =    data.calculationSettings[item];
-    });
     
-    // sets current variables after calculations
-    data.calculationSettings.currentVariables.forEach(function (item){
-      cS[item]  =    data.calculationSettings[item];
-    });
-    
-    
-        // sets parameters after calculations
-    data.calculationSettings.parameters.forEach(function (item){
-      cS[item]  =    data.calculationSettings[item];
-    });
     
     //table setup starts
     
@@ -203,7 +187,7 @@ function TenTusscherCalculator(utils) {
     
     ginft_t = (cS.cai < 0.00035) ? 1.0/(1.+cc6) :1.0/(1.+cc16);
     
-        //table ends 
+    //table ends 
     
     
     //stimulus
@@ -239,8 +223,7 @@ function TenTusscherCalculator(utils) {
     
     // Determine total current
     cS.sitot = cS.ikr+cS.iks+cS.ik1+cS.ito+cS.ina+cS.ibna+cS.ical+cS.ibca+cS.inak+cS.inaca+cS.ipca+cS.ipk+cS.istim;
-    
-    
+        
     // update concentrations
     Caisquare  = Math.pow(cS.cai, 2); //cS.cai*cS.cai
     CaSRsquare = Math.pow(cS.casr, 2); //cS.casr* cS. CaSR
@@ -323,22 +306,12 @@ function TenTusscherCalculator(utils) {
     
     cS.v = cS.v - cS.sitot * cS.timestep;
     
-    
     //cal ends
     // sets voltage variables after calculations
-    data.calculationSettings.voltageVariables.forEach(function (item){
-            data.calculationSettings[item]  =    cS[item];
-    });
+    utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
     
     // sets current variables after calculations
-    data.calculationSettings.currentVariables.forEach(function (item){
-            data.calculationSettings[item]  =    cS[item];
-    });
-    
-    // sets parameters after calculations
-    data.calculationSettings.parameters.forEach(function (item){
-      data.calculationSettings[item] = cS[item];
-    });
+    utils.copySpecific(data.calculationSettings, cS, data.calculationSettings.currentVariables);
     
     // iterate the count
     count++;
@@ -383,6 +356,9 @@ function TenTusscherCalculator(utils) {
     //here 'count' is global variable
     count   =    0;
     
+    cS         =   _.cloneDeep(settings.calculationSettings);      
+    cC         =   new CalcConstants(settings.calculationSettings); 
+    
     /**
             * Reset the calculators to their base states
     */
@@ -409,11 +385,14 @@ function TenTusscherCalculator(utils) {
     for (var i = 0; i < numCalculations; i++) {
       var data = calculateNext(state);         
       for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
-                if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-          analyzers[curAnalyzer].aggregate(data);
+        if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
+          if(    (analyzers[curAnalyzer].analyzerName === "PointBufferAnalyzer" || analyzers[curAnalyzer].analyzerName === "APDAnalyzer") 
+           || (analyzers[curAnalyzer].analyzerName === "S1S2Analyzer" && i >= numCalculations-2)){
+            analyzers[curAnalyzer].aggregate(data);
         }
       }
     }
+  }
     
     /**
             * Perform a function after the calculations are run
@@ -423,6 +402,8 @@ function TenTusscherCalculator(utils) {
                 analyzers[curAnalyzer].postAggregate(data);
       }
     }
+
+    //console.log(settings);
     
   } 
   
@@ -483,7 +464,6 @@ function TenTusscherCalculator(utils) {
   var api   =    {
     addAnalysisFunction: addAnalysisFunction,
     runCalculations: runCalculations,
-    timestep: settings.timestep,
     initialize: initialize,            
     calculateNext: calculateNext,
     updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,

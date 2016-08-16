@@ -30,9 +30,7 @@
         * @param  {Object} newSettings
         */
         function initialize(newSettings) {               
-            settings    =    utils.extend(newSettings);
-             cS         =   _.cloneDeep(settings.calculationSettings);      
-             cC         =   new CalcConstants(settings.calculationSettings);   
+            settings    =    utils.extend(newSettings);            
         }
 
         /**
@@ -101,24 +99,7 @@
                 xinfd1, exptaud1, xinff1, exptauf1, xinffca1,
                 xinfu, exptauv, xinfv, xinfw1, exptauw1,
                 xtr, xup, xupleak,
-                di_ups, carow21;
-
-            // sets voltage variables after calculations
-            data.calculationSettings.voltageVariables.forEach(function (item){
-              cS[item]  =    data.calculationSettings[item];
-            });
-
-            // sets current variables after calculations
-            data.calculationSettings.currentVariables.forEach(function (item){
-                 cS[item]  =    data.calculationSettings[item];
-            });
-
-            // sets additional variables required in calculations
-            data.calculationSettings.additionalVariables.forEach(function (item){
-                 cS[item]  =    data.calculationSettings[item];
-            });
-
-
+                di_ups, carow21;    
 
             //calculations start
             //
@@ -393,20 +374,10 @@
 
             //cal ends
             // sets voltage variables after calculations
-            data.calculationSettings.voltageVariables.forEach(function (item){
-                data.calculationSettings[item]  =    cS[item];
-            });
-
+            utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
+            
             // sets current variables after calculations
-            data.calculationSettings.currentVariables.forEach(function (item){
-                data.calculationSettings[item]  =    cS[item];
-            });
-
-
-            // sets additional variables after calculations
-            data.calculationSettings.additionalVariables.forEach(function (item){
-                data.calculationSettings[item] =   cS[item];
-            });
+            utils.copySpecific(data.calculationSettings, cS, data.calculationSettings.currentVariables);
 
             // iterate the count
             count++;
@@ -467,12 +438,9 @@
             //here 'count' is global variable
             count   =    0;
 
-            //need to update value to reflect UI changes
-            state.calculationSettings.parameters.forEach(function(item){    
-                cS[item] = state.calculationSettings[item];
-            });
-
-
+             cS   =   _.cloneDeep(settings.calculationSettings);      
+             cC   =   new CalcConstants(settings.calculationSettings); 
+          
             /**
             * Reset the calculators to their base states
             */
@@ -497,12 +465,15 @@
             */
             for (var i = 0; i < numCalculations; i++) {
                 var data = calculateNext(state);         
-                    for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
-                        if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-                        analyzers[curAnalyzer].aggregate(data);
+                for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
+                    if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
+                        if(    (analyzers[curAnalyzer].analyzerName === "PointBufferAnalyzer" || analyzers[curAnalyzer].analyzerName === "APDAnalyzer") 
+                            || (analyzers[curAnalyzer].analyzerName === "S1S2Analyzer" && i >= numCalculations-2)){
+                            analyzers[curAnalyzer].aggregate(data);
                     }
                 }
             }
+        }
 
             /**
             * Perform a function after the calculations are run
@@ -511,7 +482,8 @@
                 if (analyzers[curAnalyzer].hasOwnProperty("postAggregate")) {
                     analyzers[curAnalyzer].postAggregate(data);
                 }
-            }         
+            }
+            //console.dir(settings);         
         }
 
         /* adding analyzers */
@@ -571,7 +543,6 @@
         var api   =    {
             addAnalysisFunction: addAnalysisFunction,
             runCalculations: runCalculations,
-            timestep: settings.timestep,
             initialize: initialize,            
             calculateNext: calculateNext,
             updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,

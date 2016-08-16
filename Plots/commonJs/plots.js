@@ -4,7 +4,7 @@
   * wraps some complex behavior into more convenient functions.
   */
   define(["utility"],
-    function TuscherPlots(utils) {
+    function ModelPlot(utils) {
       "use strict";
 
       var app;
@@ -54,6 +54,8 @@
         // set the domain of the plot
         generatedPlot.domain = _calculateDomain(calculationSettings);
 
+        generatedPlot.timeUnit = utils.timeUnit.getTimeUnit(calculationSettings.tUnit);
+
         // calculate the pixels per unit of the new plot
         generatedPlot.pixelPerUnit = _calculatePixelsPerUnit(generatedPlot.domain.x, 
         generatedPlot.range.x,
@@ -79,6 +81,18 @@
       * calculate what the domain of the plot should be
       */
       function _calculateDomain(c) {
+
+        if(c.s1Start === undefined){
+          if(c.endTime){
+            var start = 0 ; //c.s1Start;
+            var end = c.endTime * 1.1 ; //((c.s1Start + (c.s1 * c.ns1) + c.s2) * 1.1);
+            return new Point(start, end);
+          }
+          /*else{
+            console.log("No endTime.")
+          }*/
+        }
+
         var start = c.s1Start;
         var end = ((c.s1Start + (c.s1 * c.ns1) + c.s2) * 1.1);
         return new Point(start, end);
@@ -160,9 +174,9 @@
       function drawPlots(settings) {
         
         // draw the main plot
-        app.selectPlot("Tuscher");
-        _resizePlots("Tuscher", 
-        settings.plotSettings.Tuscher, 
+        app.selectPlot("primary");
+        _resizePlots("primary", 
+        settings.plotSettings.primary, 
         settings.calculationSettings,
         "mainPlot");
 
@@ -185,7 +199,7 @@
         // Draw the DI
         var DIText;
         if (!!settings.calculationSettings.apdPoints.dl.length) {
-            DIText = settings.calculationSettings.apdPoints.dl.length;
+            DIText = settings.calculationSettings.apdPoints.dl.length * utils.timeUnit.getTimeUnit(settings.calculationSettings.tUnit);
             DIText = Math.floor(DIText * 10) / 10;
             DIText = "DI: " + DIText + "ms";
           } else {
@@ -199,7 +213,7 @@
           // Draw the APD
           var APDText;
           if (!!settings.calculationSettings.apdPoints.apd.length) {
-            APDText = settings.calculationSettings.apdPoints.apd.length;
+            APDText = settings.calculationSettings.apdPoints.apd.length * utils.timeUnit.getTimeUnit(settings.calculationSettings.tUnit);
             APDText = Math.floor(APDText * 10) / 10;
             APDText = "APD: " + APDText + "ms";
           } else {
@@ -212,23 +226,20 @@
         }
 
         // Draw the voltage plots
-        var voltagePlots =  [ {key: "v",value: "Red"},{key: "sd",value: "LightSlateGray"},
-                              {key: "sf",value: "Aqua"},{key: "sfca",value: "Maroon"},{key: "sg",value: "Gray"},
-                              {key: "sh",value: "MidnightBlue"},{key: "sj",value: "Pink"},
-                              {key: "sm",value: "SandyBrown"},{key: "sr",value: "Purple"},{key: "ss",value: "Teal"},
-                              {key: "sxr1",value: "YellowGreen"},{key: "sxr2",value: "Violet"},
-                              {key: "sxs",value: "SpringGreen"},{key: "cai",value: "LightCoral"},
-                              {key: "casr",value: "Olive"},{key: "ki",value: "Yellow"},
-                              {key: "nai",value: "OrangeRed"}  ];
+        var voltagePlots
+        if(settings.calculationSettings.voltageVariables){
 
-        voltagePlots.forEach(function(item){
-          var display = "display"+item.key.charAt(0).toUpperCase() + item.key.slice(1);
+         voltagePlots = settings.calculationSettings.voltageVariables;
+         voltagePlots.forEach(function(item){
+          var display = "display"+item.charAt(0).toUpperCase() + item.slice(1);
           if (settings.formSettings[display]) {                
-            app.ctx.strokeStyle = utils.colors[item.value];
+            app.ctx.strokeStyle = utils.colors[settings.formSettings.colors[item]];
             app.ctx.lineWidth = 3;
-            app.plotPoly(settings.calculationSettings.pointBuffer.points[item.key], false);
-          }	
+            app.plotPoly(settings.calculationSettings.pointBuffer.points[item], false);
+          } 
         });
+       }
+        
 
         // draw the S1-S2 lines
         if (settings.formSettings.displayS1S2) {        
@@ -255,50 +266,42 @@
           app.plotText(" S2", textPoint);
         }        
 
-
+      if(settings.plotSettings.secondary){
         // draw the secondary plot
-        app.selectPlot("TuscherOther");
+        app.selectPlot("secondary");
 
         //check if minmax points exist
         if(settings.calculationSettings.pointBuffer.minMaxPoints){
           // reset points based on minmax for selected secondaryPlot 
-          _resetPointsForSecondaryPlot(settings, "TuscherOther")
+         _resetPointsForSecondaryPlot(settings);                  
         }
 
-        _resizePlots("TuscherOther",
-        settings.plotSettings.TuscherOther, 
+        _resizePlots("secondary",
+        settings.plotSettings.secondary, 
         settings.calculationSettings, 
         settings.formSettings.secondaryPlot);        
         app.ctx.strokeStyle = utils.colors.Indigo;
         app.ctx.lineWidth = 3;
         app.plotPoly(settings.calculationSettings.pointBuffer.points[settings.formSettings.secondaryPlot], false);
-    
+       }
       }
 
       /*
       * This function is used to recalculate sub plot settings.  
-      * @param {settings, plotName} - consists of settings to store calculated values
+      * @param {settings} - consists of settings to store calculated values
       */
 
-      function _resetPointsForSecondaryPlot(settings, plotName){
+      function _resetPointsForSecondaryPlot(settings){
         var  p  = settings.formSettings.secondaryPlot,
         pMinMax = settings.calculationSettings.pointBuffer.minMaxPoints[p],
-        selectedPlot;
-
-        if(settings.plotSettings[plotName]["plots"][p] && pMinMax){
-          selectedPlot = settings.plotSettings[plotName]["plots"][p];
-
-          // update selected plot settings
-          // padding range upper and lower bounds by additional 10%
-          selectedPlot["range"]           = new Point((pMinMax["x"] + (pMinMax["x"] * .1)), (pMinMax["y"] + (pMinMax["y"] * .1)));
-          selectedPlot["unitPerTick"]     = new Point(200, Math.abs((pMinMax["y"] - pMinMax["x"] )/10)); 
+        selectedPlot,
+        calculatedPlot;
         
-          // logic for labelPrecision can be changed if someone has a better wasy to calculate it
-          selectedPlot["labelPrecision"]  = new Point(0, (Math.abs(pMinMax["y"] - pMinMax["x"]) >= 1)?1 : 
-                                                (Math.abs(pMinMax["y"] - pMinMax["x"]) >= .5 
-                                                && Math.abs(pMinMax["y"] - pMinMax["x"]) < 1) ? 2 :
-                                                (Math.abs(pMinMax["y"] - pMinMax["x"]) >= .1 
-                                                && Math.abs(pMinMax["y"] - pMinMax["x"]) < .5) ? 3 : 4); 
+        if(settings.plotSettings["secondary"]["plots"][p] && pMinMax){
+              selectedPlot = settings.plotSettings["secondary"]["plots"][p];
+              calculatedPlot = utils.calcPlotSettings(pMinMax);
+              calculatedPlot.unitPerTick.x = selectedPlot.unitPerTick.x;
+              utils.extend(selectedPlot, calculatedPlot);
         }
       }
 

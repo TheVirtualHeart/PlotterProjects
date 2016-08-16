@@ -1,0 +1,119 @@
+---
+title: Priebe-Beuckelmann Reduced
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Priebe-Beuckelmann Reduced Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-635px;margin-left:550px;">
+		<fieldset>
+			<div>
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" />
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<div >
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" />
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+			<div >
+				<input id="displayV" name="displayV" type="checkbox" />
+				<label for="displayV">Display Voltage</label>
+			</div>
+			<div>
+				<input id="displayM" name="displayM" type="checkbox" />
+				<label for="displayM">Display m</label>
+			</div>
+			<div>
+				<input id="displayXv" name="displayXv" type="checkbox" />
+				<label for="displayXv">Display v</label>
+			</div>
+			<div>
+				<input id="displayF" name="displayF" type="checkbox" />
+				<label for="displayF">Display f</label>
+			</div>
+			<div>
+				<input id="displayTo" name="displayTo" type="checkbox" />
+				<label for="displayTo">Display to</label>
+			</div>
+			<div>
+				<input id="displayXx" name="displayXx" type="checkbox" />
+				<label for="displayXx">Display x</label>
+			</div>
+			<div class="plotter_inputgroup" >
+				<select id="secondaryPlot" name="secondaryPlot">
+					<option id = 'displayIna'   value ='ina' ></option>
+					<option id = 'displayIca'   value ='ica' ></option>
+					<option id = 'displayIto'   value ='ito' ></option>
+					<option id = 'displayIk'    value ='ik' ></option>	
+					<option id = 'displayIk1'   value ='ik1' ></option>
+					<option id = 'displayInaca' value ='inaca' ></option>
+					<option id = 'displayInak'  value ='inak' ></option>	
+					<option id = 'displayInab'  value ='inab' ></option>
+					<option id = 'displayIcab'  value ='icab' ></option>		
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>		
+		</fieldset>
+		<fieldset>
+            <div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gNa">g<sub>Na</sub></label>
+				<input type="text" name="gNa"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gCa">g<sub>Ca</sub></label>
+				<input type="text" name="gCa"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gto">g<sub>to</sub></label>
+				<input type="text" name="gto"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gK">g<sub>K</sub></label>
+				<input type="text" name="gK"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gK1">g<sub>K1</sub></label>
+				<input type="text" name="gK1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gNaCa">g<sub>NaCa</sub></label>
+				<input type="text" name="gNaCa"/>
+			</div>
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<center>
+				<!-- <button id="update">Update</button> -->
+				<button id="default" name="default">Defaults</button>
+				<button id="print" name="print">Print Data</button>
+				</center>
+			</div>
+		</fieldset>
+		</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
+	

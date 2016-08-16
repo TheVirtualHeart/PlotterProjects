@@ -1,0 +1,142 @@
+---
+title: Ten Tusscher Reduced
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Ten Tusscher Reduced Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-635px;margin-left:550px;">
+
+		<fieldset>
+			<div>
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" checked/>
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<div>
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+			<div>
+				<input id="displayV" name="displayV" type="checkbox" checked/>
+				<label for="displayV">Display Voltage</label>
+			</div>
+			<div>
+				<input id="displaySm" name="displaySm" type="checkbox" checked/>
+				<label for="displaySm">Display sm</label>
+			</div>
+			<div>
+				<input id="displaySh" name="displaySh" type="checkbox" checked/>
+				<label for="displaySh">Display sh</label>
+			</div>
+			<div>
+				<input id="displaySj" name="displaySj" type="checkbox" checked/>
+				<label for="displaySj">Display sj</label>
+			</div>
+			<div>
+				<input id="displaySxr1" name="displaySxr1" type="checkbox" checked/>
+				<label for="displaySxr1">Display sxr1</label>
+			</div>
+			<div>
+				<input id="displaySxs" name="displaySxs" type="checkbox" checked/>
+				<label for="displaySxs">Display sxs</label>
+			</div>
+			<div>
+				<input id="displaySs" name="displaySs" type="checkbox" checked/>
+				<label for="displaySs">Display ss</label>
+			</div>
+			<div>
+				<input id="displaySf" name="displaySf" type="checkbox" checked/>
+				<label for="displaySf">Display sf</label>
+			</div>
+			<div>
+				<input id="displaySf2" name="displaySf2" type="checkbox" checked/>
+				<label for="displaySf2">Display sf2</label>
+			</div>			
+			<div class="plotter_inputgroup" >
+				<select id="secondaryPlot" name="secondaryPlot">					
+					<option id = 'displayIkr'  	value = 'ikr'></option>
+					<option id = 'displayIks'  	value = 'iks'></option>
+					<option id = 'displayIk1'  	value = 'ik1'></option>
+					<option id = 'displayIto'  	value = 'ito'></option>
+					<option id = 'displayIna'  	value = 'ina'></option>
+					<option id = 'displayIbna'  value = 'ibna'></option>
+					<option id = 'displayIcal'  value = 'ical'></option>
+					<option id = 'displayIbca'  value = 'ibca'></option>
+					<option id = 'displayInaca' value = 'inaca'></option>
+					<option id = 'displayIpca'  value = 'ipca'></option>
+					<option id = 'displayIpk'  	value = 'ipk'></option>
+					<option id = 'displayInak'  value = 'inak'></option>							
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>		
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="GNa">GNa</label>
+				<input type="text" name="GNa"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="GCaL">GCaL</label>
+				<input type="text" name="GCaL"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="Gto">Gto</label>
+				<input type="text" name="Gto"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="Gkr">Gkr</label>
+				<input type="text" name="Gkr"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="Gks">Gks</label>
+				<input type="text" name="Gks"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="GK1">GK1</label>
+				<input type="text" name="GK1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<select id="iType" name="iType">					
+					<option id = 'displayEpi'   value = 'epi'>epi</option>
+					<option id = 'displayM'     value = 'mid'>mid</option>
+					<option id = 'displayEndo'  value = 'endo'>endo</option>
+				</select>
+				<label for="iType">iType</label>
+			</div>			
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<center>
+					<!-- <button id="update">Update</button> -->
+					<button id="default" name="default">Defaults</button>
+					<button id="print" name="print">Print Data</button>
+				</center>
+			</div>
+		</fieldset>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>

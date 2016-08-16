@@ -18,23 +18,8 @@
      * This refers the functions that will analyze the 
      * data that is produced
      */
-    var analyzers = [];
-
-	var v ,
-		h,
-		tau_in,
-		tau_out,
-		tau_open,
-		tau_close,
-		v_gate,
-		v_stim,
-		stimdur,
-		endTime,
-		s1Start,
-    	s2,
-   		ns1,
-    	s1,
-    	timestep;
+    var analyzers = [],
+     cS;
 
 
 	    /**
@@ -74,22 +59,7 @@
 			settings.initial[attrname] = overwrite[attrname]; 
 		};
 
-		v 			= settings.initial.v;
-		h 			= settings.initial.h;
-		tau_in 		= settings.initial.tau_in;
-		tau_out 	= settings.initial.tau_out;
-		tau_open 	= settings.initial.tau_open;
-		tau_close 	= settings.initialt.tau_close;
-		v_gate	 	= settings.initial.v_gate;
-		v_stim 		= settings.initial.v_stim;
-		stimdur 	= settings.initial.stimdur;
-		endTime     = settings.initial.endTime;
-		s1Start 	= settings.initial.s1Start;
-    	s2 			= settings.initial.s2;
-   		ns1 		= settings.initial.ns1;
-    	s1 			= settings.initial.s1;
-    	timestep 	= settings.initial.timestep;
-		count 		= 0;
+		count = 0;
 	}
 
 
@@ -121,44 +91,29 @@
 	 */
 	function calculateNext(data) {  
 
-      	var v 		= data.calculationSettings.v,
-		h 			= data.calculationSettings.h,
-		tau_in 		= data.calculationSettings.tau_in,
-		tau_out 	= data.calculationSettings.tau_out,
-		tau_open 	= data.calculationSettings.tau_open,
-		tau_close 	= data.calculationSettings.tau_close,
-		v_gate	 	= data.calculationSettings.v_gate,
-		v_stim 		= data.calculationSettings.v_stim,
-		stimdur 	= data.calculationSettings.stimdur,
-		endTime     = data.calculationSettings.endTime,
-		s1Start 	= data.calculationSettings.s1Start,
-    	s2 			= data.calculationSettings.s2,
-   		ns1 		= data.calculationSettings.ns1,
-    	s1 			= data.calculationSettings.s1,
-    	timestep 	= data.calculationSettings.timestep;
+    	var jstim, jin, jout, dv, dh;
         
-         var jstim = _s1s2Stimulus(count, data);
+        jstim = _s1s2Stimulus(count, data);
          
 
         // calculate currents
-	    var jin = h * v * v * ((1-v)/tau_in),
-	    jout = -v/tau_out;
+	    jin = cS.h * cS.v * cS.v * ((1-cS.v)/cS.tau_in);
+	    jout = -cS.v/cS.tau_out;
 
 	   
         //update derivatives for state variables
-        var dv = jin + jout + jstim,
-        dh = (v < v_gate) ? ((1.0-h)/tau_open) : (-h/tau_close);
+        dv  = jin + jout + jstim;
+        dh = (cS.v < cS.v_gate) ? ((1.0-cS.h)/cS.tau_open) : (-cS.h/cS.tau_close);
          
-         v += timestep * dv;
-         h += timestep * dh;
+         cS.v = cS.v + cS.timestep * dv;
+         cS.h = cS.h + cS.timestep * dh;
 
+ 		//cal ends
+    	// sets voltage variables after calculations
+        utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
 
 		// iterate the count
 		count++;
-
-        data.calculationSettings.v = v;        
-        data.calculationSettings.h = h;
-
         return data;
 	}
 
@@ -216,6 +171,8 @@
         var state = settings,
         curAnalyzer;                  
         count = 0;
+
+        cS =   _.cloneDeep(settings.calculationSettings); 
         
         /**
          * Reset the calculators to their base states
@@ -230,16 +187,20 @@
          * pass these values to the analyzers using their aggregate
          * function
          */
-        for (var i = 0; i < numCalculations; i++) {
-            var data = calculateNext(state);           
+         for (var i = 0; i < numCalculations; i++) {
+         	var data = calculateNext(state); 
 
-           	for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {			            	
-                if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-                    analyzers[curAnalyzer].aggregate(data);
-                }
-            }
-        }
-    }
+         	for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {			            	
+         		if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
+         			if(   (analyzers[curAnalyzer].analyzerName === "PointBufferAnalyzer" ) 
+         				|| (analyzers[curAnalyzer].analyzerName === "S1S2Analyzer" && i >= numCalculations-2)){
+         				analyzers[curAnalyzer].aggregate(data);
+         		}
+         	}
+         }
+     }
+     console.dir(settings);
+ }
 
     /*
     * This function is responsible for updating the settings object properties  
@@ -258,9 +219,7 @@
 	var api = {
 		addAnalysisFunction: addAnalysisFunction,
         runCalculations: runCalculations,
-		timestep: settings.timestep,
 		initialize: initialize,
-		calculateNext: calculateNext,
 		updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,
 		reset: reset
 	};

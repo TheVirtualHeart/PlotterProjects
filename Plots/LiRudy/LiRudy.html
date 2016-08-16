@@ -1,0 +1,259 @@
+---
+title: Li-Rudy
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Li-Rudy Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-635px;margin-left:550px;">
+
+		<fieldset>
+			<div>
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" checked/>
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<div>
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+			<div>
+				<input id="displayV" name="displayV" type="checkbox" checked/>
+				<label for="displayV">Display Voltage</label>
+			</div>
+			<div>
+				<input id="displayM" name="displayM" type="checkbox" checked/>
+				<label for="displayM">Display m</label>
+			</div>
+			<div>
+				<input id="displayH" name="displayH" type="checkbox" checked/>
+				<label for="displayH">Display h</label>
+			</div>
+			<div>
+				<input id="displayJ" name="displayJ" type="checkbox" checked/>
+				<label for="displayJ">Display j</label>
+			</div>
+			<div>
+				<input id="displayD" name="displayD" type="checkbox" checked/>
+				<label for="displayD">Display d</label>
+			</div>
+			<div>
+				<input id="displayF" name="displayF" type="checkbox" checked/>
+				<label for="displayF">Display f</label>
+			</div>
+			<div>
+				<input id="displayF2" name="displayF2" type="checkbox" checked/>
+				<label for="displayF2">Display f<sub>2</sub></label>
+			</div>
+			<div>
+				<input id="displayFca" name="displayFca" type="checkbox" checked/>
+				<label for="displayFca">Display f<sub>Ca</sub></label>
+			</div>
+			<div>
+				<input id="displayFca2" name="displayFca2" type="checkbox" checked/>
+				<label for="displayFca2">Display f<sub>Ca,2</sub></label>
+			</div>
+			<div>
+				<input id="displayB" name="displayB" type="checkbox" checked/>
+				<label for="displayB">Display b</label>
+			</div>
+			<div>
+				<input id="displayG" name="displayG" type="checkbox" checked/>
+				<label for="displayG">Display g</label>
+			</div>
+			<div>
+				<input id="displayA" name="displayA" type="checkbox" checked/>
+				<label for="displayA">Display a</label>
+			</div>
+			<div>
+				<input id="displayI" name="displayI" type="checkbox" checked/>
+				<label for="displayI">Display i</label>
+			</div>
+			<div>
+				<input id="displayI2" name="displayI2" type="checkbox" checked/>
+				<label for="displayI2">Display i<sub>2</sub></label>
+			</div>
+			<div>
+				<input id="displayXr" name="displayXr" type="checkbox" checked/>
+				<label for="displayXr">Display xr</label>
+			</div>	
+			<div>
+				<input id="displayXs1" name="displayXs1" type="checkbox" checked/>
+				<label for="displayXs1">Display X<sub>1s</sub></label>
+			</div>
+			<div>
+				<input id="displayXs2" name="displayXs2" type="checkbox" checked/>
+				<label for="displayXs2">Display X<sub>2s</sub></label>
+			</div>
+				
+			<div>
+				<input id="displayMl" name="displayMl" type="checkbox" checked/>
+				<label for="displayMl">Display M<sub>L2</sub></label>
+			</div>
+			<div>
+				<input id="displayMl3" name="displayMl3" type="checkbox" checked/>
+				<label for="displayMl3">Display  M<sub>L3</sub></label>
+			</div>
+			<div>
+				<input id="displayHl" name="displayHl" type="checkbox" checked/>
+				<label for="displayHl">Display h<sub>L2</sub></label>
+			</div>
+			<div>
+				<input id="displayHl3" name="displayHl3" type="checkbox" checked/>
+				<label for="displayHl3">Display h<sub>L3</sub></label>
+			</div>
+			<div>
+				<input id="displayJl" name="displayJl" type="checkbox" checked/>
+				<label for="displayJl">Display j<sub>L2</sub></label>
+			</div>
+			<div>
+				<input id="displayJl3" name="displayJl3" type="checkbox" checked/>
+				<label for="displayJl3">Display j<sub>L3</sub></label>
+			</div>
+			<div>
+				<input id="displayY" name="displayY" type="checkbox" checked/>
+				<label for="displayY">Display y</label>
+			</div>
+			<div>
+				<input id="displayU" name="displayU" type="checkbox" checked/>
+				<label for="displayU">Display u<sub>IP3R</sub></label>
+			</div>
+			<div>
+				<input id="displayCai" name="displayCai" type="checkbox" checked/>
+				<label for="displayCai">Display [Ca<sup>2+</sup>]<sub>i</sub></label>
+			</div>
+			<div>
+				<input id="displayCassl" name="displayCassl" type="checkbox" checked/>
+				<label for="displayCassl">Display [Ca<sup>2+</sup>]<sub>SSL</sub></label>
+			</div>
+			<div>
+				<input id="displayCasss" name="displayCasss" type="checkbox" checked/>
+				<label for="displayCasss">Display [Ca<sup>2+</sup>]<sub>PCS</sub></label>
+			</div>
+			<div>
+				<input id="displayCansr" name="displayCansr" type="checkbox" checked/>
+				<label for="displayCansr">Display [Ca<sup>2+</sup>]<sub>NSR</sub></label>
+			</div>
+			<div>
+				<input id="displayCajsr" name="displayCajsr" type="checkbox" checked/>
+				<label for="displayCajsr">Display [Ca<sup>2+</sup>]<sub>JSR</sub></label>
+			</div>
+			<div>
+				<input id="displayCacsr" name="displayCacsr" type="checkbox" checked/>
+				<label for="displayCacsr">Display [Ca<sup>2+</sup>]<sub>CSR</sub></label>
+			</div>
+			<div>
+				<input id="displayNai" name="displayNai" type="checkbox" checked/>
+				<label for="displayNai">Display [Na<sup>+</sup>]<sub>i</sub></label>
+			</div>
+			<div>
+				<input id="displayNassl" name="displayNassl" type="checkbox" checked/>
+				<label for="displayNassl">Display [Na<sup>+</sup>]<sub>SSL</sub></label>
+			</div>
+			<div>
+				<input id="displayNasss" name="displayNasss" type="checkbox" checked/>
+				<label for="displayNasss">Display [Na<sup>+</sup>]<sub>PCS</sub></label>
+			</div>
+			<div>
+				<input id="displayKi" name="displayKi" type="checkbox" checked/>
+				<label for="displayKi">Display [K<sup>+</sup>]<sub>i</sub></label>
+			</div>
+			<div>
+				<input id="displayCamktrap" name="displayCamktrap" type="checkbox" checked/>
+				<label for="displayCamktrap">Display CAMK<sub>trap</sub></label>
+			</div>
+			<div class="plotter_inputgroup">
+				<select id="secondaryPlot" name="secondaryPlot">					
+					<option id = 'displayIna'   value = 'ina'></option>
+					<option id = 'displayIcal'  value = 'ical'></option>
+					<option id = 'displayIcat'  value = 'icat'></option>
+					<option id = 'displayItof'  value = 'itof'></option>										
+					<option id = 'displayItos'  value = 'itos'></option>
+					<option id = 'displayIkr'   value = 'ikr'></option>
+					<option id = 'displayIks'   value = 'iks'></option>
+					<option id = 'displayIk1'   value = 'ik1'></option>
+					<option id = 'displayInal'  value = 'inal'></option>
+					<option id = 'displayInaca' value = 'inaca'></option>
+					<option id = 'displayInak'  value = 'inak'></option>
+					<option id = 'displayIpca'  value = 'ipca'></option>
+					<option id = 'displayIfna'  value = 'ifna'></option>					
+					<option id = 'displayIfk'   value = 'ifk'></option>	
+					<option id = 'displayInab'  value = 'inab'></option>
+					<option id = 'displayIcab'  value = 'icab'></option>					
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>		
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gna">g<sub>Na</sub></label>
+				<input type="text" name="gna"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="pca">P<sub>Ca</sub></label>
+				<input type="text" name="pca"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gcat">g<sub>CaT</sub></label>
+				<input type="text" name="gcat"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gtof">g<sub>to,f</sub></label>
+				<input type="text" name="gtof"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gtos">g<sub>to,s</sub></label>
+				<input type="text" name="gtos"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gkr">g<sub>Kr</sub></label>
+				<input type="text" name="gkr"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gks">g<sub>Ks</sub></label>
+				<input type="text" name="gks"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gk1">g<sub>K1</sub></label>
+				<input type="text" name="gk1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="inacamax">v<sub>max,NaCa</sub></label>
+				<input type="text" name="inacamax"/>
+			</div>
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<center>
+					<!-- <button id="update">Update</button> -->
+					<button id="default" name="default">Defaults</button>
+					<button id="print" name="print">Print Data</button>
+				</center>
+			</div>
+		</fieldset>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
