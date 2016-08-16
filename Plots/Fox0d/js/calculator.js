@@ -12,20 +12,20 @@
 	/**
 	 * Displays the current iteration of the count
 	 */
-	 var count = 0;
+	 var count = 0,
 
 	/**
      * This refers the functions that will analyze the 
      * data that is produced
      */
 
-     var analyzers = [];
+     analyzers = [],
 
 	/**
 	 * These variables are used in the calculations of Barkley.
 	 */
 
-	 var gna,
+	 gna,
 	 gk1,
 	 gkr,
 	 gks,
@@ -135,7 +135,6 @@
 	 * settings will override any existing ones.
 	 */
 	 function initialize(newSettings) {		
-		//reset(newSettings);
 		settings = utils.extend(newSettings);
 	}
 
@@ -245,49 +244,6 @@
 	}
 
 	/**
-	 * This gets the points from the current iteration of NobleCalculator. If
-	 * the calculation crossed a threshold, add that value to the points array.
-	 * 
-	 * @return {Object} - an object containing the values that the 
-	 */
-	 function getPoints() {
-	 	var points = {
-	 		v: v,
-	 		ccai: ccai,
-	 		ccasr: ccasr,
-	 		xf: xf,
-	 		xd: xd,
-	 		xm: xm,
-	 		xh: xh,
-	 		xj: xj,
-	 		xfca: xfca,
-	 		xkr: xkr,
-	 		xks: xks,
-	 		xto: xto,
-	 		yto: yto,
-
-			//currents
-			xina: xina,
-			xik1: xik1,
-			xito: xito,
-			xikp: xikp,
-			xinab: xinab,
-			xiks: xiks,
-			xica: xica,
-			xinaca: xinaca,
-			xipca: xipca,
-			xicab: xicab,
-			xicak: xicak,
-			xinak: xinak,
-			xikr: xikr,
-
-
-		};
-
-		return points;
-	}
-
-	/**
 	 * Calculate the locations of the different stimuli according to the S1-S2
 	 * Protocol.
 	 * @return {Object} - A JavaScript Object containing an array of s1 values
@@ -310,8 +266,7 @@
     }
 
 	/**
-	 * Performs a differential calculations and increments the values that will
-	 * be returned by getPoints().
+	 * Performs a differential calculations and increments the values.
 	 */
 	 function calculateNext(data) {
 
@@ -538,9 +493,6 @@
 
 		 v =  v - timestep * (xina + xik1 + xito + xikp + xinab + xiks + xica + xinaca + xipca + xicab + xicak + xinak + xikr + xstim);
 		 
-		 //   check vOld against the threshold
-		 checkThreshold(vOld, v, threshold);
-
 		// iterate the count
 		count++;
 
@@ -577,7 +529,10 @@
 		return data;
 	}
 
-
+	/*  This function calculates the number of iterations for calculateNext 
+    *   to be executed.
+    *   param {object} settings
+    */
 	function _getNumIterations(settings) {
 		var c = settings.calculationSettings;
 		var num = (((c.s1 * c.ns1) + c.s2) * 1.1) / c.timestep;
@@ -585,9 +540,16 @@
 		return num;    
 	}
 
+	/*This function iteratively calls all the analyzers and performs 
+     * all the calculations to generate points to be displayed on the
+     * plotter
+     * param {int} iterations
+     * param {object} settings
+     */ 
 	function runCalculations(iterations, settings) {
-		var state = settings; 
-		var curAnalyzer; 
+		var state = settings,
+		data,
+		curAnalyzer; 
 		count = 0;
 
 
@@ -614,12 +576,14 @@
          */
          
          for (var i = 0; i < numCalculations; i++) {
-         	var data = calculateNext(state);          
+         	data = calculateNext(state);          
          	for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
-         		if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-         			analyzers[curAnalyzer].aggregate(data);
-         		}
-         	}
+                if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
+                  if(analyzers[curAnalyzer].analyzerName !== "S1S2Analyzer" || i >= numCalculations-2) {
+                        analyzers[curAnalyzer].aggregate(data);
+                  }
+                }
+            }
          }
 
         /**
@@ -669,27 +633,6 @@
 	 	return stim;
 	 }
 
-	/**
-	 * Check to see if the v has crossed the threshold during the last 
-	 * calculation. If so, calculate the location of the crossover using
-	 * linear interpolation, and save that value in either the upTimes array or
-	 * the downTimes array.
-	 */
-	 function checkThreshold() {
-
-	 	upTime = null;
-	 	downTime = null;
-
-		// don't work out linear yet
-		if ( (vOld < threshold) && (v >= threshold) ) {
-			upTime = true;
-		}
-		else if ( (vOld > threshold) && (v <= threshold) ) {
-			downTime = true;
-		}
-
-	}
-
 	/*
 	 * This function is responsible for udpating the settings object properties.
 	 *
@@ -707,12 +650,8 @@
 	 var api = {
 	 	addAnalysisFunction: addAnalysisFunction,
 	 	runCalculations: runCalculations,
-	 	timestep: settings.timestep,
 	 	initialize: initialize,
-	 	getPoints: getPoints,
-	 	calculateNext: calculateNext,
 	 	updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,
-		//getStimuliLocations: getStimuliLocations,
 		reset: reset,
 	};
 	return api;

@@ -13,9 +13,20 @@ define(["utility"],
         /**
         * This object describes the settings for the form.
         */
-        var settings = null;
-        var initialSettings = null;
+        var settings = null,
+        initialSettings = null,
 
+        // Stores all the variables that are displayed on the webpage.
+        formCtrls    = [ "displayAPDDI", "displayS1S2",  "displayV",
+                        "displayXm",    "displayXh1",   "displayXh2",
+                        "displayXdl",   "displayXfl1",  "displayXfl2",
+                        "displayXr",    "displayXs",    "displayRsus",
+                        "displaySsus",  "displayXn",    "displayXpa",
+                        "displayCcai",  "displayCcad",  "displayCcaup",
+                        "displayCcarel","secondaryPlot"],
+
+        settingCtrls = ["s1","s2","ns1","pna","gcal","gt","gsus",
+                      "gks", "gkr", "gk1","xknaca"];
 
       /**
         * Initialize the form. Define the initial settings of the form and define
@@ -34,29 +45,18 @@ define(["utility"],
           * change
           */
 
-          // Stores all the variables that are displayed on the webpage.
-          var  formCtrls    = [ "displayAPDDI", "displayS1S2", "displayV",
-           						"displayXm",	"displayXh1",	"displayXh2",
-           						"displayXdl",	"displayXfl1",	"displayXfl2",
-           						"displayXr",	"displayXs",	"displayRsus",
-           						"displaySsus",	"displayXn",	"displayXpa",
-                      "displayCcai", "displayCcad", "displayCcaup",
-                      "displayCcarel","secondaryPlot"],
-
-           		settingCtrls = ["s1","s2","ns1","pna","gcal","gt","gsus",
-                              "gks", "gkr", "gk1","xknaca"];
-
-           		/**
-             * These methods initialize the variables on the webpage.
-             */
-             _initializeFormCtrls(settings.formSettings);
-             _initializeSettingCtrls(settings.calculationSettings);
+          
+       /**
+         * These methods initialize the variables on the webpage.
+         */
+         _initializeFormCtrls(settings.formSettings);
+         _initializeSettingCtrls(settings.calculationSettings);
 
           // On-click Action listener for the default button.
           var defaultButton = document.getElementById("default");
           defaultButton.addEventListener("click", function(e) {
-            setDefaultFormCtrls();
-            setDefaultSettingCtrls();
+            _setDefaultFormCtrls();
+            _setDefaultSettingCtrls();
 
             updateCalculations();
           });
@@ -64,9 +64,10 @@ define(["utility"],
           // On-click Action listener for the print button.
           var printButton = document.getElementById("print");
           printButton.addEventListener("click", function(e) {             
-            mediator.printPoints(settings, fetchPointsToPrint());
+            mediator.printPoints(settings);
           });
 
+        }  
         /**
          * This method initializes the form settings to their default values.
          * 
@@ -76,18 +77,15 @@ define(["utility"],
           formCtrls.forEach(function(ctrl){
             var ele = document.getElementsByName(ctrl)[0];  
               if(ele.type == "select-one"){ // For the currents drop down
-                for (var i = 0, j = ele.options.length; i < j ; i++) {
-                  var option = ele.options[i];
-                  if (option.value === settingsParam[ele.name]) {              
-                    ele.selectedIndex = i;
-                    break;
-                  }
-                }
+                // set label for currents
+                _setSecondaryPlotLabels(ele);
               } 
               else{
-                ele.checked = settingsParam[ele.name];
-              }                                            
-              _appendHandler(ele, settingsParam);           
+                //set css class
+                _setCssClass(ele);
+              }
+                utils.setElementValue(ele,  settingsParam[ele.name]);              
+                _appendHandler(ele, settingsParam);
             });
         }
 
@@ -99,7 +97,7 @@ define(["utility"],
            function _initializeSettingCtrls(settingsParam){
             settingCtrls.forEach( function(ctrl){
               var ele = document.getElementsByName(ctrl)[0];                                                  
-              ele.value = settingsParam[ele.name];
+              utils.setElementValue(ele,  settingsParam[ele.name]);
               _appendHandler(ele, settingsParam); 
             });
           }
@@ -115,9 +113,8 @@ define(["utility"],
           *
           */
           function _appendHandler(ele, settingsParam){ 
-            var propName = (ele.type === "checkbox")?  "checked" : "value";
             ele.addEventListener("change", function(e) {             
-              settingsParam[ele.name] = (ele.type == "select-one")? ele.options[ele.selectedIndex][propName]: utils.numericValue(ele[propName]);                                                        
+              settingsParam[ele.name] = utils.getElementValue(ele);
               if(ele.type === "checkbox" || ele.type == "select-one") {
                   updateDisplay();
               }
@@ -133,22 +130,11 @@ define(["utility"],
           * restore the default values.
           */
           
-          function setDefaultFormCtrls(){                
+          function _setDefaultFormCtrls(){                
             formCtrls.forEach( function(ctrl){
-              var ele = document.getElementsByName(ctrl)[0]; 
-              settings.formSettings[ele.name] =  initialSettings.formSettings[ele.name];
-              if(ele.type == "select-one"){
-                for (var i = 0, j = ele.options.length; i < j ; i++) {
-                  var option = ele.options[i];
-                  if (option.value === initialSettings.formSettings[ele.name]) {              
-                    ele.selectedIndex = i;
-                    break;
-                  }
-                }
-              } 
-              else{
-                ele.checked = initialSettings.formSettings[ele.name];
-              }                                                      
+            var ele = document.getElementsByName(ctrl)[0]; 
+            settings.formSettings[ele.name] =  initialSettings.formSettings[ele.name];
+            utils.setElementValue(ele, settings.formSettings[ele.name]) ;                                                    
             });
           }
         /**
@@ -156,13 +142,32 @@ define(["utility"],
           * initialSettings is a global variable where all the default values are stores and it is used to 
           * restore the default values.
           */
-          function setDefaultSettingCtrls(){                
+          function _setDefaultSettingCtrls(){                
             settingCtrls.forEach( function(ctrl){
               var ele = document.getElementsByName(ctrl)[0]; 
               settings.calculationSettings[ele.name] =  initialSettings.calculationSettings[ele.name];             
-              ele.value = initialSettings.calculationSettings[ele.name];
+              utils.setElementValue(ele, settings.calculationSettings[ele.name]) ;
             });
           }       
+        
+
+        function _setSecondaryPlotLabels(ele){
+        
+            if(ele["options"]){
+                for (var i = 0, j = ele.options.length; i < j ; i++) {
+                    ele.options[i].text = initialSettings.formSettings[ele.options[i].value];
+                }
+            }    
+        }
+        
+        function  _setCssClass(ele){
+            var parentDiv = ele.parentElement,
+            name = ele.name;
+            if(parentDiv){
+                name = name.replace('display', '');
+                name = name.charAt(0).toLowerCase() + name.slice(1);            
+                parentDiv.className = utils.getCssClass(settings.formSettings.colors[name]);
+            }
         } 
 
         function updateCalculations() {        
@@ -173,58 +178,6 @@ define(["utility"],
         function updateDisplay() {
           mediator.updateDisplay(_.cloneDeep(settings));
         }
-
-      /**
-        * This function identifies what are the form settings that are currently 
-        * selected fetches the points that need to be printed.
-        * The only points printed will be the one's that are selcted.
-        *
-        * @return {Array} - that will contain a list of points to be printed. 
-        */
-        function fetchPointsToPrint(){
-          var printPoints = [];
-          var formSettings = settings.formSettings;
-          for(var setting in formSettings) {
-            if(formSettings.hasOwnProperty(setting)){
-              if(      (formSettings[setting] === true) 
-                ||  (formSettings[setting] === 1) 
-                ||  (setting === "secondaryPlot") ) {
-                if(setting === "secondaryPlot"){
-                  printPoints.push(formSettings[setting]);
-                }
-                else{
-                  var name = getPointName(setting);                     
-                  if(name){
-                    if(settings.calculationSettings.pointBuffer.points[name]){
-                      printPoints.push(name);                               
-                    }                        
-                  }
-                }
-
-              }
-            }             
-          }
-          return printPoints;       
-        }
-
-      /**
-        * This function seperates the string "display" from the form setting variable to identify 
-        * the point name and returns it if there is a variable with string display in it else returns null.
-        * Eg: "DisplayV" would return v - which is the variable name.
-        *  
-        * @return {string} - the name of the variable after seperating display from it.
-        */ 
-        function getPointName(displayName){
-        // follows the convention of names staring with display
-        if(displayName  && (typeof displayName === "string") && displayName.includes("display")){
-
-          return displayName.replace("display","").toLowerCase();
-        }
-        else {
-          return null;
-        }
-
-      }
 
       /**
         * This is the object that will be returned by the function. These are the

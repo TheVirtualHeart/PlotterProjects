@@ -1,0 +1,169 @@
+---
+title: Iyer
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Iyer Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-620px;margin-left:550px;">
+		<!-- inputs -->
+		<fieldset>
+			<div>
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox">
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<div>
+				<input id="displayS1S2" name="displayS1S2" type="checkbox">
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+			<div>
+				<input id="displayV", name="displayV", type="checkbox">
+				<label for="displayV"> Display v gate</label>
+			</div>
+			<div>
+				<input id="displayNa", name="displayNa", type="checkbox">
+				<label for="displayNa"> Display O<sub>na</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayOpen", name="displayOpen", type="checkbox">
+				<label for="displayOpen"> Display O<sub>L</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayYca", name="displayYca", type="checkbox">
+				<label for="displayYca"> Display y<sub>Ca</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayOkv43", name="displayOkv43", type="checkbox">
+				<label for="displayOkv43"> Display O<sub>Kvf</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayOkv14", name="displayOkv14", type="checkbox">
+				<label for="displayOkv14"> Display O<sub>Kvs</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayOherg", name="displayOherg", type="checkbox">
+				<label for="displayOherg"> Display O<sub>Kr</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayOks", name="displayOks", type="checkbox">
+				<label for="displayOks"> Display O<sub>Ks</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayPo", name="displayPo", type="checkbox">
+				<label for="displayPo"> Display P<sub>O1</sub> + P<sub>O2</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayCai", name="displayCai", type="checkbox">
+				<label for="displayCai"> Display [Ca^2+]<sub>i</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayCass", name="displayCass", type="checkbox">
+				<label for="displayCass"> Display [Ca^2+]<sub>ss</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayCansr", name="displayCansr", type="checkbox">
+				<label for="displayCansr"> Display [Ca^2+]<sub>NSR</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayCajsr", name="displayCajsr", type="checkbox">
+				<label for="displayCajsr"> Display [Ca^2+]<sub>JSR</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayHtrpnca", name="displayHtrpnca", type="checkbox">
+				<label for="displayHtrpnca"> Display [HTRPNCa] gate</label>
+			</div>
+			<div>
+				<input id="displayLtrpnca", name="displayLtrpnca", type="checkbox">
+				<label for="displayLtrpnca"> Display [LTRPNCa] gate</label>
+			</div>
+			<div>
+				<input id="displayNai", name="displayNai", type="checkbox">
+				<label for="displayNai"> Display [Na<sup>+</sup>]<sub>i</sub> gate</label>
+			</div>
+			<div>
+				<input id="displayKi", name="displayKi", type="checkbox">
+				<label for="displayKi"> Display [K<sup>+</sup>]<sub>i</sub> gate</label>
+			</div>
+			<div class="plotter_inputgroup" >
+				<select id="secondaryPlot" name="secondaryPlot">
+					<option id = "displayIna" value = "ina" ></option>
+					<option id = "displayIca" value = "ica" ></option>
+					<option id = "displayIcak" value = "icak" ></option>
+					<option id = "displayIkv43" value = "ikv43" ></option>
+					<option id = "displayIkv14" value = "ikv14" ></option>
+					<option id = "displayIkr" value = "ikr" ></option>
+					<option id = "displayIks" value = "iks" ></option>
+					<option id = "displayIk1" value = "ik1" ></option>
+					<option id = "displayInaca" value = "inaca" ></option>
+					<option id = "displayInak" value = "inak" ></option>
+					<option id = "displayIpca" value = "ipca" ></option>
+					<option id = "displayIcab" value = "icab" ></option>
+					<option id = "displayInab" value = "inab" ></option>
+					
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="GNa">g<sub>Na</sub></label>
+				<input type="text" name="GNa"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="PCa">P<sub>Ca</sub></label>
+				<input type="text" name="PCa"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="GKv43">g<sub>to,f</sub></label>
+				<input type="text" name="GKv43"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="GKr">g<sub>Kr</sub></label>
+				<input type="text" name="GKr"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="GKs">g<sub>Ks</sub></label>
+				<input type="text" name="GKs"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="GK1">g<sub>K1</sub></label>
+				<input type="text" name="GK1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="kNaCa">k<sub>NaCa</sub></label>
+				<input type="text" name="kNaCa"/>
+			</div>
+			</fieldset>
+		<!-- Buttons -->
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<button id="default">Defaults</button>
+				<button id="print">Print Data</button>
+			</div>
+		</fieldset>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>

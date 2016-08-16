@@ -1,18 +1,15 @@
 require.config({
-	paths: {
-		calculator: "calculator",
-		form: "form",
-		mediator: "../../Noble0d/js/mediator",
-		plots: "plots",
-		pointBufferAnalyzer: "pointBufferAnalyzer",
-        s1s2Analyzer: "../../Noble0d/js/s1s2Analyzer",
-        apdAnalyzer: "../../Noble0d/js/APDAnalyzer",
-		utility: "../../Noble0d/js/utility"
-	},
+    paths: {
+        calculator: "calculator",
+        form: "form",
+        mediator: "../../commonJs/mediator",
+        plots: "../../commonJs/plots",
+        pointBufferAnalyzer: "../../commonJs/pointBufferAnalyzer",
+        s1s2Analyzer: "../../commonJs/s1s2Analyzer",
+        apdAnalyzer: "../../commonJs/APDAnalyzer",
+        utility: "../../commonJs/utility"
+    },
 });
-
-// require(["plots", "calculator", "mediator", "form"],
-// function initialize(plots, calculator, mediator, form) {
 
 require(["settings", 
          "mediator", 
@@ -33,7 +30,6 @@ function initialize(
     apdAnalyzer,
     plots
     ) {
-
     
     /*
      * Initialize the default settings for the plot
@@ -48,22 +44,13 @@ function initialize(
             pointBuffer: {
                 bufferSize: 10,
                 normalPoints: {
-                    v: new Point( -95 , 43)
-                }
+                    v: new Point( -95 , 43),        ccasr: new Point(310, 325)
+                },
+                minMaxPoints: {}
             },
             apdPoints: {
                 threshhold: -80,
                 vNormalize: new Point( -95 , 43)
-            }
-        },
-        plotSettings: {
-            Fox: {
-                plots: {
-                    mainPlot: {
-                        xAxis: "Time (ms)",
-                        yAxis: "",
-                    }
-                }
             }
         }
     });

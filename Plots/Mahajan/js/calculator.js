@@ -27,24 +27,7 @@
 	 * @param  {Object} newSettings
 	 */
 	 function initialize(newSettings) {		
-		//reset(newSettings);
 		settings 		 =    utils.extend(newSettings);		
-		cS 	 =   _.cloneDeep(settings.calculationSettings);	
-		cC 	 =   new CalcConstants(settings.calculationSettings);
-	}
-
-	/**
-	 * This function initializes the Calculator. It is functionally the same as
-	 * the reset function. This wrapper function provides a more semantic way to
-	 * present that functionality.
-	 * 
-	 * @param  {Object} newSettings
-	 */
-	 function initialize(newSettings) {		
-		//reset(newSettings);
-		settings 		 =    utils.extend(newSettings);		
-		cS 	 =   _.cloneDeep(settings.calculationSettings);	
-		cC 	 =   new CalcConstants(settings.calculationSettings);
 	}
 
 	/**
@@ -84,27 +67,10 @@
         return stimuli;
 	}
 
-	    /**
-		 * Performs a differential calculations and increments the values that will
-		 * be returned by getPoints().
-		 */
+    /**
+	 * Performs a differential calculations and increments the values.
+	 */
 	function calculateNext(data) {
-
-
-		// sets voltage variables after calculations
-	 	data.calculationSettings.voltageVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-	 	});
-
-	 	// sets current variables after calculations
-	 	data.calculationSettings.currentVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-	 	});
-
-		// sets current variables after calculations
-	 	data.calculationSettings.additionalVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-	 	});	 	
 
 	 	var alpham, betam, alphah, betah, alphaj, betaj, tau_X1, tau_X2, tau_Xr, 
 	 	alphaK1, betaK1, gksx, za, factor1, factor, csm, rxa, alpha, beta, fca, s1, xk1, s2, s2t, xk3, xk3t, prv,
@@ -531,26 +497,21 @@
 			
 
 	 	// sets voltage variables after calculations
-        data.calculationSettings.voltageVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-        });
-
+        utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
+        
         // sets current variables after calculations
-        data.calculationSettings.currentVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-        });
-
-        // sets current variables after calculations
-	 	data.calculationSettings.additionalVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-	 	});
+        utils.copySpecific(data.calculationSettings, cS, data.calculationSettings.currentVariables);
 
 		// iterate the count
 		count++;
 
 		return data;
 	}
-
+	/*
+     * This function instantiate an object consisting of constants
+     * as properties to be used in calculations iterations. The values 
+     * remains unchanged across iterations.
+     */  
 	function CalcConstants(c){
 
 		// nice values to precompute
@@ -564,7 +525,10 @@
       	this.xmnao3 = Math.pow(c.xmnao,3); //xmNao*xmNao*xmNao
     }
 
-
+    /*  This function calculates the number of iterations for calculateNext 
+    *   to be executed.
+    *   param {object} settings
+    */
     function _getNumIterations(settings) {
 	 	var c   =    settings.calculationSettings;
 	 	var num   =    (((c.s1 * c.ns1) + c.s2) * 1.1) / c.timestep;
@@ -572,18 +536,22 @@
 	 	return num;    
 	}
 
+	/*This function iteratively calls all the analyzers and performs 
+     * all the calculations to generate points to be displayed on the
+     * plotter
+     * param {int} iterations
+     * param {object} settings
+     */ 
 	function runCalculations(iterations, settings) {
-	 	var state   =    settings; 
-	 	var curAnalyzer; 
+	 	var state   =    settings,
+	 	data,
+	 	curAnalyzer; 
 	 	
         count   =    0;
         
-        // need to update change in parameter values in page level cS object.
-        state.calculationSettings.parameters.forEach(function (item){
-           cS[item] = state.calculationSettings[item];
-        });
-
-
+        cS  =   _.cloneDeep(settings.calculationSettings);      
+        cC  =   new CalcConstants(settings.calculationSettings); 
+        
         /**
          * Reset the calculators to their base states
          */
@@ -607,12 +575,14 @@
          */
          
          for (var i = 0; i < numCalculations; i++) {
-         	var data = calculateNext(state);          
+         	data = calculateNext(state);          
          	for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
-         		if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-         			analyzers[curAnalyzer].aggregate(data);
-         		}
-         	}
+                if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
+                  if(analyzers[curAnalyzer].analyzerName !== "S1S2Analyzer" || i >= numCalculations-2) {
+                        analyzers[curAnalyzer].aggregate(data);
+                  }
+                }
+            }
          }
 
         /**
@@ -680,7 +650,6 @@
 	 	addAnalysisFunction: addAnalysisFunction,
 	 	runCalculations: runCalculations,
 	 	initialize: initialize,
-	 	calculateNext: calculateNext,
 	 	updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,
 		reset: reset,
 	};

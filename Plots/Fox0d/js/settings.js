@@ -101,7 +101,7 @@
 
 	formSettings: {	
 
-		displayV: true,
+		displayV: false,
 		displayCcai: false,
 		displayCcasr: false,
 		displayXf: false,
@@ -116,196 +116,57 @@
 		displayYto: false,
 		displayAPDDI: false,
 		displayS1S2: false,
-		secondaryPlot: "xikr",
+		secondaryPlot: "",
+		//current with labels
+		xica: "I_Ca",
+		xicab: "I_Cab",
+		xicak: "I_CaK",
+		xik1: "I_K1",
+		xikp: "I_Kp",
+		xikr: "I_Kr",
+		xiks: "I_Ks",
+		xina: "I_Na",
+		xinab: "I_Nab",
+		xinaca: "I_NaCa",
+		xinak: "I_NaK",
+		xipca: "I_pCa",
+		xito: "I_to",
+      	colors : {
+	        aPDDI: "Orange",
+	        s1S2 : "Black",
+	        v    : "Red"
+      	}
 	}               	    	
 };
 
-	//Setting plot setting dynamically
-	defaultSettings["plotSettings"] = initializePlotSettings();
-
-	defaultSettings.calculationSettings.voltageVariables= getVoltageVariables();
-	defaultSettings.calculationSettings.currentVariables = getCurrentVariables();
-
-
+	
   // The function return an array of voltage variables
-  function getVoltageVariables(){
+  function _getVoltageVariables(){
   	return ["v",    "ccasr",    "ccai",     "xfca",     "xd",       "xf",       "yto",      "xto",      "xks",      "xkr",      "xj",   "xh",   "xm"];        
   }
 
 // The function return an array of current variables
-function getCurrentVariables(){
+function _getCurrentVariables(){
 	return ["xina", "xik1",     "xito",     "xikp",     "xinab",    "xiks",     "xica",     "xinaca",   "xipca",    "xicab",    "xicak", "xinak", "xikr"];
 }
 
+	function _initialize(override){
 
+            defaultSettings = _.merge(defaultSettings, override);
+              
+            //Adding additional properties    
+            defaultSettings.calculationSettings.voltageVariables = _getVoltageVariables();
+            defaultSettings.calculationSettings.currentVariables =  _getCurrentVariables();
 
-  /* This function {constructor} is used to initiate plot-settings for the setting object
-  * @param {basePlots} - base plot object
-  */
-  function PlotSettings(basePlots){
-  	var basePlot  = function(){
-  		var basePlotTarget = new Object();      
-  		basePlots.forEach(function(item){     
-  			basePlotTarget[item.key] =  item.value; 
-  		});       	 
-  		return basePlotTarget;
-  	}();
-
-  	return basePlot;
-  };
-
-  /* This function {constructor} is used to initiate base class object
-  * @param {width, height, offset, plots} 
-  */
-
-  function BasePlot(width, height, offset, plots){
-  	this.width = width,
-  	this.height = height,
-  	this.offset = offset,
-  	this.plots = 	function(){
-  		var plotsTarget = new Object();      
-  		plots.forEach(function(item){     
-  			plotsTarget[item.key] =  item.value; 
-  		});       	 
-  		return plotsTarget;
-  	}();
-  };
-
-
- /* This function {constructor} is used to initiate Plot object
-        * @param {xAxis, yAxis, defaultFlag}
-        *
-        */
-
-        function Plot (xAxis, yAxis, defaultFlag) {     
-            this.range          =  new Point(-0.1, 1.1),     
-            this.unitPerTick    =  new Point(200, 0.10), 
-            this.labelFrequency = new Point(1, 1),
-            this.xAxis          = xAxis,
-            this.yAxis          = yAxis,
-            this.labelPrecision =  new Point(0,1), 
-            this.labelSize      = new Point(0, 0),
-            this.default        = defaultFlag
-        };
-
-/* This function is responsible for creating plot-settings object;
- * a nested object in the settings object. One or more plot objects are nested under baseplot
- * object which in turn can be one or more in number nested under plot settings object.
- * Here "baseplot" consists of "Fox" and "FoxOther" which have foxBasePlot and foxOtherBasePlot respectively.
- */
-
-
- function initializePlotSettings(){
- 	var foxPlots = [],
- 	foxOtherPlots = [],
- 	foxBasePlot,
- 	foxOtherBasePlot,               
- 	basePlots =[],
- 	plotSettings;
-
-		//foxPlots
-		foxPlots.push({key:"mainPlot",value: new Plot("Time (ms)", " ", false)});
-        foxBasePlot = new BasePlot( 437.5, 240, new Point(0, 0), foxPlots);
-
-		/*foxPlots.push({key:"mainPlot",
-			value: new Plot(new Point(-0.1, 1.1), new Point(200, 0.1), new Point(1, 1), "Time (ms)",
-				"V_m", new Point(0, 1), new Point(0, 0), false)});
-		foxBasePlot = new BasePlot( 437.5, 240, new Point(0, 0), foxPlots);
-		*/
-		// foxOtherPlots
-
-		var fOtherPlotsInit = [ {key : "xica",	value:  {name: "I_Ca",	showDefault:false}},
-                                {key : "xicab", value:  {name: "I_Cab", showDefault:false}},
-                                {key : "xicak", value:  {name: "I_CaK", showDefault:false}},
-                                {key : "xik1",  value:  {name: "I_K1", 	showDefault:false}},
-                                {key : "xikp",  value:  {name: "I_Kp",  showDefault:false}},
-                                {key : "xikr",  value:  {name: "I_Kr", 	showDefault:false}},
-                                {key : "xiks",  value:  {name: "I_Ks",  showDefault:false}},
-                                {key : "xina",  value:  {name: "I_Na",  showDefault:false}},
-                                {key : "xinab", value:  {name: "I_Nab", showDefault:false}},
-                                {key : "xinaca",value:  {name: "I_NaCa",showDefault:false}},
-                                {key : "xinak", value:  {name: "I_NaK", showDefault:false}},
-                                {key : "xipca", value:  {name: "I_pCa",	showDefault:false}},
-                                {key : "xito", 	value:  {name: "I_to",	showDefault:false}} ];
-
-       fOtherPlotsInit.forEach(function(plotItem){
-        foxOtherPlots.push({key: plotItem["key"], value: new Plot("Time (ms)", plotItem["value"]["name"], 
-                            plotItem["value"]["showDefault"])}); });
-        foxOtherBasePlot = new BasePlot( 437.5, 240, new Point(0, 300), foxOtherPlots);
-
-        basePlots.push({key:"Fox", value : foxBasePlot});
-        basePlots.push({key:"FoxOther", value :foxOtherBasePlot});
-
-        plotSettings = new PlotSettings(basePlots);
-        return plotSettings;
-    }; 
-/*
-		foxOtherPlots.push({key:"xica",
-			value: new Plot(new Point(-1.6, 0), new Point(200, .15), new Point(1, 1), "Time (ms)",
-				"I_Ca", new Point(0, 2), new Point(0, 0), false)});
-
-		foxOtherPlots.push({key:"xicab",
-			value: new Plot(new Point(-0.1, 0), new Point(200, 0.01), new Point(1, 1), "Time (ms)",
-				"I_Cab", new Point(0, 2), new Point(0, 0), false)});
-
-		
-		foxOtherPlots.push({key:"xicak",
-			value: new Plot(new Point(0, 0.8), new Point(200, .08), new Point(1, 1), "Time (ms)",
-				"I_CaK", new Point(0, 2), new Point(0, 0), false)});
-
-		foxOtherPlots.push({key:"xik1",
-			value: new Plot(new Point(0, 10), new Point(200, 1), new Point(1, 1), "Time (ms)",
-				"I_K1", new Point(0, 1), new Point(0, 0), false)});		
-
-		foxOtherPlots.push({key:"xikp",
-			value: new Plot(new Point(0, 0.3), new Point(200, .03), new Point(1, 1), "Time (ms)",
-				"I_Kp", new Point(0, 2), new Point(0, 0), false)});		
-
-
-		foxOtherPlots.push({key:"xikr",
-			value: new Plot(new Point(0, 0.2), new Point(200, .02), new Point(1, 1), "Time (ms)",
-				"I_Kr", new Point(0, 2), new Point(0, 0), true)});
-
-
-		foxOtherPlots.push({key:"xiks",
-			value: new Plot(new Point(0, 0.004), new Point(200, .0004), new Point(1, 1), "Time (ms)",
-				"I_Ks", new Point(0, 4), new Point(0, 0), false)});
-
-		foxOtherPlots.push({key:"xina",
-			value: new Plot(new Point(-350, 0), new Point(200, 35), new Point(1, 1), "Time (ms)",
-				"I_Na", new Point(0, 1), new Point(0, 0), false)});
-		
-		foxOtherPlots.push({key:"xinab",
-			value: new Plot(new Point(-0.2, 0), new Point(200, .02), new Point(1, 1), "Time (ms)",
-				"I_Nab", new Point(0, 2), new Point(0, 0), false)});
-
-		foxOtherPlots.push({key:"xinaca",
-			value: new Plot(new Point(-0.25, 0), new Point(200, .025), new Point(1, 1), "Time (ms)",
-				"I_NaCa", new Point(0, 3), new Point(0, 0), false)});		
-
-		foxOtherPlots.push({key:"xinak",
-			value: new Plot(new Point(0, 0.3), new Point(200, .03), new Point(1, 1), "Time (ms)",
-				"I_NaK", new Point(0, 2), new Point(0, 0), false)});
-
-		foxOtherPlots.push({key:"xipca",
-			value: new Plot(new Point(0, 0.05), new Point(200, .005), new Point(1, 1), "Time (ms)",
-				"I_pCa", new Point(0, 3), new Point(0, 0), false)});	
-		
-		foxOtherPlots.push({key:"xito",
-			value: new Plot(new Point(0, 3), new Point(200, .3), new Point(1, 1), "Time (ms)",
-				"I_to", new Point(0, 1), new Point(0, 0), false)});
-
-		foxOtherBasePlot = new BasePlot( 437.5, 240, new Point(0, 300), foxOtherPlots);
-		
-
-		basePlots.push({key:"Fox", value : foxBasePlot});
-		basePlots.push({key:"FoxOther", value :foxOtherBasePlot});
-		
-		plotSettings = new PlotSettings(basePlots);
-		return plotSettings;
-	};*/
-
-
+            //Setting plot setting dynamically            
+            defaultSettings["plotSettings"] = utils.initializePlotSettings( _getCurrentVariables(), defaultSettings.formSettings);         
+            
+             // assign colors            
+            defaultSettings["formSettings"]["colors"] =  utils.extend(defaultSettings["formSettings"]["colors"],
+                                                         utils.assignColors(utils.removeArrayItems(_getVoltageVariables(), ["v"])));                                
+                   
+            return defaultSettings;
+    }
 	/*
 	* The module exposes functions 
     * initialize
@@ -318,7 +179,7 @@ function getCurrentVariables(){
 			* This function modifies any default settings
 			*/
 			initialize: function(override) {
-				defaultSettings = _.merge(defaultSettings, override);
+				return _initialize(override);
 			},   
 
         /**

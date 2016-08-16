@@ -58,179 +58,96 @@
 
             formSettings: { 
 
-                  displayV: true,
-                  displayXm: false,
-                  displayXh1: false,
-                  displayXh2: false,
-                  displayXdl: false,
-                  displayXfl1: false,
-                  displayXfl2: false,
-                  displayXr: false,
-                  displayXs: false,
-                  displayRsus: false,
-                  displaySsus: false,
-                  displayXn: false,
-                  displayXpa: false,
+                  displayV    : false,
+                  displayXm   : false,
+                  displayXh1  : false,
+                  displayXh2  : false,
+                  displayXdl  : false,
+                  displayXfl1 : false,
+                  displayXfl2 : false,
+                  displayXr   : false,
+                  displayXs   : false,
+                  displayRsus : false,
+                  displaySsus : false,
+                  displayXn   : false,
+                  displayXpa  : false,
                   displayAPDDI: false,
-                  displayS1S2: false,
-                  secondaryPlot: "xna",
+                  displayS1S2 : false,
+                  secondaryPlot: "",
+                  //current with labels
+                  xna    : "I_Na",
+                  xks    : "I_Ks",
+                  xbca   : "I_bCa",
+                  xcal   : "I_CaL",
+                  xkr    : "I_Kr",
+                  xnak   : "I_NaK",
+                  xt     : "I_t",
+                  xk1    : "I_K1",
+                  xcap   : "I_Cap",
+                  xsus   : "I_Sus",
+                  xbna   : "I_bNa",
+                  xnaca  : "I_NaCa",
+                  colors : {
+                    aPDDI: "Orange",
+                    s1S2 : "Black",
+                    v    : "Red"
+                  }
               }
           };
 
+          // The function return an array of voltage variables
+        function _getVoltageVariables(){
+            return ["v",  "xm",   "xh1",  "xh2",  "xdl",  "xfl1",  "xfl2",  "xr",
+                    "xs",  "rsus", "ssus", "xn",   "xpa", "ccai", "ccad", "ccaup",
+                    "ccarel"];
+        }
 
+        // The function return an array of current variables
+        function _getCurrentVariables(){
+              return ["xna",  "xcal", "xt","xsus", "xks", "xkr",  "xk1",  "xbna",
+                      "xbca", "xnak", "xcap", "xnaca"];
+        }
 
-              //Setting plot setting dynamically
-              defaultSettings["plotSettings"] = initializePlotSettings();
+        function _initialize(override){
 
-              defaultSettings.calculationSettings.voltageVariables= getVoltageVariables();
-              defaultSettings.calculationSettings.currentVariables = getCurrentVariables();
-              defaultSettings.calculationSettings.additionalVariables = getAdditionalVariables();
-              defaultSettings.calculationSettings.parameters = getParameters();
+            defaultSettings = _.merge(defaultSettings, override);
+              
+            //Adding additional properties    
+            defaultSettings.calculationSettings.voltageVariables = _getVoltageVariables();
+            defaultSettings.calculationSettings.currentVariables =  _getCurrentVariables();
 
-              // The function return an array of voltage variables
-              function getVoltageVariables(){
-                  return ["v",  "xm",   "xh1",  "xh2",  "xdl",  "xfl1",  "xfl2",  "xr",
-                          "xs",  "rsus", "ssus", "xn",   "xpa", "ccai", "ccad", "ccaup",
-                          "ccarel"];
-              }
+            //Setting plot setting dynamically            
+            defaultSettings["plotSettings"] = utils.initializePlotSettings( _getCurrentVariables(), defaultSettings.formSettings);         
+            
+             // assign colors            
+            defaultSettings["formSettings"]["colors"] =  utils.extend(defaultSettings["formSettings"]["colors"],
+                                                         utils.assignColors(utils.removeArrayItems(_getVoltageVariables(), ["v"])));                                
+                   
+            return defaultSettings;
+        }
 
-              // The function return an array of current variables
-              function getCurrentVariables(){
-                  return ["xna",  "xcal", "xt","xsus", "xks", "xkr",  "xk1",  "xbna",
-                          "xbca", "xnak", "xcap", "xnaca"];
-              }
+          
+        /*
+        * The module exposes functions 
+        * initialize
+        * getSettings
+        */
 
-              // This function returns a set of parameters that need to be updated based on user input.
-              function getParameters(){
-                  return ["pna","gcal","gt","gsus","gks","gkr","gk1","xknaca"];
-                          
-              }
-
-              // The function return an array of additional variables that are updated 
-              // in calculatenext
-              function getAdditionalVariables(){
-                  return ["xoc","xotc","xotmgc","xotmgmg","xocalse",
-                          "xf1", "xf2","xna1_t"];
-                          //xna1_t is used here because its i-1th value is required in if 
-                          // else condition in calculateNext
-              }
-
-              /* This function {constructor} is used to initiate plot-settings for the setting object
-               * @param {basePlots} - base plot object
-               */
-               function PlotSettings(basePlots){
-                  var basePlot  = function(){
-                      var basePlotTarget = new Object();      
-                      basePlots.forEach(function(item){     
-                          basePlotTarget[item.key] =  item.value; 
-                      });          
-                      return basePlotTarget;
-                  }();
-
-                  return basePlot;
-              };
-
-              /* This function {constructor} is used to initiate base class object
-               * @param {width, height, offset, plots} 
-               */
-
-              function BasePlot(width, height, offset, plots){
-                  this.width = width,
-                  this.height = height,
-                  this.offset = offset,
-
-                  this.plots =    function(){
-                      var plotsTarget = new Object();      
-                      plots.forEach(function(item){     
-                          plotsTarget[item.key] =  item.value; 
-                      });          
-                      return plotsTarget;
-                  }();
-              };
-
-              /* This function {constructor} is used to initiate Plot object
-                  * @param {xAxis, yAxis, defaultFlag}
-                  *
-                  */
-
-                  function Plot (xAxis, yAxis, defaultFlag) {     
-                      this.range          =  new Point(-0.1, 1.1),     
-                      this.unitPerTick    =  new Point(200, 0.10), 
-                      this.labelFrequency = new Point(1, 1),
-                      this.xAxis          = xAxis,
-                      this.yAxis          = yAxis,
-                      this.labelPrecision =  new Point(0,1), 
-                      this.labelSize      = new Point(0, 0),
-                      this.default        = defaultFlag
-                  };
-
-              /* This function is responsible for creating plot-settings object;
-               * a nested object in the settings object. One or more plot objects are nested under baseplot
-               * object which in turn can be one or more in number nested under plot settings object.
-               * Here "baseplot" consists of "nygren" and "nygrenOther" which have nygrenBasePlot and nygrenOtherBasePlot respectively.
-               */
-              function initializePlotSettings(){
-                  var nygrenPlots = [],
-                  nygrenOtherPlots = [],
-                  nygrenBasePlot,
-                  nygrenOtherBasePlot,               
-                  basePlots =[],
-                  plotSettings;
-
-
-                //nygrenPlots
-                  nygrenPlots.push({key:"mainPlot",value: new Plot("Time (ms)", "V_m", false)});
-                  nygrenBasePlot = new BasePlot( 437.5, 240, new Point(0, 0), nygrenPlots);
-
-                // nygrenOtherPlots
-
-                  var nOtherPlotsInit = [ {key : "xna",   value:  {name: "I_Na",  showDefault:false}},
-                                          {key : "xks",   value:  {name: "I_Ks",  showDefault:false}},
-                                          {key : "xbca",  value:  {name: "I_bCa", showDefault:false}},
-                                          {key : "xcal",  value:  {name: "I_CaL", showDefault:false}},
-                                          {key : "xkr",   value:  {name: "I_Kr",  showDefault:false}},
-                                          {key : "xnak",  value:  {name: "I_NaK", showDefault:false}},
-                                          {key : "xt",    value:  {name: "I_t",   showDefault:false}},
-                                          {key : "xk1",   value:  {name: "I_K1",  showDefault:false}},
-                                          {key : "xcap",  value:  {name: "I_Cap", showDefault:false}},
-                                          {key : "xsus",  value:  {name: "I_Sus", showDefault:false}},
-                                          {key : "xbna",  value:  {name: "I_bNa", showDefault:false}},
-                                          {key : "xnaca", value:  {name: "I_NaCa",showDefault:false}} ];
-
-                  nOtherPlotsInit.forEach(function(plotItem){
-                  nygrenOtherPlots.push({key: plotItem["key"], value: new Plot("Time (ms)", plotItem["value"]["name"], 
-                                      plotItem["value"]["showDefault"])}); });
-                  nygrenOtherBasePlot = new BasePlot( 437.5, 240, new Point(0, 300), nygrenOtherPlots);
-
-                  basePlots.push({key:"Nygren", value : nygrenBasePlot});
-                  basePlots.push({key:"NygrenOther", value :nygrenOtherBasePlot});
-
-                  plotSettings = new PlotSettings(basePlots);
-                  return plotSettings;
-              };  
-              /*
-              * The module exposes functions 
-              * initialize
-              * getSettings
-              */
-
-              return{
-
-                  /**
-                      * This function modifies any default settings
-                      */
-                      initialize: function(override) {
-                          defaultSettings = _.merge(defaultSettings, override);
-                      },   
-
-                  /**
-                      * Retrieves the settings
-                      */
-                      getSettings: function() {            
-                          return _.cloneDeep(defaultSettings);
-                      }
-              }
-
-    });
-
+        return{
+    
+            /**
+             * This function modifies any default settings
+             */
+            initialize: function(override) {                        
+               return _initialize(override);
+             },  
+            
+            /**
+            * Retrieves the settings
+            */        
+            getSettings: function() {
+                return _.cloneDeep(defaultSettings);
+            }
+        }
+});
 

@@ -153,7 +153,14 @@ function PointBufferAnalyzer(utils) {
         }
         settings.calculationSettings.pointBuffer = utils.extend(settings.calculationSettings.pointBuffer, bufferSettings);
     }
-    
+    function setSanodeDependants(updatedValues, settings){
+          bufferSettings = settings.calculationSettings.pointBuffer;
+          if(updatedValues.normalPoints){
+            for(var item in updatedValues.normalPoints){
+                    bufferSettings.normalPoints[item] = updatedValues.normalPoints[item];
+            }
+          }
+    }
     /*
         * The module exposes functions 
         *   initialize
@@ -166,6 +173,7 @@ function PointBufferAnalyzer(utils) {
         aggregate: aggregate,
         reset: reset,
         getSettings : getSettings,
+        setSanodeDependants: setSanodeDependants,
         analyzerName : "PointBufferAnalyzer"
     } 
     

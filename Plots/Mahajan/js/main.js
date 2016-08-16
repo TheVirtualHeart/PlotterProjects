@@ -1,16 +1,15 @@
 require.config({
-	paths: {
-		calculator: "calculator",
-		form: "form",
-		mediator: "../../Noble0d/js/mediator",
-		plots: "plots",
-		pointBufferAnalyzer: "pointBufferAnalyzer",
-        s1s2Analyzer: "../../Noble0d/js/s1s2Analyzer",
-        apdAnalyzer: "../../Noble0d/js/APDAnalyzer",
-        utility: "../../Noble0d/js/utility"
+    paths: {
+        calculator: "calculator",
+        form: "form",
+        mediator: "../../commonJs/mediator",
+        plots: "../../commonJs/plots",
+        pointBufferAnalyzer: "../../commonJs/pointBufferAnalyzer",
+        s1s2Analyzer: "../../commonJs/s1s2Analyzer",
+        apdAnalyzer: "../../commonJs/APDAnalyzer",
+        utility: "../../commonJs/utility"
     },
 });
-
 
 require(["settings", 
    "mediator", 
@@ -44,27 +43,22 @@ require(["settings",
             pointBuffer: {
                 bufferSize: 20,
                 normalPoints: {
-                    v: new Point( -87 , 42 )
-                }
+                    v:    new Point( -87 , 42 ),    trops: new Point(21.04,63.52),
+                    cp:   new Point(0.753,14.759),  cs:    new Point(0,6),         
+                    ci:   new Point(0.26,1.25),     cj :   new Point(64 , 112),
+                    cjp:  new Point(78,106),        xir:   new Point(0.0033,1.31),
+                    xnai: new Point(12.28,12.31),   tropi: new Point(22.34,46.62),
+                },
+                minMaxPoints: {}
             },
             apdPoints: {
                 threshhold: -73.5,
                 vNormalize: new Point( -87 , 42 )
             }
-        },
-        plotSettings: {
-            Mahajan: {
-                plots: {
-                    mainPlot: {
-                        xAxis: "Time (ms)",
-                        yAxis: "",
-                    }
-                }
-            }
         }
     });
 
-     /*
+   /*
     * Create an analyzer array that holds all the 
     * analyzers to be processed
     */

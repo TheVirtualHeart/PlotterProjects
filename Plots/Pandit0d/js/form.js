@@ -13,9 +13,24 @@ define(["utility"],
         /**
         * This object describes the settings for the form.
         */
-        var settings = null;
-        var initialSettings = null;
+        var settings = null,
+        initialSettings = null,
 
+        formCtrls    = [  "displayAPDDI", "displayS1S2",     "displayV", 
+                    "displayM",  "displayH",     "displayJ",        "displayD",
+                    "displayF11","displayF12",   "displayCainact",  "displayR",
+                    "displayS",  "displaySslow", "displayRss",      "displaySss",
+                    "displayY",  "displayNai",   "displayKi",       "displayCai",
+                    "displayCansr","displayCass","displayCajsr",    "displayPo",
+                    "displayLtrpn","displayHtrpn","secondaryPlot"],
+
+        settingCtrls = ["s1","s2","ns1", "gna", "gcal", "gt", "gss","gk1", "gf", "knaca","iType"],
+
+        iTypeValues = {   epi : {gna: 0.8, gt: 0.035, iType: "epi"},
+                          endo : {gna: 1.0364, gt: 0.0162645, iType: "endo"} //gna(endo) = 1.33 * gna(epi)
+        };                                      //gt (endo) = 0.4647 * gt(epi)
+
+          
 
       /**
         * Initialize the form. Define the initial settings of the form and define
@@ -35,20 +50,6 @@ define(["utility"],
           */
 
           // Stores all the variables that are displayed on the webpage.
-          var  formCtrls    = [  "displayAPDDI", "displayS1S2",     "displayV", 
-                    "displayM",  "displayH",     "displayJ",        "displayD",
-                    "displayF11","displayF12",   "displayCainact",  "displayR",
-                    "displayS",  "displaySslow", "displayRss",      "displaySss",
-                    "displayY",  "displayNai",   "displayKi",       "displayCai",
-                    "displayCansr","displayCass","displayCajsr",    "displayPo",
-                    "displayLtrpn","displayHtrpn","secondaryPlot"],
-
-              settingCtrls = ["s1","s2","ns1", "gna", "gcal", "gt", "gss","gk1", "gf", "knaca","iType"],
-
-              iTypeValues = {   epi : {gna: 0.8, gt: 0.035, iType: "epi"},
-                                endo : {gna: 1.0364, gt: 0.0162645, iType: "endo"} //gna(endo) = 1.33 * gna(epi)
-                            };                                      //gt (endo) = 0.4647 * gt(epi)
-
            	/**
              * These methods initialize the variables on the webpage.
              */
@@ -58,8 +59,8 @@ define(["utility"],
           // On-click Action listener for the default button.
           var defaultButton = document.getElementById("default");
           defaultButton.addEventListener("click", function(e) {
-            setDefaultFormCtrls();
-            setDefaultSettingCtrls();
+            _setDefaultFormCtrls();
+            _setDefaultSettingCtrls();
 
             updateCalculations();
           });
@@ -67,9 +68,9 @@ define(["utility"],
           // On-click Action listener for the print button.
           var printButton = document.getElementById("print");
           printButton.addEventListener("click", function(e) {             
-            mediator.printPoints(settings, fetchPointsToPrint());
+            mediator.printPoints(settings);
           });
-
+      }
         /**
          * This method initializes the form settings to their default values.
          * 
@@ -79,17 +80,14 @@ define(["utility"],
           formCtrls.forEach(function(ctrl){
             var ele = document.getElementsByName(ctrl)[0];  
               if(ele.type == "select-one"){ // For the currents drop down
-                for (var i = 0, j = ele.options.length; i < j ; i++) {
-                  var option = ele.options[i];
-                  if (option.value === settingsParam[ele.name]) {              
-                    ele.selectedIndex = i;
-                    break;
-                  }
-                }
+                // set label for currents
+                    _setSecondaryPlotLabels(ele);
               } 
               else{
-                ele.checked = settingsParam[ele.name];
-              }                                            
+                    //set css class
+                    _setCssClass(ele);
+              }
+              utils.setElementValue(ele,  settingsParam[ele.name]);
               _appendHandler(ele, settingsParam);           
             });
         }
@@ -102,23 +100,15 @@ define(["utility"],
            function _initializeSettingCtrls(settingsParam){        
             settingCtrls.forEach( function(ctrl){
                 var ele = document.getElementsByName(ctrl)[0];
-                if(ele.type == "select-one"){ // For the currents drop down
-                  for (var i = 0, j = ele.options.length; i < j ; i++) {
-                    
-                    var option = ele.options[i];               
-                    if (option.value === settingsParam[ele.name]) {              
-                      ele.selectedIndex = i;
-                      _iTypeChanged(ele, settingsParam);
-                      break;
-                    }
-                  }
+                if(ele.type == "select-one"){ // For the currents drop down             
+                    _iTypeChanged(ele);                                        
                 }
                 else{
-                  if(ele.name === "s1" || ele.name === "s2" ){
-                    ele.value = settingsParam[ele.name] * utils.timeUnit.seconds; 
+                  if(ele.name === "s1" || ele.name === "s2"){
+                    ele.value = settingsParam[ele.name] * utils.timeUnit.getTimeUnit(settingsParam.tUnit);
                   }
                   else{
-                  ele.value = settingsParam[ele.name]; 
+                    utils.setElementValue(ele,  settingsParam[ele.name]);
                   }
                 }         
                 _appendHandler(ele, settingsParam); 
@@ -136,12 +126,11 @@ define(["utility"],
           *
           */
           function _appendHandler(ele, settingsParam){ 
-            var propName = (ele.type === "checkbox")?  "checked" : "value";
             ele.addEventListener("change", function(e) {             
               if(ele.name === "s1" || ele.name === "s2")
-                settingsParam[ele.name] = utils.numericValue(ele[propName]) / utils.timeUnit.seconds;
+                settingsParam[ele.name] = utils.numericValue(ele.value) / utils.timeUnit.getTimeUnit(settingsParam.tUnit);
               else{
-                settingsParam[ele.name] = (ele.type == "select-one")? ele.options[ele.selectedIndex][propName]: utils.numericValue(ele[propName]);
+                settingsParam[ele.name] =  utils.getElementValue(ele);
               }
               if(ele.type === "checkbox" || ele.type == "select-one"  && ele.name === "secondaryPlot") {
                   updateDisplay();
@@ -160,18 +149,17 @@ define(["utility"],
         *
         */ 
 
-        function _iTypeChanged(ele, settingsParam){
+        function _iTypeChanged(ele){    
           if(ele){
             ele.addEventListener("change", function(e) {
-              var selectedVal = ele.options[ele.selectedIndex].value;
-              if(selectedVal){
-                var objSelected = iTypeValues[selectedVal];
-                if(objSelected){
-                  for(e in objSelected){
-                    document.getElementsByName(e)[0].value = objSelected[e];
-                    settingsParam[e] = objSelected[e];              
-                  } 
-                }
+            var  selectedValue = ele.options[ele.selectedIndex].value;
+              if(selectedValue){   
+               settings.calculationSettings.updateDependents(selectedValue, settings.calculationSettings);
+               //update display for setting controls
+               settingCtrls.forEach( function(ctrl){
+                var ele1 = document.getElementsByName(ctrl)[0];          
+                utils.setElementValue(ele1,  settings.calculationSettings[ele1.name]);             
+                });
               }
             });
           }
@@ -183,22 +171,11 @@ define(["utility"],
           * restore the default values.
           */
           
-          function setDefaultFormCtrls(){                
+          function _setDefaultFormCtrls(){                
             formCtrls.forEach( function(ctrl){
               var ele = document.getElementsByName(ctrl)[0]; 
               settings.formSettings[ele.name] =  initialSettings.formSettings[ele.name];
-              if(ele.type == "select-one"){
-                for (var i = 0, j = ele.options.length; i < j ; i++) {
-                  var option = ele.options[i];
-                  if (option.value === initialSettings.formSettings[ele.name]) {              
-                    ele.selectedIndex = i;
-                    break;
-                  }
-                }
-              } 
-              else{
-                ele.checked = initialSettings.formSettings[ele.name];
-              }                                                      
+              utils.setElementValue(ele, settings.formSettings[ele.name]) ;                                                                                                       
             });
           }
         /**
@@ -206,19 +183,19 @@ define(["utility"],
           * initialSettings is a global variable where all the default values are stores and it is used to 
           * restore the default values.
           */
-          function setDefaultSettingCtrls(){                
+          function _setDefaultSettingCtrls(){                
             settingCtrls.forEach( function(ctrl){
               var ele = document.getElementsByName(ctrl)[0]; 
               settings.calculationSettings[ele.name] =  initialSettings.calculationSettings[ele.name];             
-              if(ele.name === "s1" || ele.name === "s2" ){
-                    ele.value = initialSettings.calculationSettings[ele.name] * utils.timeUnit.seconds;
-              }
-              else{
-                ele.value = initialSettings.calculationSettings[ele.name];
-              }
+              if(ele.name === "s1" || ele.name === "s2"){
+                    ele.value = settings.calculationSettings[ele.name] * utils.timeUnit.getTimeUnit(initialSettings.calculationSettings.tUnit);
+                }
+               else{
+                    utils.setElementValue(ele, settings.calculationSettings[ele.name]) ;
+               }  
             });
           }       
-        } 
+        
 
         function updateCalculations() {        
           mediator.updateCalculator(_.cloneDeep(settings));
@@ -229,57 +206,24 @@ define(["utility"],
           mediator.updateDisplay(_.cloneDeep(settings));
         }
 
-      /**
-        * This function identifies what are the form settings that are currently 
-        * selected fetches the points that need to be printed.
-        * The only points printed will be the one's that are selcted.
-        *
-        * @return {Array} - that will contain a list of points to be printed. 
-        */
-        function fetchPointsToPrint(){
-          var printPoints = [];
-          var formSettings = settings.formSettings;
-          for(var setting in formSettings) {
-            if(formSettings.hasOwnProperty(setting)){
-              if(      (formSettings[setting] === true) 
-                ||  (formSettings[setting] === 1) 
-                ||  (setting === "secondaryPlot") ) {
-                if(setting === "secondaryPlot"){
-                  printPoints.push(formSettings[setting]);
-                }
-                else{
-                  var name = getPointName(setting);                     
-                  if(name){
-                    if(settings.calculationSettings.pointBuffer.points[name]){
-                      printPoints.push(name);                               
-                    }                        
-                  }
-                }
-
-              }
-            }             
-          }
-          return printPoints;       
+        function _setSecondaryPlotLabels(ele){
+        
+          if(ele["options"]){
+            for (var i = 0, j = ele.options.length; i < j ; i++) {
+                ele.options[i].text = initialSettings.formSettings[ele.options[i].value];
+            }
+          }    
         }
-
-      /**
-        * This function seperates the string "display" from the form setting variable to identify 
-        * the point name and returns it if there is a variable with string display in it else returns null.
-        * Eg: "DisplayV" would return v - which is the variable name.
-        *  
-        * @return {string} - the name of the variable after seperating display from it.
-        */ 
-        function getPointName(displayName){
-        // follows the convention of names staring with display
-        if(displayName  && (typeof displayName === "string") && displayName.includes("display")){
-
-          return displayName.replace("display","").toLowerCase();
+    
+        function  _setCssClass(ele){
+            var parentDiv = ele.parentElement,
+            name = ele.name;
+            if(parentDiv){
+                name = name.replace('display', '');
+                name = name.charAt(0).toLowerCase() + name.slice(1);            
+                parentDiv.className = utils.getCssClass(settings.formSettings.colors[name]);
+            }
         }
-        else {
-          return null;
-        }
-
-      }
 
       /**
         * This is the object that will be returned by the function. These are the
@@ -289,8 +233,7 @@ define(["utility"],
         var api = {
           initialize: initialize,
           updateCalculations: updateCalculations,
-          updateDisplay: updateDisplay
-        //exportValues: exportValues,
+          updateDisplay: updateDisplay        
       };
       return api;
     });

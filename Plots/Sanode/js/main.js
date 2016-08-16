@@ -1,13 +1,12 @@
 require.config({
-	paths: {
-		calculator: "calculator",
-		form: "form",
-		mediator: "../../Noble0d/js/mediator",
-		plots: "plots",
-		pointBufferAnalyzer: "pointBufferAnalyzer",
-        //s1s2Analyzer: "../../Noble0d/js/s1s2Analyzer",
-        apdAnalyzer: "../../Noble0d/js/APDAnalyzer",
-        utility: "../../Noble0d/js/utility"
+    paths: {
+        calculator: "calculator",
+        form: "form",
+        mediator: "../../commonJs/mediator",
+        plots: "../../commonJs/plots",
+        pointBufferAnalyzer: "../../commonJs/pointBufferAnalyzer",
+        apdAnalyzer: "../../commonJs/APDAnalyzer",
+        utility: "../../commonJs/utility"
     },
 });
 
@@ -17,7 +16,6 @@ require(["settings",
    "form", 
    "calculator", 
    "pointBufferAnalyzer",
-   //"s1s2Analyzer",
    "apdAnalyzer",
    "plots"
    ],
@@ -28,7 +26,6 @@ require(["settings",
     form, 
     calculator, 
     pointBufferAnalyzer,
-    //s1s2Analyzer,
     apdAnalyzer,
     plots
     ) {
@@ -46,34 +43,26 @@ require(["settings",
         calculationSettings: {
             pointBuffer: {
                 bufferSize: 20,
-                /*normalPoints:{
-                    sanodeCv: new Point( -58 , 22 ),
-                    sanodePv: new Point( -77 , 24 )
-                }*/
+                normalPoints:{
+                /*    sanodeCv: new Point( -58 , 22 ),
+                    sanodePv: new Point( -77 , 24 ) */
+                },
+                minMaxPoints : {}
             },
             apdPoints: {
                 // threshhold: -50.00,
                 //threshold = (0.9 (min) + 0.1(max))
                 // vNormalize: new Point( -78 , 24 )
-            }
+            },
+            tUnit: "seconds"
         },
-        plotSettings: {
-            Sanode: {
-                plots: {
-                    mainPlot: {
-                        xAxis: "Time (ms)",
-                        yAxis: "",
-                    }
-                }
-            }
-        }
     });
 
     /*
     * Create an analyzer array that holds all the 
     * analyzers to be processed
     */
-    var analyzers = [pointBufferAnalyzer, /*s1s2Analyzer,*/ apdAnalyzer],
+    var analyzers = [pointBufferAnalyzer, apdAnalyzer],
     plotSettings = settings.getSettings();
     
     /*

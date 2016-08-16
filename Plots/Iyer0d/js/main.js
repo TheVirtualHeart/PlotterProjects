@@ -37,24 +37,23 @@ require(["settings",
         formSettings: {
             displayAPDDI: true,
             displayV: true,
-            secondaryPlot: "ikr",
+            secondaryPlot: "inaca",
         },
         calculationSettings: {
             pointBuffer: {
                 bufferSize: 20,
                 normalPoints: {
-                    v: new Point( -87 , 34 ),             cai       : new Point(0.00008,0.00047),
-                    cajsr     : new Point(0.17,1.27),     camkactive: new Point(0.00,0.05),
-                    camktrap  : new Point(0.00,0.014),    nai       : new Point(9.87,9.90),
-                    cansr     : new Point(1.27,1.36),     car       : new Point(0.00,0.029),
-                    cli       : new Point(18.89,18.90),   ki        : new Point(141.98,142.016),
-                    xdpower   : new Point(1,9)
+                    v: new Point( -90 , 35 ),           cai: new Point(0.00008, 0.00150),
+                    cajsr: new Point(0.0955, 0.4359),   cansr: new Point(0.104, 0.436),
+                    cass: new Point(0.00014, 0.04807),  htrpnca: new Point(0.9771, 0.9973),
+                    ltrpnca: new Point(0.0803, 0.5968), ki: new Point(125.55, 125.577),
+                    nai: new Point(9.710, 9.802)
                 },
                 minMaxPoints: {}
             },
             apdPoints: {
-                threshhold: -75.34,
-                vNormalize: new Point( -87 , 34 )
+                threshhold: -78.8,
+                vNormalize: new Point( -90 , 35 )
             }
         },
     });
@@ -63,7 +62,6 @@ require(["settings",
     * Create an analyzer array that holds all the 
     * analyzers to be processed
     */
-    var start = new Date();
     var analyzers = [pointBufferAnalyzer, s1s2Analyzer, apdAnalyzer],
     plotSettings = settings.getSettings();
     
@@ -107,7 +105,5 @@ require(["settings",
         );
      
      form.updateCalculations();
-     var end = new Date();
-
-     console.log(end.getTime() - start.getTime());
+     
  });

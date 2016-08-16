@@ -12,8 +12,16 @@ define(["utility"],
         /**
         * This object describes the settings for the form.
         */
-        var settings = null;
-        var initialSettings = null;
+        var settings = null,
+        initialSettings = null,
+
+        formCtrls    = ["displayV", "displayCcai", "displayCcasr",
+            "displayXf","displayXd","displayXm","displayXh","displayXj",
+            "displayXfca","displayXkr","displayXks","displayXto",
+            "displayYto","displayAPDDI","displayS1S2", "secondaryPlot"],
+        settingCtrls = ["s1","s2","ns1", "gna","gk1","gkr","gks","gto",
+                      "pca","xknaca"];
+
 
 
       /**
@@ -34,13 +42,7 @@ define(["utility"],
           */
 
           // Stores all the variables that are displayed on the webpage.
-          var  formCtrls    = ["displayV", "displayCcai", "displayCcasr",
-                "displayXf","displayXd","displayXm","displayXh","displayXj",
-                "displayXfca","displayXkr","displayXks","displayXto",
-                "displayYto","displayAPDDI","displayS1S2", "secondaryPlot"],
-          settingCtrls = ["s1","s2","ns1", "gna","gk1","gkr","gks","gto",
-                          "pca","xknaca"];
-
+          
           /**
              * These methods initialize the variables on the webpage.
              */
@@ -50,8 +52,8 @@ define(["utility"],
           // On-click Action listener for the default button.
           var defaultButton = document.getElementById("default");
           defaultButton.addEventListener("click", function(e) {
-            setDefaultFormCtrls();
-            setDefaultSettingCtrls();
+            _setDefaultFormCtrls();
+            _setDefaultSettingCtrls();
 
             updateCalculations();
           });
@@ -59,9 +61,10 @@ define(["utility"],
           // On-click Action listener for the print button.
           var printButton = document.getElementById("print");
           printButton.addEventListener("click", function(e) {             
-            mediator.printPoints(settings, fetchPointsToPrint());
+            mediator.printPoints(settings);
           });
 
+      }
         /**
          * This method initializes the form settings to their default values.
          * 
@@ -69,20 +72,17 @@ define(["utility"],
          */
           function _initializeFormCtrls(settingsParam){
             formCtrls.forEach(function(ctrl){
-              var ele = document.getElementsByName(ctrl)[0];  
+            var ele = document.getElementsByName(ctrl)[0];  
               if(ele.type == "select-one"){ // For the currents drop down
-                for (var i = 0, j = ele.options.length; i < j ; i++) {
-                  var option = ele.options[i];
-                  if (option.value === settingsParam[ele.name]) {              
-                    ele.selectedIndex = i;
-                    break;
-                  }
-                }
+                // set label for currents
+                _setSecondaryPlotLabels(ele);
               } 
               else{
-                ele.checked = settingsParam[ele.name];
-              }                                            
-              _appendHandler(ele, settingsParam);           
+                //set css class
+                _setCssClass(ele);
+              }
+                utils.setElementValue(ele,  settingsParam[ele.name]);              
+                _appendHandler(ele, settingsParam);
             });
           }
 
@@ -94,7 +94,7 @@ define(["utility"],
           function _initializeSettingCtrls(settingsParam){
             settingCtrls.forEach( function(ctrl){
               var ele = document.getElementsByName(ctrl)[0];                                                  
-              ele.value = settingsParam[ele.name];
+              utils.setElementValue(ele,  settingsParam[ele.name]);
               _appendHandler(ele, settingsParam); 
             });
           }
@@ -109,19 +109,17 @@ define(["utility"],
           * @param {settingsParam} - an object that holds the default parameter settings
           *
           */
-          function _appendHandler(ele, settingsParam){ 
-            var propName = (ele.type === "checkbox")?  "checked" : "value";
+        function _appendHandler(ele, settingsParam){ 
             ele.addEventListener("change", function(e) {             
-              settingsParam[ele.name] = (ele.type == "select-one")? ele.options[ele.selectedIndex][propName]: utils.numericValue(ele[propName]);                                                        
-
+              settingsParam[ele.name] = utils.getElementValue(ele);
               if(ele.type === "checkbox" || ele.type == "select-one") {
-                updateDisplay();
+                  updateDisplay();
               }
               else{
-                updateCalculations();
+                  updateCalculations();
               }  
             });
-          } 
+        } 
 
         /**
           * This method is used to set the form settings to their default values  
@@ -129,37 +127,44 @@ define(["utility"],
           * restore the default values.
           */
           
-          function setDefaultFormCtrls(){                
-            formCtrls.forEach( function(ctrl){
-              var ele = document.getElementsByName(ctrl)[0]; 
-              settings.formSettings[ele.name] =  initialSettings.formSettings[ele.name];
-              if(ele.type == "select-one"){
-                for (var i = 0, j = ele.options.length; i < j ; i++) {
-                  var option = ele.options[i];
-                  if (option.value === initialSettings.formSettings[ele.name]) {              
-                    ele.selectedIndex = i;
-                    break;
-                  }
-                }
-              } 
-              else{
-                ele.checked = initialSettings.formSettings[ele.name];
-              }                                                      
+        function _setDefaultFormCtrls(){                
+           formCtrls.forEach( function(ctrl){
+            var ele = document.getElementsByName(ctrl)[0]; 
+            settings.formSettings[ele.name] =  initialSettings.formSettings[ele.name];
+            utils.setElementValue(ele, settings.formSettings[ele.name]) ;                                                    
             });
-          }
+        }
         /**
           * This method is used to set the parameter settings to their default values  
           * initialSettings is a global variable where all the default values are stores and it is used to 
           * restore the default values.
           */
-          function setDefaultSettingCtrls(){                
+        function _setDefaultSettingCtrls(){                
             settingCtrls.forEach( function(ctrl){
               var ele = document.getElementsByName(ctrl)[0]; 
               settings.calculationSettings[ele.name] =  initialSettings.calculationSettings[ele.name];             
               ele.value = initialSettings.calculationSettings[ele.name];
             });
-          }       
-        } 
+        }       
+        
+        function _setSecondaryPlotLabels(ele){
+        
+            if(ele["options"]){
+                for (var i = 0, j = ele.options.length; i < j ; i++) {
+                    ele.options[i].text = initialSettings.formSettings[ele.options[i].value];
+                }
+            }    
+        }
+        
+        function  _setCssClass(ele){
+            var parentDiv = ele.parentElement,
+            name = ele.name;
+            if(parentDiv){
+                name = name.replace('display', '');
+                name = name.charAt(0).toLowerCase() + name.slice(1);            
+                parentDiv.className = utils.getCssClass(settings.formSettings.colors[name]);
+            }
+        }
 
         function updateCalculations() {        
           mediator.updateCalculator(_.cloneDeep(settings));
@@ -171,58 +176,6 @@ define(["utility"],
         }
 
       /**
-        * This function identifies what are the form settings that are currently 
-        * selected fetches the points that need to be printed.
-        * The only points printed will be the one's that are selcted.
-        *
-        * @return {Array} - that will contain a list of points to be printed. 
-        */
-        function fetchPointsToPrint(){
-          var printPoints = [];
-          var formSettings = settings.formSettings;
-          for(var setting in formSettings) {
-            if(formSettings.hasOwnProperty(setting)){
-              if(      (formSettings[setting] === true) 
-                ||  (formSettings[setting] === 1) 
-                ||  (setting === "secondaryPlot") ) {
-                if(setting === "secondaryPlot"){
-                  printPoints.push(formSettings[setting]);
-                }
-                else{
-                  var name = getPointName(setting);                     
-                  if(name){
-                    if(settings.calculationSettings.pointBuffer.points[name]){
-                      printPoints.push(name);                               
-                    }                        
-                  }
-                }
-
-              }
-            }             
-          }
-          return printPoints;       
-        }
-
-      /**
-        * This function seperates the string "display" from the form setting variable to identify 
-        * the point name and returns it if there is a variable with string display in it else returns null.
-        * Eg: "DisplayV" would return v - which is the variable name.
-        *  
-        * @return {string} - the name of the variable after seperating display from it.
-        */ 
-        function getPointName(displayName){
-        // follows the convention of names staring with display
-        if(displayName  && (typeof displayName === "string") && displayName.includes("display")){
-
-          return displayName.replace("display","").toLowerCase();
-        }
-        else {
-          return null;
-        }
-
-      }
-
-      /**
         * This is the object that will be returned by the function. These are the
         * only things that will be publicly accessible after the form is
         * initialized.
@@ -231,8 +184,7 @@ define(["utility"],
           initialize: initialize,
           updateCalculations: updateCalculations,
           updateDisplay: updateDisplay
-        //exportValues: exportValues,
-      };
+        };
       return api;
 });
 

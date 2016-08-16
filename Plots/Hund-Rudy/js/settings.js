@@ -127,7 +127,7 @@
 
         formSettings: { 
 
-	        displayV: true,
+	        displayV: false,
 	        displayCai: false,
 			displayCajsr: false,
 			displayCamkactive: false,
@@ -159,20 +159,32 @@
 			displayXs2: false,
 			displayAPDDI: false,
         	displayS1S2: false,
-			secondaryPlot: "iks"
+			secondaryPlot: "",
+            //current with labels
+            icab: "I_Ca,b",
+            icalca: "I_Ca",
+            iclb: "I_Cl,b",
+            ik1: "I_K1",
+            ikp: "I_Kp",
+            ikr: "I_Kr",
+            iks: "I_Ks",
+            ina: "I_Na",
+            inaca: "I_NaCa",
+            inak: "I_NaK",
+            inal: "I_Na,l",
+            ipca: "I_pCa",
+            ito1: "I_to1",
+            ito2: "I_to2",
+            colors : {
+                aPDDI: "Orange",
+                s1S2 : "Black",
+                v    : "Red"
+            }
 		}
 	};
 
-    //Setting plot setting dynamically
-    defaultSettings["plotSettings"] = initializePlotSettings();
-
-    defaultSettings.calculationSettings.voltageVariables= getVoltageVariables();
-    defaultSettings.calculationSettings.currentVariables = getCurrentVariables();
-    defaultSettings.calculationSettings.additionalVariables = getAdditionalVariables();
-    defaultSettings.calculationSettings.parameters = getParameters();
-
     // The function return an array of voltage variables
-    function getVoltageVariables(){
+    function _getVoltageVariables(){
         return ["v",	 "cai",	   "cajsr",	"camkactive",	"camktrap",	"cansr",
         		"car",	 "cli",	  "ki",  "nai",	   "xa",	"xaa",
         		"xd",	 "xdpower","xf",	"xf2", "xfca",	"xfca2",	"xh",
@@ -181,117 +193,28 @@
     }
 
     // The function return an array of current variables
-    function getCurrentVariables(){
+    function _getCurrentVariables(){
         return ["icab",	"icalca",	"iclb",	"ik1",	"ikp",	"ikr",	"iks",	
         		"ina",	"inaca","inak",	"inal",	"ipca",	"ito1",	"ito2"];
     }
 
-    // This function returns a set of parameters that need to be updated based on user input.
-    function getParameters(){
-        return ["gna","pca","gbarto1","gbarkr","gks","gbark1","gbarnal"];
-    }
+    function _initialize(override){
 
-    // The function return an array of additional variables that are updated 
-    // in calculatenext
-    function getAdditionalVariables(){
-        return [];
-    }
+        defaultSettings = _.merge(defaultSettings, override);
+          
+        //Adding additional properties    
+        defaultSettings.calculationSettings.voltageVariables = _getVoltageVariables();
+        defaultSettings.calculationSettings.currentVariables =  _getCurrentVariables();
 
-    /* This function {constructor} is used to initiate plot-settings for the setting object
-     * @param {basePlots} - base plot object
-     */
-     function PlotSettings(basePlots){
-        var basePlot  = function(){
-            var basePlotTarget = new Object();      
-            basePlots.forEach(function(item){     
-                basePlotTarget[item.key] =  item.value; 
-            });          
-            return basePlotTarget;
-        }();
-
-        return basePlot;
-    };
-
-    /* This function {constructor} is used to initiate base class object
-     * @param {width, height, offset, plots} 
-     */
-
-    function BasePlot(width, height, offset, plots){
-        this.width = width,
-        this.height = height,
-        this.offset = offset,
-
-        this.plots =    function(){
-            var plotsTarget = new Object();      
-            plots.forEach(function(item){     
-                plotsTarget[item.key] =  item.value; 
-            });          
-            return plotsTarget;
-        }();
-    };
-
-    /* This function {constructor} is used to initiate Plot object
-        * @param {xAxis, yAxis, defaultFlag}
-        *
-        */
-
-        function Plot (xAxis, yAxis, defaultFlag) {     
-            this.range          =  new Point(-0.1, 1.1),     
-            this.unitPerTick    =  new Point(250, 0.10), 
-            this.labelFrequency = new Point(1, 1),
-            this.xAxis          = xAxis,
-            this.yAxis          = yAxis,
-            this.labelPrecision =  new Point(0,1), 
-            this.labelSize      = new Point(0, 0),
-            this.default        = defaultFlag
-        };
-
-    /* This function is responsible for creating plot-settings object;
-     * a nested object in the settings object. One or more plot objects are nested under baseplot
-     * object which in turn can be one or more in number nested under plot settings object.
-     * Here "baseplot" consists of "hundrudy" and "hundrudyOther" which have hundrudyBasePlot and hundrudyOtherBasePlot respectively.
-     */
-     function initializePlotSettings(){
-     	var hundrudyPlots = [],
-        hundrudyOtherPlots = [],
-        hundrudyBasePlot,
-        hundrudyOtherBasePlot,               
-        basePlots = [],
-        plotSettings;
-
-        //hundrudyPlots
-        hundrudyPlots.push({key:"mainPlot",value: new Plot("Time (ms)", "", false)});
-        hundrudyBasePlot = new BasePlot( 437.5, 240, new Point(0, 0), hundrudyPlots);
-
-        // hundrudyOtherPlots
+        //Setting plot setting dynamically            
+        defaultSettings["plotSettings"] = utils.initializePlotSettings( _getCurrentVariables(), defaultSettings.formSettings);         
         
-        var hOtherPlotsInit = [ {key : "icab",  value:  {name: "I_bCa", showDefault:false}},
-                                {key : "icalca",  value:  {name: "I_Ca",  showDefault:false}},
-                                {key : "iclb",  value:  {name: "I_Cl",  showDefault:false}},
-                                {key : "ik1",   value:  {name: "I_K1",  showDefault:false}},
-                                {key : "ikp",   value:  {name: "I_Kr",  showDefault:false}},
-                                {key : "ikr",   value:  {name: "I_Kr",  showDefault:false}},
-                                {key : "iks",   value:  {name: "I_Ks",  showDefault:false}},
-                                {key : "ina",   value:  {name: "I_Na",  showDefault:false}},
-                                {key : "inaca", value:  {name: "I_NaCa",showDefault:false}},
-                                {key : "inak",  value:  {name: "I_NaK", showDefault:false}},
-                                {key : "inal",  value:  {name: "I_lNa", showDefault:false}},
-                                {key : "ipca",  value:  {name: "I_pCa", showDefault:false}},
-                                {key : "ito1",  value:  {name: "I_to1", showDefault:false}},
-                                {key : "ito2",  value:  {name: "I_to2", showDefault:false}} ];
-
-        hOtherPlotsInit.forEach(function(plotItem){
-        hundrudyOtherPlots.push({key: plotItem["key"], value: new Plot("Time (ms)", plotItem["value"]["name"], 
-                            plotItem["value"]["showDefault"])}); });
-        
-        hundrudyOtherBasePlot = new BasePlot( 437.5, 240, new Point(0, 300), hundrudyOtherPlots);
-
-        basePlots.push({key:"Hundrudy", value : hundrudyBasePlot});
-        basePlots.push({key:"HundrudyOther", value :hundrudyOtherBasePlot});
-
-        plotSettings = new PlotSettings(basePlots);
-        return plotSettings;
-    };
+         // assign colors            
+        defaultSettings["formSettings"]["colors"] =  utils.extend(defaultSettings["formSettings"]["colors"],
+                                                     utils.assignColors(utils.removeArrayItems(_getVoltageVariables(), ["v"])));                                
+               
+        return defaultSettings;
+    }
 
     /*
     * The module exposes functions 
@@ -305,7 +228,7 @@
             * This function modifies any default settings
             */
             initialize: function(override) {
-                defaultSettings = _.merge(defaultSettings, override);
+                return _initialize(override);
             },   
 
         /**

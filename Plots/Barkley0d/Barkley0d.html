@@ -10,7 +10,6 @@ plot: true
 	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
-	<h1><center>Barkley0d</center></h1>
 	<div id="app">
 		<canvas id="plot">hello</canvas>
 	</div>
@@ -18,53 +17,48 @@ plot: true
 	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-330px;margin-left:550px;">
 
 		<fieldset>
-			<!-- <div class="plotter_inputgroup plotter_inputgroup-orange">
-				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" checked/>
-				<label for="displayAPDDI">Display APD/DI</label>
-			</div> -->
-			<div class="plotter_inputgroup plotter_inputgroup-black">
-				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
+			<div>
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" >
 				<label for="displayS1S2">Display Timings</label>
 			</div>
-			<div class="plotter_inputgroup plotter_inputgroup-green">
-				<input id="displayU" name="displayU" type="checkbox" checked/>
-				<label for="displayU">Display u</label>
-			</div>
-			<div class="plotter_inputgroup plotter_inputgroup-red">
-				<input id="displayV" name="displayV" type="checkbox" checked/>
+			<div>
+				<input id="displayV" name="displayV" type="checkbox" >
 				<label for="displayV">Display v</label>
+			</div>
+			<div>
+				<input id="displayU" name="displayU" type="checkbox" >
+				<label for="displayU">Display u</label>
 			</div>
 		</fieldset>
 		<fieldset>
             <div class="plotter_inputgroup">
 				<label for="s1">S1</label>
-				<input type="text" name="s1" value="15" />
+				<input type="text" name="s1"/>
 			</div>
 			<div class="plotter_inputgroup">
 				<label for="ns1"># of S1 beats</label>
-				<input type="text" name="ns1" value="4"/>
+				<input type="text" name="ns1"/>
 			</div>
 			<div class="plotter_inputgroup">
 				<label for="s2">S2</label>
-				<input type="text" name="s2" value="30"/>
+				<input type="text" name="s2"/>
 			</div>
 			<div class="plotter_inputgroup">
 				<label for="a">a</label>
-				<input type="text" name="a" value="000" />
+				<input type="text" name="a" />
 			</div>
 			<div class="plotter_inputgroup">
 				<label for="b">b</label>
-				<input type="text" name="b" value="000" />
+				<input type="text" name="b"/>
 			</div>
 			<div class="plotter_inputgroup">
 				<label for="eps">eps</label>
-				<input type="text" name="eps" value="000" />
+				<input type="text" name="eps"/>
 			</div>
 		</fieldset>
 		<fieldset>
 			<div class="plotter_inputgroup">
 				<center>
-				<!-- <button id="update">Update</button> -->
 				<button id="default" name="default">Defaults</button>
 				<button id="print" name="print">Print Data</button>
 				</center>

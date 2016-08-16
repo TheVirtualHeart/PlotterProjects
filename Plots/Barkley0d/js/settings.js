@@ -31,28 +31,38 @@ function Settings(utils) {
             displayU: false,
             displayV: false,
             displayS1S2: false,
-            //secondaryPlot: "il",
-        },
-        plotSettings:{
-        	Barkley: {
-        		width: 437.5,
-        		height: 240,
-        		offset: new Point(0,0),
-        		plots: {
-        			mainPlot: {
-        				range: new Point(-0.1, 1.1),
-                        unitPerTick: new Point(30, .1),
-                        labelFrequency: new Point(1, 1),
-                        xAxis: "Time (ms)",
-                        yAxis: " ",
-                        labelPrecision: new Point(0, 1),
-                        labelSize: new Point(0, 0),	
-        			}
-
-        		}
-        	}
-        }
+            colors  : {
+                s1S2 : "Black",
+                v    : "Red"
+            }
+        } 
+     
     };
+    
+    // The function return an array of voltage variables
+    function _getVoltageVariables(){
+        return ["v", "u"];
+    }
+
+    function _initialize(override){        
+        defaultSettings = _.merge(defaultSettings, override);         
+    //Adding additional properties    
+        defaultSettings.calculationSettings.voltageVariables = _getVoltageVariables();
+
+    // overriding the plot settings explicitly.
+            var plotParams = {
+                unitPerTick    :  new Point(30, 0.10)
+            };
+
+    //Setting plot setting dynamically            
+        defaultSettings["plotSettings"] = utils.initializePlotSettings( null, defaultSettings.formSettings,plotParams);
+
+     // assign colors            
+        defaultSettings["formSettings"]["colors"] =  utils.extend(defaultSettings["formSettings"]["colors"],
+                                                      utils.assignColors(utils.removeArrayItems(_getVoltageVariables(), ["v"]))); 
+
+        return defaultSettings;                                              
+    }
 
     return{
 
@@ -60,16 +70,13 @@ function Settings(utils) {
          * This function modifies any default settings
          */
         initialize: function(override) {
-            
-            defaultSettings = _.merge(defaultSettings, override);
-        
+            return _initialize(override);
         },  
 
 
         /**
          * Retrieves the settings
-         */
-        
+         */        
         getSettings: function() {
             return _.cloneDeep(defaultSettings);
         }

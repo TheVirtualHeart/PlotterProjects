@@ -1,13 +1,13 @@
 require.config({
-	paths: {
-		calculator: "calculator",
-		form: "form",
-		mediator: "../../Noble0d/js/mediator",
-		plots: "plots",
-		pointBufferAnalyzer: "pointBufferAnalyzer",
-        s1s2Analyzer: "../../Noble0d/js/s1s2Analyzer",
-        utility: "../../Noble0d/js/utility"
-	},
+    paths: {
+        calculator: "calculator",
+        form: "form",
+        mediator: "../../commonJs/mediator",
+        plots: "../../commonJs/plots",
+        pointBufferAnalyzer: "../../commonJs/pointBufferAnalyzer",
+        s1s2Analyzer: "../../commonJs/s1s2Analyzer",
+        utility: "../../commonJs/utility"
+    },
 });
 
 
@@ -33,25 +33,13 @@ function initialize(
      */
     settings.initialize({
         formSettings: {
-            displayV: true,
-            displayU: true,
+            displayV: true
         }, 
         calculationSettings: {
             pointBuffer: {
-                bufferSize: 1000
-            },
-        },
-        plotSettings: {
-            Barkley: {
-                plots: {
-                    mainPlot: {
-
-                        xAxis: "Time (ms)",
-                        yAxis: "",
-                    }
-                }
+                bufferSize: 4
             }
-        }
+        },
     });
 
    /*
@@ -59,7 +47,9 @@ function initialize(
     * analyzers to be processed
     */
     var analyzers = [pointBufferAnalyzer, s1s2Analyzer],
-        plotSettings = settings.getSettings();
+    
+
+    plotSettings = settings.getSettings();
 
     /*
      * Initialize a calculator
@@ -100,6 +90,7 @@ function initialize(
         plotSettings,
         mediator
     );
+    
     form.updateCalculations();
 
 });

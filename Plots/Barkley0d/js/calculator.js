@@ -12,31 +12,14 @@
 	/**
 	 * Displays the current iteration of the count
 	 */
-	var count = 0;
+	var count = 0,
 
 	/**
      * This refers the functions that will analyze the 
      * data that is produced
      */
-
-    var analyzers = [];
-
-	/**
-	 * These variables are used in the calculations of Barkley.
-	 */
-
-	var u;
-	var v;
-	var a;
-	var b;
-	var eps;
-	var stimdur;
-	var v_stim;
-	var s1Start;
-	var s2;
-	var ns1;
-	var s1;
-	var timestep;	 
+    analyzers = [],
+    cS;
 
     /**
 	 * The Calculator is initialized with certain default settings. These will
@@ -57,7 +40,6 @@
 	 */
 	
 	function initialize(newSettings) {		
-		//reset(newSettings);
 		settings = utils.extend(newSettings);
 	}
 
@@ -77,21 +59,7 @@
 	 		settings.initial[attrname]  =  overwrite[attrname]; 
 	 	};
 
-	 	u = settings.initial.u;
-	 	v = settings.initial.v;
-
-	 	a = settings.initial.a;
-	 	b = settings.initial.b;
-	 	eps = settings.initial.eps;
-	 	stimdur = settings.initial.stimdur;
-	 	v_stim = settings.initial.v_stim;
-	 	s1Start = settings.initial.s1Start;
-	 	s2 = settings.initial.s2;
-	 	ns1 = settings.initial.ns1;
-	 	s1 = settings.initial.s1;
-	 	timestep = settings.initial.timestep;	
-
-    	count = 0;
+	 	count = 0;
     }
 
 
@@ -118,42 +86,29 @@
     }
 
 	/**
-	 * Performs a differential calculations and increments the values that will
-	 * be returned by getPoints().
+	 * Performs a differential calculations and increments the values.
 	 */
 	function calculateNext(data) {
 
-	 	var u = data.calculationSettings.u;
-	 	var v = data.calculationSettings.v;
+        cS.istim = _s1s2Stimulus(count, data);
 
-	 	var a = data.calculationSettings.a;
-	 	var b = data.calculationSettings.b;
-	 	var eps = data.calculationSettings.eps;
-	 	var stimdur = data.calculationSettings.stimdur;
-	 	var v_stim = data.calculationSettings.v_stim;
-	 	var s1Start = data.calculationSettings.s1Start;
-	 	var s2 = data.calculationSettings.s2;
-	 	var ns1 = data.calculationSettings.ns1;
-	 	var s1 = data.calculationSettings.s1;
-	 	var timestep = data.calculationSettings.timestep;	
+        var du = (1 / cS.eps) * cS.u * (1 - cS.u) * (cS.u - (cS.b + cS.v) / cS.a) + cS.istim;
+        var dv = cS.u - cS.v;
 
-        var istim = _s1s2Stimulus(count, data);
-
-        var du = (1 / eps) * u * (1 - u) * (u - (b + v) / a) + istim;
-        var dv = u - v;
-
-        u +=  timestep * du;
-        v +=  timestep * dv;
+        cS.u +=  cS.timestep * du;
+        cS.v +=  cS.timestep * dv;
 		
 		// iterate the count
 		count ++;
 
-		data.calculationSettings.u  = u;
-		data.calculationSettings.v  = v;
-
+		// sets voltage variables after calculations
+        utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
 		return data;
 	}
-
+   
+   /*
+	* Gets the number of iterations
+	*/
 	function _getNumIterations(settings) {
 		var c = settings.calculationSettings;
 		var num = (((c.s1 * c.ns1) + c.s2) * 1.1) / c.timestep;
@@ -161,11 +116,17 @@
 		return num;    
 	}
 
+   /*
+    * This function runs calculations by calling calculateNext
+    */
     function runCalculations(iterations, settings) {
-    	var state = settings;  
+    	var state = settings,
+    	data,
+    	curAnalyzer;
     	count = 0;
 
-    	var curAnalyzer;
+    	cS =  _.cloneDeep(settings.calculationSettings); 
+
  	    /**
          * Reset the calculators to their base states
          */
@@ -181,13 +142,15 @@
          * function
          */
         for (var i = 0; i < numCalculations; i++) {
-         	var data = calculateNext(state);
-         	for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
+         	data = calculateNext(state); 
+         	for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {			            	
          		if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-         			analyzers[curAnalyzer].aggregate(data);
+         			if(analyzers[curAnalyzer].analyzerName !== "S1S2Analyzer" || i >= numCalculations-2){
+         				analyzers[curAnalyzer].aggregate(data);
+         			}
          		}
          	}
-        }
+     	}
     }
 
     function addAnalysisFunction(fn) {
@@ -244,11 +207,8 @@
 	 var api = {
 	 	addAnalysisFunction: addAnalysisFunction,
 	 	runCalculations: runCalculations,
-	 	timestep: settings.timestep,
 	 	initialize: initialize,
-		calculateNext: calculateNext,
 		updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,
-		//getStimuliLocations: getStimuliLocations,
 		reset: reset,
 	};
 	return api;

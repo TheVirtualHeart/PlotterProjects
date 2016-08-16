@@ -1,4 +1,17 @@
 require.config({
+    paths: {
+        calculator: "calculator",
+        form: "form",
+        mediator: "../../commonJs/mediator",
+        plots: "plots",
+        pointBufferAnalyzer: "pointBufferAnalyzer",
+        s1s2Analyzer: "../../commonJs/s1s2Analyzer",
+        apdAnalyzer: "../../commonJs/APDAnalyzer",
+        utility: "../../commonJs/utility"
+    },
+});
+
+require.config({
 	paths: {
 		calculator: "calculator",
 		form: "form",

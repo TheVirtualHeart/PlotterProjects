@@ -1,11 +1,11 @@
 /**
   * This module describes the Form element. This form can alter the appearance
-  * of the plot, describing what variables are plotted and how the Mahajan 
+  * of the plot, describing what variables are plotted and how the Iyer 
   * differential equation is calculated.
   */
 
 define(["utility"],
-    function MahajanForm(utils) {
+    function IyerForm(utils) {
       "use strict";
 
       var mediator;
@@ -17,15 +17,15 @@ define(["utility"],
         initialSettings = null,
 
         // Stores all the variables that are displayed on the webpage.
-        formCtrls    = [  "displayAPDDI", "displayS1S2",  "displayV", 
-                          "displayM",     "displayH",     "displayJ",     "displayXr",
-                          "displayXs1",   "displayXs2",   "displayXtos",  "displayYtos",
-                          "displayXtof",  "displayYtof",  "displayCp",    "displayCs",
-                          "displayCi",    "displayCj",    "displayCjp",   "displayXir",
-                          "displayXnai",  "displayTropi", "displayTrops", "displayPo", "secondaryPlot"],
+        formCtrls    = [ "displayAPDDI", "displayS1S2",  "displayV", 
+                        "displayCai",   "displayCajsr", "displayCansr",
+                        "displayCass",  "displayHtrpnca",   "displayKi",
+                        "displayLtrpnca",   "displayNa",    "displayNai",
+                        "displayOherg", "displayOks",   "displayOkv14",
+                        "displayOkv43", "displayOpen",  "displayPo",
+                        "displayYca","secondaryPlot"],
 
-        settingCtrls = ["s1","s2","ns1","gna", "gca", "gtof", "gtos", "gkr","gks","gkix","gnaca"];
-
+        settingCtrls = ["s1","s2","ns1","GNa","PCa", "GKv43","GKr","GKs","GK1","kNaCa"];
 
 
       /**
@@ -45,6 +45,7 @@ define(["utility"],
           * change
           */
 
+          
        	/**
          * These methods initialize the variables on the webpage.
          */
@@ -65,6 +66,7 @@ define(["utility"],
           printButton.addEventListener("click", function(e) {             
             mediator.printPoints(settings);
           });
+
         }
 
         /**
@@ -74,7 +76,7 @@ define(["utility"],
          */
          function _initializeFormCtrls(settingsParam){
             formCtrls.forEach(function(ctrl){
-            var ele = document.getElementsByName(ctrl)[0];  
+              var ele = document.getElementsByName(ctrl)[0];  
               if(ele.type == "select-one"){ // For the currents drop down
                 // set label for currents
                 _setSecondaryPlotLabels(ele);
@@ -136,7 +138,7 @@ define(["utility"],
             utils.setElementValue(ele, settings.formSettings[ele.name]) ;                                                    
             });
           }
-
+        
         /**
           * This method is used to set the parameter settings to their default values  
           * initialSettings is a global variable where all the default values are stores and it is used to 
@@ -148,8 +150,8 @@ define(["utility"],
               settings.calculationSettings[ele.name] =  initialSettings.calculationSettings[ele.name];             
               utils.setElementValue(ele, settings.calculationSettings[ele.name]) ;
             });
-          }       
-        
+          }
+
         function _setSecondaryPlotLabels(ele){
         
             if(ele["options"]){
@@ -167,8 +169,8 @@ define(["utility"],
                 name = name.charAt(0).toLowerCase() + name.slice(1);            
                 parentDiv.className = utils.getCssClass(settings.formSettings.colors[name]);
             }
-        } 
-
+        }   
+        
         function updateCalculations() {        
           mediator.updateCalculator(_.cloneDeep(settings));
         }
@@ -178,7 +180,7 @@ define(["utility"],
           mediator.updateDisplay(_.cloneDeep(settings));
         }
 
-      /**
+       /**
         * This is the object that will be returned by the function. These are the
         * only things that will be publicly accessible after the form is
         * initialized.
@@ -187,6 +189,7 @@ define(["utility"],
           initialize: initialize,
           updateCalculations: updateCalculations,
           updateDisplay: updateDisplay
-        };
+        //exportValues: exportValues,
+      };
       return api;
     });

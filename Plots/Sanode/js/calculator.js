@@ -29,9 +29,7 @@ define(["utility"],
 	 */
 	function initialize(newSettings) {		
 		//reset(newSettings);
-		settings 		 =    utils.extend(newSettings);		
-		cS 	 =   _.cloneDeep(settings.calculationSettings);	
-		cC 	 =   new CalcConstants(settings.calculationSettings);
+		settings 		 =    utils.extend(newSettings);
 	}
 
 	/**
@@ -67,26 +65,11 @@ define(["utility"],
 	 * Performs a differential calculations considering one point at a time.
 	 */
 	function calculateNextCentral(data) {
-        // sets voltage variables after calculations
-	 	data.calculationSettings.voltageVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-	 	});
-
-	 	// sets current variables after calculations
-	 	data.calculationSettings.currentVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-	 	});
-
-        data.calculationSettings.additionalVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-        });
-
-        cS.gfk = cS.gfna;
-
+        
         //Table setup for voltage-dependent functions
-        var adl, bdl, afl, bfl, adt, bdt, aft, bft, tr, tq, ay, by  ;
+        var adl, bdl, afl, bfl, adt, bdt, aft, bft, tr, tq, ay, by, temp,
 
-        var tdlt_t, bar_dlt_t, tflt_t, bar_flt_t,
+            tdlt_t, bar_dlt_t, tflt_t, bar_flt_t,
         	d_1t_t, tdtt_t, bar_dtt_t, tftt_t, bar_ftt_t, bar_paft_t, bar_past_t,
         	tpaft_t, tpast_t, bar_piit_t, ast_t, bst_t, bar_rt_t,
     		trt_t, bar_qt_t, tqt_t, bar_yt_t, tyt_t, inakdenom_t, inacat_t ;
@@ -176,7 +159,6 @@ define(["utility"],
         cS.ina = 0.0;
 
 		// ical
-        var temp;
         temp = (bar_dlt_t - cS.sdl) / tdlt_t;
         cS.sdl = cS.sdl + temp * cS.timestep;
         temp = (bar_flt_t - cS.sfl) / tflt_t;
@@ -258,50 +240,25 @@ define(["utility"],
         cS.v = cS.v + temp * cS.timestep;
         
         // sets voltage variables after calculations
-	 	data.calculationSettings.voltageVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-	 	});
-
-	 	// sets current variables after calculations
-	 	data.calculationSettings.currentVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-	 	});
-
-        data.calculationSettings.voltageVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-        });
-
-        data.calculationSettings.additionalVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-        });
-
+        utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
+        
+        // sets current variables after calculations
+        utils.copySpecific(data.calculationSettings, cS, data.calculationSettings.currentVariables);
+        
 	 	// iterate the count
 		count++;
 
 		return data;
     }
     function calculateNextPeripheral(data) {
-        // sets voltage variables after calculations
-        data.calculationSettings.voltageVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-        });
-
-        // sets current variables after calculations
-        data.calculationSettings.currentVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-        });
-
-        cS.gfk = cS.gfna;
         
         var bar_mt_t, tmt_t, bar_ht_t, th1t_t, th2t_t, tdlt_t, bar_dlt_t,
             tflt_t, bar_flt_t, d_1t_t, tdtt_t, bar_dtt_t, tftt_t, bar_ftt_t, 
             bar_paft_t, bar_past_t, tpaft_t, tpast_t, bar_piit_t, ast_t, bst_t,
             bar_rt_t, trt_t, bar_qt_t, tqt_t, bar_yt_t, tyt_t, inakdenom_t, inacat_t,
-            bar_h1, bar_h2 ;
+            bar_h1, bar_h2,
 
-          
-
-        var b1m, c1m, d1m, b2m, c2m, d2m, em, ah, bh, adl, bdl,
+            b1m, c1m, d1m, b2m, c2m, d2m, em, ah, bh, adl, bdl,
             afl, bfl, adt, bdt, aft, bft, tr, tq, ay, by,
             temp, sh_new    ;
 
@@ -514,14 +471,10 @@ define(["utility"],
         cS.v = cS.v + temp * cS.timestep;
         
         // sets voltage variables after calculations
-        data.calculationSettings.voltageVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-        });
-
+        utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
+        
         // sets current variables after calculations
-        data.calculationSettings.currentVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-        });
+        utils.copySpecific(data.calculationSettings, cS, data.calculationSettings.currentVariables);
 
         // iterate the count
         count++;
@@ -553,50 +506,19 @@ define(["utility"],
 	function runCalculations(iterations, settings) {
 	 	var state   =    settings, 
 	 	curAnalyzer,
-        sanodeTypeValues = {};
+        sanodeTypeValues = {},
+        data;
+        
         count   =    0;
         
-        //need to update change in parameter values in page level cS object.
-        state.calculationSettings.parameters.forEach(function (item){
-           cS[item] = state.calculationSettings[item];
-        });
-
-        sanodeTypeValues   = { 
-          sanodeC : { cm:20.0e-6,     
-            gkp:6.65e-5,    gbna:0.58e-4,   gbca:1.32e-5,
-            gbk:2.52e-5,    gfna:5.47e-4,   timestep: 0.0001,
-
-            v   : 15.760660258312,      spii: 3.2132281142660e-02,
-            sdl : 0.99815953112686,     sfl : 0.14004248323399,
-            sdt : 0.99956816419731,     sft : 6.5705516478730e-05,
-            sy  : 1.2809083561878e-02,  sr  : 0.53922249081045,
-            sq  : 1.6146678857860e-02,  sxs : 7.5035050267509e-02, //sxs = n gate
-            spaf: 0.55835887024974,     spas: 0.45592769434524,
-           },
-
-          sanodeP :{ cm: 65.0e-6, pna: 1.2e-6,
-            gkp: 1.14e-2,   gbna: 1.89e-4,  gbca: 4.3e-5,
-            gbk: 8.19e-5,   gfna: 0.69e-2,  timestep: 0.00005,
-
-            v: -64.35,      sm: 0.124,      sh1: 0.595,
-            sh2: 5.25e-2,   sdl: 8.45e-2,   sfl: 0.987,
-            sdt: 1.725e-2,  sft: 0.436,     sy: 5.28e-2,
-            sr: 1.974e-2,   sq: 0.663,      sxs: 7.67e-2,
-            spaf: 0.400,    spas: 0.327,    spii: 0.991,
-           } 
-        };
+        cS   =   _.cloneDeep(settings.calculationSettings); 
+        cC   =   new CalcConstants(settings.calculationSettings);
 
         var sanodeDependants = {
             sanodeC : { normalPoints: {v : new Point(-58 , 22)},
                         threshholdPoint: {threshhold: -50 }},
             sanodeP : { normalPoints: {v : new Point(-78 , 24)},
                         threshholdPoint: {threshhold: -65 }}
-        };
-
-        // update the default settings based on the model selected.
-        for(var item in sanodeTypeValues[state.calculationSettings.sanodeType]){
-            state.calculationSettings[item] = sanodeTypeValues[state.calculationSettings.sanodeType][item];
-            cS[item] = sanodeTypeValues[state.calculationSettings.sanodeType][item];
         };
 
         /**
@@ -631,19 +553,20 @@ define(["utility"],
          */
          for (var i = 0; i < numCalculations; i++) {
             if (state.calculationSettings.sanodeType === "sanodeC"){ 
-              var data = calculateNextCentral(state);
+              data = calculateNextCentral(state);
             }
             else{ 
-             var data = calculateNextPeripheral(state);   
+             data = calculateNextPeripheral(state);   
             }
-
-            for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
-         		if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-                    // if(analyzers[curAnalyzer] === "pointBufferAnalyzer" || analyzers[curAnalyzer] === "s1s2Analyzer")
-         			analyzers[curAnalyzer].aggregate(data);
-         		}
-         	}
-         }
+                for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
+                    if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
+                      if(analyzers[curAnalyzer].analyzerName !== "S1S2Analyzer" || i >= numCalculations-2) {
+                            analyzers[curAnalyzer].aggregate(data);
+                      }
+                    }
+                }
+            }
+         
 
         /**
          * Perform a function after the calculations are run
@@ -677,7 +600,6 @@ define(["utility"],
 	 	addAnalysisFunction: addAnalysisFunction,
 	 	runCalculations: runCalculations,
 	 	initialize: initialize,
-	 	// calculateNext: calculateNext,
 	 	updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,
 		reset: reset,
 	};

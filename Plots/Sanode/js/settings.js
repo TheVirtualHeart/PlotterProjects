@@ -22,7 +22,7 @@ define(["utility"],
         gks:3.45e-4,    gkr:7.97e-4,    gkp:6.65e-5,
         gbna:0.58e-4,   gbca:1.32e-5,   gbk:2.52e-5,
         gcal:0.58e-2,   gcat:0.43e-2,   gto:4.91e-3,
-        gfna:5.47e-4,   gfk:null,   
+        gfna:5.47e-4,   gfk:5.47e-4, //gfk = gfna.   
             
         //Used only in SanodePeripheral
         pna:0.0,        sm  : 0.99981949872082,
@@ -32,7 +32,6 @@ define(["utility"],
         // numerical parameters
         timestep: 0.0001, endTime: 1.5,
 
-
         //initial values
         //v = sv in fortran code.
         v   : 15.760660258312,      spii: 3.2132281142660e-02,
@@ -40,8 +39,7 @@ define(["utility"],
         sdt : 0.99956816419731,     sft : 6.5705516478730e-05,
         sy  : 1.2809083561878e-02,  sr  : 0.53922249081045,
         sq  : 1.6146678857860e-02,  sxs : 7.5035050267509e-02, //sxs = n gate
-        spaf: 0.55835887024974,     spas: 0.45592769434524,
-        
+        spaf: 0.55835887024974,     spas: 0.45592769434524,        
 
         // currents helpers.
         ibna: 0,    ibca: 0,    ibk: 0,        
@@ -54,13 +52,12 @@ define(["utility"],
         if:  0, // if is the sum of ifna and ifk
         ik:  0, // ik is the sum of ikr and iks
         inak:0, icap: 0,    inaca: 0,
-        ikp: 0, ito: 0 
-
+        ikp: 0, ito: 0
     },
 
       formSettings: { 
 
-        displayV    : true,
+        displayV    : false,
         displaySdl  : false,
         displaySdt  : false,
         displaySy   : false,
@@ -76,134 +73,112 @@ define(["utility"],
         displaySh1  : false,
         displaySh2  : false,
         displayAPDDI: false,
-        secondaryPlot: "ibna",
+        secondaryPlot: "",
+        //current with labels
+        ical:   "I_Cal",
+        icat:   "I_Cat",
+        ito:    "I_to",
+        ikp:    "I_Sus",
+        ikr:    "I_Kr",
+        iks:    "I_Ks",
+        inaca:  "I_NaCa",
+        ibna:   "I_bNa",
+        ibca:   "I_bCa",
+        ibk:    "I_bk",
+        if:     "I_f",
+        inak:   "I_NaK",
+        ina:    "I_Na",
+        colors : {
+                aPDDI: "Orange",
+                s1S2 : "Black",
+                v    : "Red"
+        }
       }
     };
     
-    //Setting plot setting dynamically
-    defaultSettings["plotSettings"] = initializePlotSettings();
-
-    defaultSettings.calculationSettings.voltageVariables= getVoltageVariables();
-    defaultSettings.calculationSettings.currentVariables = getCurrentVariables();
-    defaultSettings.calculationSettings.additionalVariables = getAdditionalVariables();
-    defaultSettings.calculationSettings.parameters = getParameters();
-
+    
       // The function return an array of voltage variables
-    function getVoltageVariables(){
+    function _getVoltageVariables(){
         return ["v",  "sdl", "sdt", "sy",  "sq",  "spaf", "spii", "sfl", "sft", "sr", "sxs", "spas", "sm", "sh1", "sh2"];
     }
 
-      // The function return an array of current variables
-    function getCurrentVariables(){
+    // The function return an array of current variables
+    function _getCurrentVariables(){
         return ["ina", "ibna", "ibca", "ibk", "if", "ikr", "iks", "inak", "ikp",  "ical", "ito",  "icat", "inaca"];
     }
 
-      // This function returns a set of parameters that need to be updated based on user input.
-    function getParameters(){
-        return ["gcal", "gcat","gto", "gkr", "gks", "endTime"];
+    /* This function is responsible for set varaibles values dependent on the cell type;
+        *@param {dfS} - object
+        *@param  {cellType} string
+    */
+    
+    function setDependents(selectedItype, calcSettings){
+        var values = {
+            sanodeC : { cm:20.0e-6,     
+            gkp:6.65e-5,    gbna:0.58e-4,   gbca:1.32e-5,
+            gbk:2.52e-5,    gfna:5.47e-4,   timestep: 0.0001,
+            gcal: 0.58e-2,  gcat: 0.43e-2,  gto: 4.91e-3,
+            gkr: 7.97e-4,   gks: 3.45e-4, 
+
+            v   : 15.760660258312,      spii: 3.2132281142660e-02,
+            sdl : 0.99815953112686,     sfl : 0.14004248323399,
+            sdt : 0.99956816419731,     sft : 6.5705516478730e-05,
+            sy  : 1.2809083561878e-02,  sr  : 0.53922249081045,
+            sq  : 1.6146678857860e-02,  sxs : 7.5035050267509e-02, //sxs = n gate
+            spaf: 0.55835887024974,     spas: 0.45592769434524,
+            sanodeType : "sanodeC",
+            
+           },
+
+          sanodeP :{ cm: 65.0e-6, pna: 1.2e-6,
+            gkp: 1.14e-2,   gbna: 1.89e-4,  gbca: 4.3e-5,
+            gbk: 8.19e-5,   gfna: 0.69e-2,  timestep: 0.00005,
+            gcal: 6.59e-2,  gcat: 1.39e-2,  gto: 36.49e-3,
+            gkr: 1.6e-2,    gks: 1.04e-2,
+
+            v: -64.35,      sm: 0.124,      sh1: 0.595,
+            sh2: 5.25e-2,   sdl: 8.45e-2,   sfl: 0.987,
+            sdt: 1.725e-2,  sft: 0.436,     sy: 5.28e-2,
+            sr: 1.974e-2,   sq: 0.663,      sxs: 7.67e-2,
+            spaf: 0.400,    spas: 0.327,    spii: 0.991,
+            sanodeType : "sanodeP",
+           } 
+        },      
+        selectedTypeValues = values[selectedItype];
+        
+        if(selectedTypeValues){
+            for(var prop in selectedTypeValues){
+                calcSettings[prop] =  selectedTypeValues[prop];
+            }           
+        }
     }
 
-      // The function return an array of additional variables that are updated 
-      // in calculatenext
-    function getAdditionalVariables(){
-        return ["ik", "ib"];
+    function _initialize(override){
+        
+            //override colors
+            defaultSettings = _.merge(defaultSettings, override); 
+            
+            //Adding additional properties    
+            defaultSettings.calculationSettings.voltageVariables = _getVoltageVariables();
+            defaultSettings.calculationSettings.currentVariables =  _getCurrentVariables();
+            
+            // overriding the plot settings explicitly.
+            var plotParams = {
+                unitPerTick    :  new Point(0.2, 0.10)
+            };
+
+            //Setting plot setting dynamically            
+            defaultSettings["plotSettings"] = utils.initializePlotSettings( _getCurrentVariables(), defaultSettings.formSettings,plotParams);
+            
+             // assign colors            
+            defaultSettings["formSettings"]["colors"] =  utils.extend(defaultSettings["formSettings"]["colors"],
+                                                         utils.assignColors(utils.removeArrayItems(_getVoltageVariables(), ["v"])));
+            
+            defaultSettings.calculationSettings.updateDependents = setDependents;
+
+            return defaultSettings;
     }
-
-  /* This function {constructor} is used to initiate plot-settings for the setting object
-   * @param {basePlots} - base plot object
-   */
-    function PlotSettings(basePlots){
-        var basePlot  = function(){
-            var basePlotTarget = new Object();      
-            basePlots.forEach(function(item){     
-                basePlotTarget[item.key] =  item.value; 
-            });          
-            return basePlotTarget;
-        }();
-        return basePlot;
-    };
-
-   /* This function {constructor} is used to initiate base class object
-    * @param {width, height, offset, plots} 
-    */
-
-    function BasePlot(width, height, offset, plots){
-        this.width = width,
-        this.height = height,
-        this.offset = offset,
-
-        this.plots =    function(){
-            var plotsTarget = new Object();      
-            plots.forEach(function(item){     
-                plotsTarget[item.key] =  item.value; 
-            });          
-            return plotsTarget;
-        }();
-    };
-
-  /* This function {constructor} is used to initiate Plot object
-    * @param {xAxis, yAxis, defaultFlag}
-    *
-    */
-
-    function Plot (xAxis, yAxis, defaultFlag) {     
-        this.range          =  new Point(-0.1, 1.1),     
-        this.unitPerTick    =  new Point(0.2, 0.10), 
-        this.labelFrequency = new Point(1, 1),
-        this.xAxis          = xAxis,
-        this.yAxis          = yAxis,
-        this.labelPrecision =  new Point(0,1), 
-        this.labelSize      = new Point(0, 0),
-        this.default        = defaultFlag
-    };
-
-  /* This function is responsible for creating plot-settings object;
-   * a nested object in the settings object. One or more plot objects are nested under baseplot
-   * object which in turn can be one or more in number nested under plot settings object.
-   * Here "baseplot" consists of "Sanode" and "SanodeOther" which have sanodeBasePlot and sanodeOtherBasePlot respectively.
-   */
-    function initializePlotSettings(){
-        var sanodePlots = [],
-        sanodeOtherPlots = [],
-        sanodeBasePlot,
-        sanodeOtherBasePlot,               
-        basePlots =[],
-        plotSettings;
-
-
-        //sanodePlots
-        sanodePlots.push({key:"mainPlot",value: new Plot("Time (ms)", "V_m", false)});
-        sanodeBasePlot = new BasePlot( 437.5, 240, new Point(0, 0), sanodePlots);
-
-        // sanodeOtherPlots
-
-        var sOtherPlotsInit = [ {key: "ina",    value: {name: "I_Na",   showDefault: false}},
-                                {key: "ibna",   value: {name: "I_bNa",  showDefault: false}},
-                                {key: "ibca",   value: {name: "I_bCa",  showDefault: false}},
-                                {key: "ibk",    value: {name: "I_bk",   showDefault: false}},
-                                {key: "if",     value: {name: "I_if",   showDefault: false}},
-                                {key: "ikr",    value: {name: "I_Kr",   showDefault: false}},
-                                {key: "iks",    value: {name: "I_Ks",   showDefault: false}},
-                                {key: "inak",   value: {name: "I_NaK",  showDefault: false}},
-                                {key: "ikp",    value: {name: "I_Kp",   showDefault: false}},
-                                {key: "ical",   value: {name: "I_Cal",  showDefault: true}},
-                                {key: "icap",   value: {name: "I_Cap",  showDefault: false}},
-                                {key: "ito",    value: {name: "I_to",   showDefault: false}},
-                                {key: "icat",   value: {name: "I_Cat",  showDefault: false}},
-                                {key: "inaca",  value: {name: "I_NaCa", showDefault: false}}  ];
-
-                         
-        sOtherPlotsInit.forEach(function(plotItem){
-            sanodeOtherPlots.push({key: plotItem["key"], value: new Plot("Time (ms)", plotItem["value"]["name"], 
-                                        plotItem["value"]["showDefault"])}); 
-        });
-        sanodeOtherBasePlot = new BasePlot( 437.5, 240, new Point(0, 300), sanodeOtherPlots);
-
-        basePlots.push({key:"Sanode", value : sanodeBasePlot});
-        basePlots.push({key:"SanodeOther", value :sanodeOtherBasePlot});
-        plotSettings = new PlotSettings(basePlots);
-        return plotSettings;
-    };  
+     
    /*
     * The module exposes functions 
     * initialize
@@ -216,7 +191,7 @@ define(["utility"],
         * This function modifies any default settings
         */
         initialize: function(override) {
-            defaultSettings = _.merge(defaultSettings, override);
+            return _initialize(override);
         },   
 
       /**

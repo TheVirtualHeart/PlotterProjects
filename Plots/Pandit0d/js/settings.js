@@ -45,7 +45,7 @@
 			s2: 300.0e-3,
             ns1: 3,
 			timestep: 1e-5, // seconds, not ms
-	      	 
+             
 	      	 //initial values
 	      	v: -80.50146,
 	        m: 4.164108e-3,
@@ -87,163 +87,119 @@
 
         formSettings: { 
 
-            displayV:   true,
-            displayM: false,
-			displayH: false,
-			displayJ: false,
-			displayD: false,
-			displayF11: false,
-			displayF12: false,
-			displayCainact: false,
-			displayR: false,
-			displayS: false,
-			displaySslow: false,
-			displayRss: false,
-			displaySss: false,
-			displayY: false,
-			displayNai: false,
-			displayKi: false,
-			displayCai: false,
-			displayCansr: false,
-			displayCass: false,
-			displayCajsr: false,
-			displayPo: false,
-            displayPc1: false,
-			displayPc2: false,
-			displayLtrpn: false,
-			displayHtrpn: false,
-			displayAPDDI: false,
-            displayS1S2:  false,
-            secondaryPlot: "ibna"
+            displayV         : false,
+            displayM         : false,
+			displayH         : false,
+			displayJ         : false,
+			displayD         : false,
+			displayF11       : false,
+			displayF12       : false,
+			displayCainact   : false,
+			displayR         : false,
+			displayS         : false,
+			displaySslow     : false,
+			displayRss       : false,
+			displaySss       : false,
+			displayY         : false,
+			displayNai       : false,
+			displayKi        : false,
+			displayCai       : false,
+			displayCansr     : false,
+			displayCass      : false,
+			displayCajsr     : false,
+			displayPo        : false,
+            displayPc1       : false,
+			displayPc2       : false,
+			displayLtrpn     : false,
+			displayHtrpn     : false,
+			displayAPDDI     : false,
+            displayS1S2      :  false,
+            secondaryPlot    : "",
+            //current with labels
+            ik1: "I_K1",
+            if: "I_f",
+            ibna: "I_bNa",
+            inak: "I_NaK",
+            ibk: "I_bK",
+            ibca: "I_bCa",
+            icap: "I_pCa",
+            inaca: "I_NaCa",
+            ina: "I_Na",
+            ical: "I_CaL",
+            it: "I_to",
+            iss: "I_ss",
+            colors : {
+                aPDDI: "Orange",
+                s1S2 : "Black",
+                v    : "Red"
+            }
         }
     };
-    //Setting plot setting dynamically
-    defaultSettings["plotSettings"] = initializePlotSettings();
-
-    defaultSettings.calculationSettings.voltageVariables= getVoltageVariables();
-    defaultSettings.calculationSettings.currentVariables = getCurrentVariables();
-    defaultSettings.calculationSettings.additionalVariables = getAdditionalVariables();
-    defaultSettings.calculationSettings.parameters = getParameters();
-
+    
     // The function return an array of voltage variables
-    function getVoltageVariables(){
+    function _getVoltageVariables(){
         return ["v",	"m",	"h",	"j",	"d",	"f11",	"f12",	"cainact",	"r",	
         		"s",	"sslow",  "rss",	"sss",	"y",	"nai",	"ki",	"cai",	"cansr",	
         		"cass",	"cajsr",  "po",   "ltrpn",	"htrpn"];
     }
     
     // The function return an array of current variables
-    function getCurrentVariables(){
+    function _getCurrentVariables(){
         return [ "ik1",     "if",   "ibna","inak",  "ibk", "ibca",
         	     "icap",    "inaca","ina", "ical",  "it",  "iss" ];
     }
 
+    /* This function is responsible for set varaibles values dependent on the cell type;
+        *@param {dfS} - object
+        *@param  {cellType} string
+    */
+    
+    function setDependents(selectedItype,calcSettings){
+        var values   = { 
+          epi : { 
+                a: 0.886,   b: 0.114, gna: 0.8, gt: 0.035, iType: "epi"
+            },
 
-    // This function returns a set of parameters that need to be updated based on user input.
-    function getParameters(){
-        return ["gna", "gcal", "gt", "gss","gk1", "gf", "knaca", "iType"];
-    }
+          endo :{ //gna(endo) = 1.33 * gna(epi) //gt (endo) = 0.4647 * gt(epi)
+                a: 0.583,   b: 0.417, gna: 1.0364, gt: 0.0162645, iType: "endo"
+            }
+        },
 
-    // The function return an array of additional variables that are updated 
-    // in calculatenext
-    function getAdditionalVariables(){
-        return ["pc1",  "pc2", "po1",   "po2", "tauy",  "ib", "yinf", "ifna",  "ifk" ];
-    }
-
-    /* This function {constructor} is used to initiate plot-settings for the setting object
-     * @param {basePlots} - base plot object
-     */
-     function PlotSettings(basePlots){
-        var basePlot  = function(){
-            var basePlotTarget = new Object();      
-            basePlots.forEach(function(item){     
-                basePlotTarget[item.key] =  item.value; 
-            });          
-            return basePlotTarget;
-        }();
-
-        return basePlot;
-    };
-
-    /* This function {constructor} is used to initiate base class object
-     * @param {width, height, offset, plots} 
-     */
-
-    function BasePlot(width, height, offset, plots){
-        this.width = width,
-        this.height = height,
-        this.offset = offset,
-
-        this.plots =    function(){
-            var plotsTarget = new Object();      
-            plots.forEach(function(item){     
-                plotsTarget[item.key] =  item.value; 
-            });          
-            return plotsTarget;
-        }();
-    };
-
-    /* This function {constructor} is used to initiate Plot object
-        * @param {xAxis, yAxis, defaultFlag}
-        *
-        */
-
-        function Plot (xAxis, yAxis, defaultFlag) {     
-            this.range          =  new Point(-0.1, 1.1),     
-            this.unitPerTick    =  new Point(0.2, 0.10), 
-            this.labelFrequency = new Point(1, 1),
-            this.xAxis          = xAxis,
-            this.yAxis          = yAxis,
-            this.labelPrecision =  new Point(0,1), 
-            this.labelSize      = new Point(0, 0),
-            this.default        = defaultFlag
-        };
-
-    /* This function is responsible for creating plot-settings object;
-     * a nested object in the settings object. One or more plot objects are nested under baseplot
-     * object which in turn can be one or more in number nested under plot settings object.
-     * Here "baseplot" consists of "Pandit" and "PanditOther" which have hundrudyBasePlot and hundrudyOtherBasePlot respectively.
-     */
-     function initializePlotSettings(){
-        var panditPlots = [],
-        panditOtherPlots = [],
-        panditBasePlot,
-        panditOtherBasePlot,               
-        basePlots = [],
-        plotSettings;
-
-        //panditPlots
-        panditPlots.push({key:"mainPlot",value: new Plot("Time (ms)", "", false)});
-        panditBasePlot = new BasePlot( 437.5, 240, new Point(0, 0), panditPlots);
-
-        // panditOtherPlots
-        var mOtherPlotsInit = [ {key: "ik1",  	value: {name: "I_K1", 	showDefault: false}},
-								{key: "if",  	value: {name: "I_f", 	showDefault: false}},
-								{key: "ibna",  	value: {name: "I_bNa", 	showDefault: false}},
-								{key: "inak",  	value: {name: "I_NaK", 	showDefault: false}},
-								{key: "ibk",  	value: {name: "I_bK", 	showDefault: false}},
-								{key: "ibca",  	value: {name: "I_bCa", 	showDefault: false}},
-								{key: "icap",  	value: {name: "I_pCa", 	showDefault: false}},
-                                {key: "inaca",  value: {name: "I_NaCa", showDefault: true}},
-                                {key: "ina",    value: {name: "I_Na",   showDefault: false}},
-                                {key: "ical",   value: {name: "I_CaL",  showDefault: false}},
-                                {key: "it",     value: {name: "I_to",   showDefault: false}},
-                                {key: "iss",    value: {name: "I_ss",    showDefault: false}},
-                                ];
-
-		mOtherPlotsInit.forEach(function(plotItem){
-        panditOtherPlots.push({key: plotItem["key"], value: new Plot("Time (ms)", plotItem["value"]["name"], 
-                            plotItem["value"]["showDefault"])}); });
+        selectedTypeValues = values[selectedItype];
         
-        panditOtherBasePlot = new BasePlot( 437.5, 240, new Point(0, 300), panditOtherPlots);
+        if(selectedTypeValues){
+            for(var prop in selectedTypeValues){
+                calcSettings[prop] =  selectedTypeValues[prop];
+            }           
+        }
+    }
 
-        basePlots.push({key:"Pandit", value : panditBasePlot});
-        basePlots.push({key:"PanditOther", value :panditOtherBasePlot});
+    function _initialize(override){
+        
+            //override colors
+            defaultSettings = _.merge(defaultSettings, override); 
+            
+            //Adding additional properties    
+            defaultSettings.calculationSettings.voltageVariables = _getVoltageVariables();
+            defaultSettings.calculationSettings.currentVariables =  _getCurrentVariables();
+            
+            // overriding the plot settings explicitly.
+            var plotParams = {
+                unitPerTick    :  new Point(0.2, 0.10)
+            };
 
-        plotSettings = new PlotSettings(basePlots);
-        return plotSettings;            
+            //Setting plot setting dynamically            
+            defaultSettings["plotSettings"] = utils.initializePlotSettings( _getCurrentVariables(), defaultSettings.formSettings,plotParams);
+            
+             // assign colors            
+            defaultSettings["formSettings"]["colors"] =  utils.extend(defaultSettings["formSettings"]["colors"],
+                                                         utils.assignColors(utils.removeArrayItems(_getVoltageVariables(), ["v"])));                                
 
-    };						
+            defaultSettings.calculationSettings.updateDependents =  setDependents;
+
+            return defaultSettings;
+    }
+
 	/*
     * The module exposes functions 
     * initialize
@@ -256,7 +212,7 @@
             * This function modifies any default settings
             */
             initialize: function(override) {
-                defaultSettings = _.merge(defaultSettings, override);
+                return _initialize(override);
             },   
 
         /**

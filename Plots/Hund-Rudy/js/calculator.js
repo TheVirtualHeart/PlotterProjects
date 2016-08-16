@@ -9,7 +9,7 @@
   function HundrudyCalculator(utils) {
  		"use strict";
 
-		/**
+   /**
 	 * Displays the current iteration of the count
 	 */
 	 var count = 0,
@@ -26,25 +26,8 @@
 	 * 
 	 * @param  {Object} newSettings
 	 */
-	 function initialize(newSettings) {		
-		//reset(newSettings);
+	function initialize(newSettings) {		
 		settings 		 =    utils.extend(newSettings);		
-		cS 	 =   _.cloneDeep(settings.calculationSettings);	
-		cC 	 =   new CalcConstants(settings.calculationSettings);
-	}
-
-	/**
-	 * This function initializes the Calculator. It is functionally the same as
-	 * the reset function. This wrapper function provides a more semantic way to
-	 * present that functionality.
-	 * 
-	 * @param  {Object} newSettings
-	 */
-	 function initialize(newSettings) {		
-		//reset(newSettings);
-		settings 		 =    utils.extend(newSettings);		
-		cS 	 =   _.cloneDeep(settings.calculationSettings);	
-		cC 	 =   new CalcConstants(settings.calculationSettings);
 	}
 
 	/**
@@ -84,61 +67,37 @@
         return stimuli;
 	}
 
-	    /**
-		 * Performs a differential calculations and increments the values that will
-		 * be returned by getPoints().
-		 */
+    /**
+	 * Performs a differential calculations and increments the values.
+	 */
 	function calculateNext(data) {
 		
-		// sets voltage variables after calculations
-	 	data.calculationSettings.voltageVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-	 	});
-
-	 	// sets current variables after calculations
-	 	data.calculationSettings.currentVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-	 	});
-        
-        var ma,	mb,	ha,	hb,	ja,	jb,	mtau,	htau,	jtau, 
-
+		var ma,	mb,	ha,	hb,	ja,	jb,	mtau,	htau,	jtau, 
             msst_t,	hsst_t,	jsst_t, expmtaut_t, exphtaut_t, expjtaut_t,
-
             //tables
             dsst_t, dtau, expdtaut_t, fsst_t, ftau, expftaut_t, f2sst_t, f2tau,
             expf2taut_t, powsst_t, xrsst_t, xrtau, expxrtaut_t, rkrt_t, xssst_t,
             xs1tau, xs2tau, expxs1taut_t, expxs2taut_t,
-
             alphaml, betaml, mltau, mlsst_t, hlsst_t, expmltaut_t, alphaa, betaa, alphai, 
             betai,  alphai2, betai2, atau, itau, i2tau, asst_t, isst_t, i2sst_t, expataut_t,
             expitaut_t, expi2taut_t,
-
             ikpcoefft_t, fnak, inakcoefft_t, expnaca1t_t, expnaca2t_t, rto1t_t, 
             expzcavfortt_t, expzclvfortt_t, expbarcat_t,
-
             caTable,rossjsr2t_t, allot_t, ipcat_t, gksbart_t,
             fcatau1t_t, aasst_t, rossjsr1t_t, expriss1t_t, expritau1t_t,
             calca, fca2tau, expfca2taut_t, cafact_t,vgt_t,
             cafac, expriss2t_t, expritau2t_t, powtable_t,
-
             // compute reversal potentials
             ena, enal, ecl, ek, ecl, ek1, ek1, ekp, ekr, eto1, eks, 
-            vmek, k1a, k1b, k1ss, ik1t_t,
-        
-
-            istim,
-
+            vmek, k1a, k1b, k1ss, ik1t_t, istim,
             // c compute Ina
             expmtau, expjtau, exphtau, 
             mss, jss, hss,
             expzcavfort, //  compute ICab
             expbarca, ibarca, vgt_t, // compute ICaL
-
             //  activation & fast voltage dependent inactivation
             dss, expdtau, fss, expftau, f2ss, expf2tau, fcass, fca2ss, fca_dtaucamk, fcatau, 
-            
             expfcataut_t,  expfcatau, expfca2tau, powss, xdtoxdpower, 
-            
             xrss, expxrtau, rkr , //  compute IKr
             xsss, expxs1tau, expxs2tau , //  compute IKs
             allo, expnaca1, expnaca2, nai3, num, denommult, 
@@ -148,7 +107,6 @@
             expi2tau,rto1 , // compute Ito1
             aass, expzclvfort, ibarto2, // compute Ito2
             ctkcl, // compute kcl
-
             //compute qrel
             qreldtaucamk, rossjsr1, rossjsr2,rossjsr, ross, expriss1, 
             expriss2,riss, expritau1, expritau2, ritau, expritaut_t,expritau,
@@ -156,7 +114,6 @@
             dkmplb,dqupcamk ,//compute qup
             icatot, iktot, inatot, icltot, itot, 
             enamecl2, enamecl4, ctnacl, //compute nacl
-
             bss, qdiff, dcar, dcajsr, cajsrtot, dcansr,
             cansr, dnai, dki, dcli, dcai, catotal,
             camkbound; // update CAMKINASE
@@ -251,10 +208,10 @@
          expnaca2t_t = Math.exp((cS.nu - 1.0) * cS.v * cC.fort);
          rto1t_t = cS.gbarto1 * Math.exp(cS.v / 300.0);
          expzcavfortt_t = Math.exp(cS.zca * cS.v * cC.fort);
-//c         write(40, * ) cS.v,expzcavcC.fortt_t
+//         write(40, * ) cS.v,expzcavcC.fortt_t
          expzclvfortt_t = Math.exp(-cS.zcl * cS.v * cC.fort);
          expbarcat_t = Math.exp((cS.zca * (cS.v-15.0)) * cC.fort);
-//c         write(50, * ) cS.v,expbarcat_t
+//         write(50, * ) cS.v,expbarcat_t
 		 
 		
 		 caTable = cS.cai; // caTable = cc in fortran code. to avoid clash with cC (Constants)
@@ -332,12 +289,7 @@
          k1ss = k1a / (k1a + k1b);
          ik1t_t = cC.gk1 * k1ss * (vmek);
 
-        
-
          cS.istim = _s1s2Stimulus(count, data);
-
-
-
 
 		 // compute Ina
          expmtau = expmtaut_t;
@@ -351,9 +303,6 @@
          cS.xj = jss - (jss - cS.xj) * expjtau;
          cS.ina = cS.gna * cS.xm * cS.xm * cS.xm * cS.xh * cS.xj
           	* (cS.v - ena);
-        
-
-
 
         //  compute ICab
          expzcavfort = expzcavfortt_t;
@@ -363,13 +312,10 @@
         		((cS.gacai * cS.cai * expzcavfort
                -cS.gacao * cS.cao) / (expzcavfort-1.0));
 
-
-
 		// compute ICaL
 
 		// THIS INTERPOLATION IS NECESSARY at this table resolution of 0.01 mV
 		// at least for higher values such as v>12 mV
-        
 
         expbarca = expbarcat_t;
         ibarca = Math.abs(cS.v - 15.0) < 1e-2 ? -29.0 : 
@@ -382,7 +328,6 @@
         //       	(expbarca-1.0));
         
     	vgt_t = 1.0 / (1.0  +  Math.exp((ibarca + 13.0) / 5.0));
-
 
 		// activation
         dss = dsst_t;
@@ -401,8 +346,6 @@
         fca_dtaucamk = cS.fca_dtaucamkbar * cS.camkactive / 
             (cS.kmcamk + cS.camkactive);
         fcatau = fca_dtaucamk + fcatau1t_t;
-
-        
 
         expfcataut_t = Math.exp(-cS.timestep / fcatau);
 
@@ -658,15 +601,11 @@
 
             cS.v = cS.v - itot * cS.timestep; 
 
-         // sets voltage variables after calculations
-        data.calculationSettings.voltageVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-        });
-
+        // sets voltage variables after calculations
+        utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
+        
         // sets current variables after calculations
-        data.calculationSettings.currentVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-        });
+        utils.copySpecific(data.calculationSettings, cS, data.calculationSettings.currentVariables);
 
 		// iterate the count
 		count++;
@@ -674,6 +613,11 @@
 		return data;
 	}
 
+    /*
+     * This function instantiate an object consisting of constants
+     * as properties to be used in calculations iterations. The values 
+     * remains unchanged across iterations.
+     */
 	function CalcConstants(c){
 		//Some variables in initial settings.
         this.vcell = 1000. * cS.pi * cS.radius * cS.radius * cS.length;
@@ -703,6 +647,10 @@
  	 	
  	}
 
+   /*  This function calculates the number of iterations for calculateNext 
+    *   to be executed.
+    *   param {object} settings
+    */
  	function _getNumIterations(settings) {
 	 	var c   =    settings.calculationSettings;
 	 	var num   =    (((c.s1 * c.ns1) + c.s2) * 1.1) / c.timestep;
@@ -710,18 +658,22 @@
 	 	return num;    
 	}
 
+    /*This function iteratively calls all the analyzers and performs 
+     * all the calculations to generate points to be displayed on the
+     * plotter
+     * param {int} iterations
+     * param {object} settings
+     */
 	function runCalculations(iterations, settings) {
-	 	var state   =    settings; 
-	 	var curAnalyzer; 
+	 	var state   =    settings,
+        data, 
+	 	curAnalyzer; 
 	 	
         count   =    0;
         
-        // need to update change in parameter values in page level cS object.
-        state.calculationSettings.parameters.forEach(function (item){
-           cS[item] = state.calculationSettings[item];
-        });
-
-
+        cS  =   _.cloneDeep(settings.calculationSettings);      
+        cC  =   new CalcConstants(settings.calculationSettings); 
+        
         /**
          * Reset the calculators to their base states
          */
@@ -745,12 +697,14 @@
          */
          
          for (var i = 0; i < numCalculations; i++) {
-         	var data = calculateNext(state);          
-         	for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
-         		if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-         			analyzers[curAnalyzer].aggregate(data);
-         		}
-         	}
+         	data = calculateNext(state);          
+            for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
+                if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
+                  if(analyzers[curAnalyzer].analyzerName !== "S1S2Analyzer" || i >= numCalculations-2) {
+                        analyzers[curAnalyzer].aggregate(data);
+                  }
+                }
+            }
          }
 
         /**
@@ -800,7 +754,7 @@
 	 	return stim;
 	 }
 
-	 /*
+	/*
 	 * This function is responsible for udpating the settings object properties.
 	 *
 	 */
@@ -817,12 +771,8 @@
 	 var api = {
 	 	addAnalysisFunction: addAnalysisFunction,
 	 	runCalculations: runCalculations,
-	 	//timestep: settings.timestep,
 	 	initialize: initialize,
-	 	//getPoints: getPoints,
-	 	calculateNext: calculateNext,
 	 	updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,
-		//getStimuliLocations: getStimuliLocations,
 		reset: reset,
 	};
 	return api;

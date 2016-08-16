@@ -9,7 +9,7 @@
   function NygrenCalculator(utils) {
  		"use strict";
 
-		/**
+	/**
 	 * Displays the current iteration of the count
 	 */
 	 var count = 0,
@@ -26,28 +26,11 @@
 	 * 
 	 * @param  {Object} newSettings
 	 */
-	 function initialize(newSettings) {		
-		//reset(newSettings);
+	function initialize(newSettings) {		
 		settings 		 =    utils.extend(newSettings);		
-		cS 	 =   _.cloneDeep(settings.calculationSettings);	
-		cC 	 =   new CalcConstants(settings.calculationSettings);
 	}
 
    /**
-	 * This function initializes the Calculator. It is functionally the same as
-	 * the reset function. This wrapper function provides a more semantic way to
-	 * present that functionality.
-	 * 
-	 * @param  {Object} newSettings
-	 */
-	 function initialize(newSettings) {		
-		//reset(newSettings);
-		settings 		 =    utils.extend(newSettings);		
-		cS 	 =   _.cloneDeep(settings.calculationSettings);	
-		cC 	 =   new CalcConstants(settings.calculationSettings);
-	}
-
-	/**
 	 * This function resets the Calculator with the initial values. If any
 	 * values are specified in newSettings, they will overwrite the existing
 	 * values in data.calculationSettings.
@@ -84,48 +67,27 @@
         return stimuli;
 	}
 
-	    /**
-		 * Performs a differential calculations and increments the values that will
-		 * be returned by getPoints().
-		 */
+    /**
+    * Performs a differential calculations and increments the values
+    */
 	function calculateNext(data) {
 
-		// sets voltage variables after calculations
-	 	data.calculationSettings.voltageVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-	 	});
-
-	 	// sets current variables after calculations
-	 	data.calculationSettings.currentVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-	 	});
-
-        // sets current variables after calculations
-        data.calculationSettings.additionalVariables.forEach(function (item){
-           cS[item]  =    data.calculationSettings[item];
-        });
-
-        var xmbar_t, otaum_t,	xhbar_t,	otauh1_t,
+		var xmbar_t, otaum_t,	xhbar_t,	otauh1_t,
 	 	otauh2_t, 	dlbar_t, 	otaudl_t, 	flbar_t, 	
 	 	otaufl1_t, 	otaufl2_t, 	rbar_t, 	otaur_t,
 	 	sbar_t, 	otaus_t, 	rsusbar_t, 	otaursus_t,
 	 	ssusbar_t, 	otaussus_t,	xnbar_t, 	otaun_t,
 	 	xpabar_t, 	otaupa_t, 	xpi_t,		xnacoeff_t, 
-	 	xcalcoeff_t,xnaca1_t,	xnaca2_t;
-
-	 	//calcium dependant variables.
-	 	var xcapt_t, ccaipow; 
-
-        var vmek,	xk1v_t,	ckcpow,	ccadpow,	vmena; // for tables.
-
-		var  fca, 	// L-type calcium current
+	 	xcalcoeff_t,xnaca1_t,	xnaca2_t,
+        //calcium dependant variables.
+	 	xcapt_t, ccaipow,
+        vmek,	xk1v_t,	ckcpow,	ccadpow,	vmena, // for tables.
+        fca, 	// L-type calcium current
 		cnai3,	cnac3,	cnai15, //pump and exchanger currents
-		docdt,	dotcdt,	dotmgcdt,	dotmgmgdt;// intracellular ca2 +  buffering
-
-        var ena, ek, eca, xstim; // reversal potentials
-
+		docdt,	dotcdt,	dotmgcdt,	dotmgmgdt,// intracellular ca2 +  buffering
+        ena, ek, eca, xstim, // reversal potentials
         //ca2 +  handling by sarcoplasmic reticulum
-        var docalsedt,  ract,   rinact , 
+        docalsedt,  ract,   rinact , 
         xup,    xtr,    temp, xrel,
         dccareldt,dccaupdt, xidi,   dodt; 
 
@@ -278,7 +240,6 @@
         cS.xotmgc = cS.xotmgc + cS.timestep * dotmgcdt;
         cS.xotmgmg = cS.xotmgmg + cS.timestep * dotmgmgdt;
 
-	
 	// left space ion concentrations
         // if(ifixed.eq.0) then
            // cS.cnac = cS.cnac + cS.timestep * ((cS.cnab - cS.cnac) * cC.otauna
@@ -292,9 +253,6 @@
 
         // endif
 
-    
-
-    
 	//ca2 +  handling by sarcoplasmic reticulum
         docalsedt = 0.48 *  cS.ccarel * (1.0- cS.xocalse)-0.4 * cS.xocalse;
          cS.xocalse =  cS.xocalse + cS.timestep * docalsedt;
@@ -357,27 +315,22 @@
                 cS.xcap + cS.xnaca - xstim);
 
  		// sets voltage variables after calculations
-	 	data.calculationSettings.voltageVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-	 	});
-
-	 	// sets current variables after calculations
-	 	data.calculationSettings.currentVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-	 	});
-
-	 	// sets additional variables after calculations
-	 	data.calculationSettings.additionalVariables.forEach(function (item){
-           data.calculationSettings[item]  =   cS[item];
-	 	});
-
+        utils.copySpecific(data.calculationSettings, cS,  data.calculationSettings.voltageVariables);
+        
+        // sets current variables after calculations
+        utils.copySpecific(data.calculationSettings, cS, data.calculationSettings.currentVariables);
+    
 	 	// iterate the count
 		count++;
 
 		return data;				 
-	
 	}
-	     
+
+	/*
+     * This function instantiate an object consisting of constants
+     * as properties to be used in calculations iterations. The values 
+     * remains unchanged across iterations.
+     */    
      function CalcConstants(c){
  	 
 		this.rtof = c.xxr * c.xxt / c.xxf;  
@@ -399,25 +352,33 @@
       	this.dtocm = cS.timestep / c.cm
  	} 
 
- 	function _getNumIterations(settings) {
-	 	var c   =    settings.calculationSettings;
-	 	var num   =    (((c.s1 * c.ns1) + c.s2) * 1.1) / c.timestep;
-	 	num   =    Math.floor(num);
-	 	return num;    
-	}
-
-	function runCalculations(iterations, settings) {
-	 	var state   =    settings; 
-	 	var curAnalyzer; 
+   /*  This function calculates the number of iterations for calculateNext 
+    *   to be executed.
+    *   param {object} settings
+    */
+    function _getNumIterations(settings) {
+        var c   =    settings.calculationSettings;
+        var num   =    (((c.s1 * c.ns1) + c.s2) * 1.1) / c.timestep;
+        num   =    Math.floor(num);
+        return num;    
+    }
+   
+   	/*This function iteratively calls all the analyzers and performs 
+     * all the calculations to generate points to be displayed on the
+     * plotter
+     * param {int} iterations
+     * param {object} settings
+     */  
+    function runCalculations(iterations, settings) {
+	 	var state   =    settings,
+        data,
+	 	curAnalyzer; 
 	 	
         count   =    0;
         
-        // need to update change in parameter values in page level cS object.
-        state.calculationSettings.parameters.forEach(function (item){
-           cS[item] = state.calculationSettings[item];
-        });
-
-
+        cS  =   _.cloneDeep(settings.calculationSettings);      
+        cC  =   new CalcConstants(settings.calculationSettings); 
+        
         /**
          * Reset the calculators to their base states
          */
@@ -441,12 +402,14 @@
          */
          
          for (var i = 0; i < numCalculations; i++) {
-         	var data = calculateNext(state);          
+         	data = calculateNext(state);          
          	for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
-         		if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
-         			analyzers[curAnalyzer].aggregate(data);
-         		}
-         	}
+                if (analyzers[curAnalyzer].hasOwnProperty("aggregate")) {
+                  if(analyzers[curAnalyzer].analyzerName !== "S1S2Analyzer" || i >= numCalculations-2) {
+                        analyzers[curAnalyzer].aggregate(data);
+                  }
+                }
+            }
          }
 
         /**
@@ -454,7 +417,7 @@
          */
          for (curAnalyzer = 0; curAnalyzer < analyzers.length; curAnalyzer++) {
          	if (analyzers[curAnalyzer].hasOwnProperty("postAggregate")) {
-         		analyzers[curAnalyzer].postAggregate(data);
+                analyzers[curAnalyzer].postAggregate(data);
          	}
          } 
     }
@@ -498,7 +461,6 @@
 
 	 /*
 	 * This function is responsible for udpating the settings object properties.
-	 *
 	 */
 	 function updateSettingsWithAnalyzers(settings){
 	 	analyzers.forEach(function(analyzer){
@@ -514,7 +476,6 @@
 	 	addAnalysisFunction: addAnalysisFunction,
 	 	runCalculations: runCalculations,
 	 	initialize: initialize,
-	 	calculateNext: calculateNext,
 	 	updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,
 		reset: reset,
 	};

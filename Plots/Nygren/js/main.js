@@ -1,25 +1,25 @@
 require.config({
-	paths: {
-		calculator: "calculator",
-		form: "form",
-		mediator: "../../Noble0d/js/mediator",
-		plots: "plots",
-		pointBufferAnalyzer: "pointBufferAnalyzer",
-        s1s2Analyzer: "../../Noble0d/js/s1s2Analyzer",
-        apdAnalyzer: "../../Noble0d/js/APDAnalyzer",
-        utility: "../../Noble0d/js/utility"
+    paths: {
+        calculator: "calculator",
+        form: "form",
+        mediator: "../../commonJs/mediator",
+        plots: "../../commonJs/plots",
+        pointBufferAnalyzer: "../../commonJs/pointBufferAnalyzer",
+        s1s2Analyzer: "../../commonJs/s1s2Analyzer",
+        apdAnalyzer: "../../commonJs/APDAnalyzer",
+        utility: "../../commonJs/utility"
     },
 });
 
 
 require(["settings", 
-   "mediator", 
-   "form", 
-   "calculator", 
-   "pointBufferAnalyzer",
-   "s1s2Analyzer",
-   "apdAnalyzer",
-   "plots"
+       "mediator", 
+       "form", 
+       "calculator", 
+       "pointBufferAnalyzer",
+       "s1s2Analyzer",
+       "apdAnalyzer",
+       "plots"
    ],
    
    function initialize(
@@ -47,27 +47,20 @@ require(["settings",
             pointBuffer: {
                 bufferSize: 20,
                 normalPoints:{
-                    v: new Point( -74 , 44 )
-                }
+                    v: new Point( -74 , 44 ),   ccai:  new Point(0,0.0015),
+                    ccad:   new Point(0,0.1),   ccaup: new Point(0,1),
+                    ccarel: new Point(0,1)
+                },
+                minMaxPoints: {}
             },
             apdPoints: {
                 threshhold: -62.42,
                 vNormalize: new Point( -74 , 44 )
             }
-        },
-        plotSettings: {
-            Nygren: {
-                plots: {
-                    mainPlot: {
-                        xAxis: "Time (ms)",
-                        yAxis: "",
-                    }
-                }
-            }
         }
     });
 
-     /*
+   /*
     * Create an analyzer array that holds all the 
     * analyzers to be processed
     */
