@@ -1,0 +1,107 @@
+---
+title: Beeler Reuter
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Beeler Reuter Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+		<div id="controls" class="plotter_form" style="position:absolute;margin-top:-635px;margin-left:550px;">
+		<fieldset>
+			<div>
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" checked/>
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<div>
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+			<div>
+				<input id="displayV" name="displayV" type="checkbox" checked/>
+				<label for="displayV">Display Voltage</label>
+			</div>
+			<div>
+				<input id="displayM" name="displayM" type="checkbox" checked/>
+				<label for="displayM">Display m</label>
+			</div>
+			<div>
+				<input id="displayH" name="displayH" type="checkbox" checked/>
+				<label for="displayH">Display h</label>
+			</div>
+			<div>
+				<input id="displayJ" name="displayJ" type="checkbox" checked/>
+				<label for="displayJ">Display j</label>
+			</div>
+			<div>
+				<input id="displayD" name="displayD" type="checkbox" checked/>
+				<label for="displayD">Display d</label>
+			</div>
+			<div>
+				<input id="displayF" name="displayF" type="checkbox" checked/>
+				<label for="displayF">Display f</label>
+			</div>
+			<div>
+				<input id="displayX1" name="displayX1" type="checkbox" checked/>
+				<label for="displayX1">Display x<sub>1</sub></label>
+			</div>
+			<div>
+				<input id="displayCai" name="displayCai" type="checkbox" checked/>
+				<label for="displayCai">Display [Ca<sup>2+</sup>]<sub>i</sub></label>
+			</div>
+			<div class="plotter_inputgroup" >
+				<select id="secondaryPlot" name="secondaryPlot">
+				<option id = 'displayIna'  value = 'ina'></option>
+				<option id = 'displayIs'   value = 'is'></option>
+				<option id = 'displayIx1'  value = 'ix1'></option>
+				<option id = 'displayIk1'  value = 'ik1'></option>													
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>			
+		</fieldset>
+		<fieldset>
+				<div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1" value="50" />
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1" value="3"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2" value="100"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gna">g_Na</label>
+				<input type="text" name="gna" value="4"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gnac">g_Nac</label>
+				<input type="text" name="gnac" value="0.003"/>
+			</div>	
+			<div class="plotter_inputgroup">
+				<label for="gs">g_Ca</label>
+				<input type="text" name="gs" value="0.09"/>
+			</div>				
+		</fieldset>
+		<!-- Buttons -->
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<button id="default">Defaults</button>
+				<button id="print">Print Data</button>
+			</div>
+		</fieldset>
+		</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
+	
