@@ -21,7 +21,7 @@ function Settings(utils) {
             il: 0,
 
             cm: 12,
-            gan: 0.0,
+            gan: 0,
             gkMod: 1.2,
             ean: -60,
             stimmag: -106,
@@ -32,7 +32,7 @@ function Settings(utils) {
             s2: 1000,
             ns1: 4,
             s1: 500.0,
-            timestep: 0.01
+            timestep: 0.01                       
         },
         formSettings: {
             displayAPDDI: false,
@@ -41,7 +41,7 @@ function Settings(utils) {
             displayH: false,
             displayN: false,
             displayS1S2: false,
-            secondaryPlot: "il",
+            secondaryPlot: "",
         },
         plotSettings: {
             Noble: {
@@ -65,13 +65,13 @@ function Settings(utils) {
                 height: 240,
                 offset: new Point(0, 300),
                 plots: {
-                    ik: {
+                    ik: {                        
                         range: new Point(10, 60),
                         unitPerTick: new Point(1000, 10),
                         labelFrequency: new Point(1, 1),
                         xAxis: "Time (ms)",
                         yAxis: "ik",
-                        labelPrecision: new Point(0, 0),
+                        labelPrecision: new Point(0, 0)
                     },
                     ina: {
                         range: new Point(-60, 0),
@@ -79,15 +79,15 @@ function Settings(utils) {
                         labelFrequency: new Point(1, 1),
                         xAxis: "Time (ms)",
                         yAxis: "ina",
-                        labelPrecision: new Point(0, 0),
+                        labelPrecision: new Point(0, 0)
                     },
-                    il: {
-                        default: true,
+                    il: {                        
                         range: new Point(-100, 100),
                         unitPerTick: new Point(1000, 20),
                         labelFrequency: new Point(1, 1),
                         xAxis: "Time (ms)",
                         yAxis: "il",
+                        labelPrecision: new Point(0, 0)
                     }
                 }
             }

@@ -442,6 +442,16 @@ function NobleCalculator(utils) {
 		}
 
 	}
+
+	/*
+	 * This function is responsible for udpating the settings object properties.
+	 *
+	 */
+	 function updateSettingsWithAnalyzers(settings){
+	 	analyzers.forEach(function(analyzer){
+	 		analyzer.getSettings(settings);
+	 	});
+	 }
  
 
 	/**
@@ -455,7 +465,7 @@ function NobleCalculator(utils) {
 		initialize: initialize,
 		getPoints: getPoints,
 		calculateNext: calculateNext,
-		//getStimuliLocations: getStimuliLocations,
+		updateSettingsWithAnalyzers : updateSettingsWithAnalyzers,
 		reset: reset,
 	};
 	return api;

@@ -1,5 +1,5 @@
 ---
-title: Noble0d Other
+title: Noble0d
 plot: true
 ---
 <!DOCTYPE html>
@@ -13,24 +13,14 @@ plot: true
 	<div id="app">
 		<canvas id="plot">hello</canvas>
 	</div>
-	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-330px;margin-left:550px;">
-
-		<!-- Formulas -->
-<!-- 		<fieldset>
-			<legend>Formulas</legend>
-			<span><strong>Vm:</strong> -Vm + [gamma - (v/v*)<sup>xm</sup>] * h(Vm)</span><br />
-			<span><strong>h(Vm)</strong>: [Vm<sup>2</sup> - (delta * Vm<sup>3</sup>)]/alpha</span><br />
-			<span><strong>V:</strong> epsilon(Theta(Vm - 1) - v)</span><br />
-		</fieldset> -->
-
-		<!-- inputs -->
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-630px;margin-left:550px;">
 		<fieldset>
 			<div class="plotter_inputgroup plotter_inputgroup-orange">
 				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" checked/>
 				<label for="displayAPDDI">Display APD/DI</label>
 			</div>
 			<div class="plotter_inputgroup plotter_inputgroup-black">
-				<input id="displayS1S2" name="displayV" type="checkbox" checked/>
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" checked/>
 				<label for="displayS1S2">Display Timings</label>
 			</div>
 			<div class="plotter_inputgroup plotter_inputgroup-red">
@@ -50,11 +40,10 @@ plot: true
 				<label for="displayN">Display n</label>
 			</div>
 			<div class="plotter_inputgroup">
-				<select id="secondaryPlot" name="secondaryPlot">
-					<option value=""> -- none -- </option>
+				<select id="secondaryPlot" name="secondaryPlot">					
 					<option id="displayIna" value="ina">INa</option>
 					<option id="displayIk" value="ik">IK</option>
-					<option id="displayIl" value-"il">Il</option>
+					<option id="displayIl" value="il">Il</option>
 				</select>
 				<label for="secondaryPlot">Current Plot</label>
 			</div>
@@ -95,7 +84,6 @@ plot: true
 		<!-- Buttons -->
 		<fieldset>
 			<div class="plotter_inputgroup">
-				<button id="update">Update</button>
 				<button id="default">Defaults</button>
 				<button id="print">Print Data</button>
 			</div>

@@ -140,7 +140,7 @@ function NobleThreshholdAnalyzer(utils) {
 		var inaAvg 	= points.ina;
 		var ilAvg 	= points.il;
 
-		console.log(calculator);
+		//console.log(calculator);
 		
 		for (var i = 0; i < iterations; i++) {
 			calculator.calculateNext();

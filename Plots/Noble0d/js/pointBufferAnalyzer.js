@@ -17,7 +17,7 @@ function PointBufferAnalyzer(utils) {
                     il: [],
                     ina: [],
                     ik: [],
-                    myPoints: ["v","h","m","n","il","ina","ik"],
+                    myPoints: ["v","h","m","n","il","ina","ik"]
                 }
         };
         
@@ -25,7 +25,7 @@ function PointBufferAnalyzer(utils) {
         if (!settings.calculationSettings.hasOwnProperty("pointBuffer")) {
             settings.calculationSettings.pointBuffer = bufferSettings;
         } else {
-            settings.calculationSettings.pointBuffer = utils.extend(bufferSettings, settings.calculationSettings.pointBuffer);
+            settings.calculationSettings.pointBuffer = utils.deepExtend(bufferSettings, settings.calculationSettings.pointBuffer);
         }
     }
     
@@ -77,7 +77,7 @@ function PointBufferAnalyzer(utils) {
         
         var timePeriod = (((c.s1 * c.ns1) + c.s2) * 1.1);
         var numCalculation = timePeriod / c.timestep;
-           
+                   
         if (count % bufferSettings.bufferSize === 0) {
             // var points = calculator.getPoints();
 
@@ -93,7 +93,7 @@ function PointBufferAnalyzer(utils) {
             // 	variables.downTimes.push(new Point(pointX, pointY));
             // }
 
-            var vNormal = utils.normalize(data.calculationSettings.v, new Point(-90, 30));
+            var vNormal = utils.normalize(data.calculationSettings.v, new Point(-85, 30));
             var vPoint = new Point(count * c.timestep, vNormal);
             bufferSettings.points.v.push(vPoint);
             
@@ -105,8 +105,7 @@ function PointBufferAnalyzer(utils) {
             
             var nPoint = new Point(count * c.timestep, data.calculationSettings.n);
             bufferSettings.points.n.push(nPoint);
-            
-            
+                    
             var ilPoint = new Point(count * c.timestep, data.calculationSettings.il);
             bufferSettings.points.il.push(ilPoint); 
             
@@ -200,11 +199,25 @@ function PointBufferAnalyzer(utils) {
 			}
 		}
 	}
+
+    /**
+        * This function updates the object passed as a paremeter with the most recent
+        * values of point buffer if it has a property called pointbuffer.
+        *
+        * @param {settings} - the object of which point buffer property needs to be updated.
+    */
+    function getSettings(settings){
+        if (! settings.calculationSettings.hasOwnProperty("pointBuffer")) {           
+            settings.calculationSettings.pointBuffer = {};
+        }
+        settings.calculationSettings.pointBuffer = utils.extend(settings.calculationSettings.pointBuffer, bufferSettings);
+    }
     
     return {
         initialize: initialize,
         aggregate: aggregate,
         reset: reset,
+        getSettings : getSettings,
         getPoints : function(){
         	return {
         		myPoints: mySettings.calculationSettings.pointBuffer.points.myPoints,

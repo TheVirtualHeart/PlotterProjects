@@ -11,22 +11,6 @@ require.config({
     },
 });
 
-require.config({
-	paths: {
-		calculator: "calculator",
-		form: "form",
-		mediator: "mediator",
-		plots: "plots",
-		pointBufferAnalyzer: "pointBufferAnalyzer",
-        s1s2Analyzer: "s1s2Analyzer",
-        apdAnalyzer: "APDAnalyzer",
-		utility: "utility"
-	},
-});
-
-// require(["plots", "calculator", "mediator", "form"],
-// function initialize(plots, calculator, mediator, form) {
-
 require(["settings", 
          "mediator", 
          "form", 
