@@ -256,7 +256,7 @@ plot: true
 			if (length > cableLength)
 				for (var i = cableLength; i < length; i++)
 				{
-					ee[i] = ee[cableLength-1];
+					eVoltage[i] = eVoltage[cableLength-1];
 					n[i] = n[cableLength-1];
 				}
 			cableLength = length;
@@ -378,7 +378,7 @@ plot: true
 			<p style="margin:0px;"><input id="graphVoltage" type="checkbox" name="graphToggles" value="0" checked="checked" />
 			<label id="graphVoltageLabel" for="graphVoltage">voltage</label></p>
 			<p style="margin:0px;"><input id="graphNGate" type="checkbox" name="graphToggles" value="1" />
-			<label id="graphMGateLabel" for="graphNGate">n gate</label></p>
+			<label id="graphMGateLabel" for="graphNGate">n</label></p>
 		</div>
 		<div style="position:absolute;top:450px;left:71px;border:2px solid black;padding:10px;">
 			<button id="applyS1">Apply S1</button>

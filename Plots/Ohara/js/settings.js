@@ -169,8 +169,8 @@ function Settings(utils) {
 			
 			//numerical parameters
 			s1Start: 0,
-			s1: 500,
-			s2: 400,
+			s1: 400,
+			s2: 300,
 			ns1:3,
 			timestep: 0.01,
 			

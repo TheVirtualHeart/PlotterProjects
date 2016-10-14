@@ -38,7 +38,7 @@ function initialize(
         formSettings: {
             displayAPDDI: true,
             displayV: true,
-            secondaryPlot: "xikr",
+            secondaryPlot: "xica",
         }, 
         calculationSettings: {
             pointBuffer: {

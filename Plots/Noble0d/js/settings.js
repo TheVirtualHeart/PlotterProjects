@@ -29,7 +29,7 @@ function Settings(utils) {
             gna1: 400.0,
             gna2: 0.14,
             s1Start: 0,
-            s2: 1000,
+            s2: 700,
             ns1: 4,
             s1: 500.0,
             timestep: 0.01                       

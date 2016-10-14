@@ -40,7 +40,7 @@
             formSettings: {
                 displayAPDDI: true,
                 displayV: true,
-                secondaryPlot: "ina"                         
+                secondaryPlot: "ica"                         
             }, 
             calculationSettings: {
                 pointBuffer: {

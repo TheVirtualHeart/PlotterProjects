@@ -83,7 +83,7 @@ function Settings(utils) {
 			secondaryPlot: "",
             
 		//current with labels
-            ifk: 	"I_fK",
+      ifk: 	"I_fK",
 			ifna: 	"I_fNa",
 			ik: 	"I_K",
 			ik1: 	"I_K1",
@@ -93,7 +93,7 @@ function Settings(utils) {
 			inak: 	"I_NaK",
 			ina: 	"I_Na",
 			inaca: 	"I_NaCa",
-			isica: 	"I_siCa",
+			isica: 	"I_Ca",
 			isik: 	"I_siK",
             colors  : {
                    aPDDI: "Orange",

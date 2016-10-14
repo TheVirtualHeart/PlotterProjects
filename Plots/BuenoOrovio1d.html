@@ -19,7 +19,7 @@ plot: true
    
     //Note : replaced variables thvinf, tho with thvm and  tw2p with tw1p
 	commonVariables = {
-		uo : 0, thv : 0.3, thw : 0.13, thwinf : 0.13, thso : 0.13, thsi : 0.13, 
+		uo : 0, thv : 0.3, thw : 0.13,  thso : 0.13, thsi : 0.13, 
 		 tvp : 1.4506, kwp : 5.7, wcp : 0.15, ts1 : 2.7342,
 		 ks : 2.0994, us : 0.9087, tsi2 : 1.8875, ksi : 97.8, sc : 0.007		 
 	},
@@ -29,20 +29,20 @@ plot: true
                 uu: 1.55,	thvm: 0.006,  tv1m: 60,	tv2m: 1150,	tw1m: 60,	
                 tw2m: 15,	kwm: 65,	 uwm: 0.03,	tw1p: 200,	tfi: 0.11,	to1: 400,	to2: 6,	
                 tso1: 30.0181,	tso2: 0.9957,	kso: 2.0458,	uso: 0.65,	ts2: 16,	tsi1: 1.8875,	
-                twinf: 0.07,	winfstar: 0.94, thvinf : 0.006, tho: 0.006, tw2p:200
+                twinf: 0.07,	winfstar: 0.94, thvinf : 0.006, tho: 0.006, tw2p:200, thwinf : 0.006
             },
 
           endo:{
           		uu: 1.56,	thvm: 0.2,	tv1m: 75,	tv2m: 10,	tw1m: 6,	
           		tw2m: 140,	kwm: 200,	uwm: 0.016,	tw1p: 280,  tfi: 0.1,	to1: 470,	to2: 6,	
           		tso1: 40,	tso2: 1.2,	kso: 2,	uso: 0.65,	ts2: 2,	tsi1: 2.9013,   twinf: 0.0273,	
-          		winfstar: 0.7, thvinf :0.2, tho: 0.2, tw2p: 280
+          		winfstar: 0.7, thvinf :0.2, tho: 0.2, tw2p: 280, thwinf : 0.2
            },
            m:{
                 uu: 1.61,	thvm: 0.1,	tv1m: 80,	tv2m: 1.4506,	tw1m: 70,	
                 tw2m: 8,	kwm: 200,	uwm: 0.016,	tw1p: 280,   tfi: 0.078,	to1: 410,	to2: 7,	
                 tso1: 91,	tso2: 0.8,	kso: 2.1,	uso: 0.6,	ts2: 4,	tsi1: 3.3849,  twinf: 0.01,	
-                winfstar: 0.5, thvinf: 0.1, tho: 0.1, tw2p:280
+                winfstar: 0.5, thvinf: 0.1, tho: 0.1, tw2p:280, thwinf : 0.1
             }
     };
 
@@ -451,7 +451,7 @@ plot: true
 			<label id="geometryCableLabel" for="geometryCable">cable</label>
 			<input id="geometryRing" type="radio" name="geometry" value="ring" />
 			<label id="geometryRingLabel" for="geometryRing">ring</label>
-			<p style="margin:0px;"><label><strong>Model Type</strong></label></p>
+			<p style="margin:0px;"><label><strong>Cell Type</strong></label></p>
 			<input id="modelEpi" type="radio" name="modeType" value = "epi" checked="checked" />
 			<label id="modelEpiLabel" for="modelEpi">epi</label>
 			<input id="modelEndo" type="radio" name="modeType" value = "endo" />
@@ -464,11 +464,11 @@ plot: true
 			<p style="margin:0px;"><input id="graphVoltage" type="checkbox" name="graphToggles" value="0" checked="checked" />
 			<label id="graphVoltageLabel" for="graphVoltage">voltage</label></p>
 			<p style="margin:0px;"><input id="graphVGate" type="checkbox" name="graphToggles" value="1" />
-			<label id="graphVGateLabel" for="graphVGate">v gate</label></p>
+			<label id="graphVGateLabel" for="graphVGate">v</label></p>
 			<p style="margin:0px;"><input id="graphWGate" type="checkbox" name="graphToggles" value="2" />
-			<label id="graphWGateLabel" for="graphWGate">w gate</label></p>
+			<label id="graphWGateLabel" for="graphWGate">w</label></p>
 			<p style="margin:0px;"><input id="graphSGate" type="checkbox" name="graphToggles" value="3" />
-			<label id="graphSGateLabel" for="graphSGate">s gate</label></p>
+			<label id="graphSGateLabel" for="graphSGate">s</label></p>
 		</div>
 		<div style="position:absolute;top:450px;left:71px;border:2px solid black;padding:10px;">
 			<button id="applyS1">Apply S1</button>

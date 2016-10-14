@@ -62,7 +62,7 @@ define(["utility"],
                s1Start: 0,
                s1: 340,
                s2: 900,
-               ns1: 5,
+               ns1: 2,
                timestep: 0.01,
 
                //initial conditions

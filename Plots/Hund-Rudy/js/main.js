@@ -37,7 +37,7 @@ require(["settings",
         formSettings: {
             displayAPDDI: true,
             displayV: true,
-            secondaryPlot: "ikr",
+            secondaryPlot: "icalca",
         },
         calculationSettings: {
             pointBuffer: {

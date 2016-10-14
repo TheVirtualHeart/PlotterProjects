@@ -167,7 +167,7 @@ function Settings(utils) {
             s1Start: 0,
             s1: 500,
             s2: 400,
-            ns1:3,
+            ns1:2,
             timestep: 0.01            
         },
         formSettings: {

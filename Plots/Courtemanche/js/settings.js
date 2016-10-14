@@ -137,18 +137,16 @@ function Settings(utils) {
 			secondaryPlot: "",
 			//current with labels 
 			xna : "I_Na",
-			xk1 : "I_K1",
-			xto : "I_to",
+			xk1 : "I_K1",			
 			xkur : "I_Kur",
 			xkr : "I_Kr",
 			xks : "I_Ks",
-			xcal : "I_Cal",
+			xcal : "I_caL",
 			xpca : "I_pCa",
 			xnak : "I_NaK",
 			xnaca : "I_NaCa",
 			xbna : "I_bNa",
-			xbca : "I_bCa",
-			xto : "I_Total", 
+			xbca : "I_bCa",			
 			
 			colors  : {
 				aPDDI: "Orange",
@@ -165,7 +163,7 @@ function Settings(utils) {
 	
 	// The function return an array of current variables
 	function _getCurrentVariables(){
-		return ["xbca" , "xbna" , "xcal" , "xk1" , "xkr" , "xks" , "xkur" , "xna" , "xnaca" , "xnak" , "xpca" , "xrel" , "xto" ];
+		return ["xbca" , "xbna" , "xcal" , "xk1" , "xkr" , "xks" , "xkur" , "xna" , "xnaca" , "xnak" , "xpca" , "xrel" ];  
 	}
 	
 	function _initialize(override){

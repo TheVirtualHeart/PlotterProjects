@@ -65,7 +65,7 @@ function Settings(utils) {
             
             //numerical parameters
             s1Start: 0,
-            s1: 400,
+            s1: 500,
             s2: 500,
             ns1:3,
             timestep: 0.01            
@@ -88,7 +88,7 @@ function Settings(utils) {
             inab    : "I_Nab",
             ina     : "I_Na",
             ica     : "I_Ca",
-            ito     : "I_To",
+            ito     : "I_to",
             ik      : "I_K",           
             colors  : {
                    aPDDI: "Orange",

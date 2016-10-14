@@ -41,8 +41,8 @@
 
           	// numerical parameters
 			s1Start: 0,
-			s1: 200.0e-3,
-			s2: 300.0e-3,
+			s1: 100.0e-3,
+			s2: 150.0e-3,
             ns1: 3,
 			timestep: 1e-5, // seconds, not ms
              

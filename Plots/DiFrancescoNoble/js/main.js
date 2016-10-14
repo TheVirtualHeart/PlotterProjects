@@ -39,7 +39,7 @@ require([
             formSettings: {
                 displayAPDDI: true,
                 displayV: true,
-                secondaryPlot: "ina"                         
+                secondaryPlot: "isica"                         
             }, 
             calculationSettings: {
                 pointBuffer: {

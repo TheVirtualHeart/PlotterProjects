@@ -67,8 +67,8 @@
 
 			//numerical parameters
 			s1Start: 0,
-			s1: 430,
-			s2: 900,
+			s1: 400,
+			s2: 300,
 			ns1: 3,
 			timestep: 0.01,
 

@@ -77,8 +77,8 @@ function Settings(utils) {
                 
             //numerical parameters
             s1Start: 0,
-            s1: 500,
-            s2: 400,
+            s1: 550,
+            s2: 600,
             ns1:3,
             timestep: 0.01            
         },
