@@ -95,8 +95,8 @@
         var du = (1 / cS.eps) * cS.u * (1 - cS.u) * (cS.u - (cS.b + cS.v) / cS.a) + cS.istim;
         var dv = cS.u - cS.v;
 
-        cS.u +=  cS.timestep * du;
-        cS.v +=  cS.timestep * dv;
+        cS.u += cS.timestep * du;
+        cS.v += cS.timestep * dv;
 		
 		// iterate the count
 		count ++;

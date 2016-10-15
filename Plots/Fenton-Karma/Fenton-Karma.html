@@ -1,0 +1,129 @@
+---
+title: Fenton-Karma
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Fenton-Karma Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-620px;margin-left:550px;">
+
+		<fieldset>
+			<div>
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" >
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<div>
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" >
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+			<div>
+				<input id="displayU" name="displayU" type="checkbox" >
+				<label for="displayU">Display Voltage</label>
+			</div>
+			<div>
+				<input id="displayV" name="displayV" type="checkbox" >
+				<label for="displayV">Display v</label>
+			</div>
+			<div>
+				<input id="displayW" name="displayW" type="checkbox" >
+				<label for="displayW">Display w</label>
+			</div>
+			<div class="plotter_inputgroup" >
+				<select id="secondaryPlot" name="secondaryPlot">
+					<option id = "displayJfi" 	value = "jfi">	</option>
+					<option id = "displayJsi" 	value = "jsi">	</option>
+					<option id = "displayJso" 	value = "jso">	</option>
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>
+		</fieldset>
+		<fieldset>
+            <div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tvp">tvp</label>
+				<input type="text" name="tvp"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tv1m">tv1m</label>
+				<input type="text" name="tv1m"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tv2m">tv2m</label>
+				<input type="text" name="tv2m"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="twp">twp</label>
+				<input type="text" name="twp"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="twm">twm</label>
+				<input type="text" name="twm"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="td">td</label>
+				<input type="text" name="td"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="to">to</label>
+				<input type="text" name="to"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tr">tr</label>
+				<input type="text" name="tr"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tsi">tsi</label>
+				<input type="text" name="tsi"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="xk">xk</label>
+				<input type="text" name="xk"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ucsi">ucsi</label>
+				<input type="text" name="ucsi"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="uc">uc</label>
+				<input type="text" name="uc"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="uv">uv</label>
+				<input type="text" name="uv"/>
+			</div>
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<center>
+				<button id="default" name="default">Defaults</button>
+				<button id="print" name="print">Save Data</button>
+				</center>
+			</div>
+		</fieldset>
+		</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
+	

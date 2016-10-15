@@ -1,12 +1,12 @@
 ---
-title: Barkley0d
+title: Karma0d
 plot: true
 ---
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>Barkley Model</title>
+	<title>Karma Model</title>
 	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
@@ -18,16 +18,20 @@ plot: true
 
 		<fieldset>
 			<div>
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" >
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<div>
 				<input id="displayS1S2" name="displayS1S2" type="checkbox" >
 				<label for="displayS1S2">Display Timings</label>
 			</div>
 			<div>
-				<input id="displayU" name="displayU" type="checkbox" >
-				<label for="displayU">Display u</label>
+				<input id="displayV" name="displayV" type="checkbox" >
+				<label for="displayV">Display Voltage</label>
 			</div>
 			<div>
-				<input id="displayV" name="displayV" type="checkbox" >
-				<label for="displayV">Display v</label>
+				<input id="displayN" name="displayN" type="checkbox" >
+				<label for="displayN">Display n</label>
 			</div>
 		</fieldset>
 		<fieldset>
@@ -44,16 +48,12 @@ plot: true
 				<input type="text" name="s2"/>
 			</div>
 			<div class="plotter_inputgroup">
-				<label for="a">a</label>
-				<input type="text" name="a" />
+				<label for="estar">VStar</label>
+				<input type="text" name="estar"/>
 			</div>
 			<div class="plotter_inputgroup">
-				<label for="b">b</label>
-				<input type="text" name="b"/>
-			</div>
-			<div class="plotter_inputgroup">
-				<label for="eps">eps</label>
-				<input type="text" name="eps"/>
+				<label for="m">xm</label>
+				<input type="text" name="m"/>
 			</div>
 		</fieldset>
 		<fieldset>

@@ -33,7 +33,7 @@ function Settings(utils) {
             displayS1S2: false,
             colors  : {
                 s1S2 : "Black",
-                v    : "Red"
+                u    : "Red"
             }
         } 
      
@@ -59,7 +59,7 @@ function Settings(utils) {
 
      // assign colors            
         defaultSettings["formSettings"]["colors"] =  utils.extend(defaultSettings["formSettings"]["colors"],
-                                                      utils.assignColors(utils.removeArrayItems(_getVoltageVariables(), ["v"]))); 
+                                                      utils.assignColors(utils.removeArrayItems(_getVoltageVariables(), ["u"]))); 
 
         return defaultSettings;                                              
     }
