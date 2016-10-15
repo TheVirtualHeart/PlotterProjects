@@ -6,7 +6,7 @@ require.config({
         plots: "../../commonJs/plots",
         pointBufferAnalyzer: "../../commonJs/pointBufferAnalyzer",
         s1s2Analyzer: "../../commonJs/s1s2Analyzer",
-        apdAnalyzer: "../../commonJs/apdAnalyzer",
+        apdAnalyzer: "../../commonJs/APDAnalyzer",
         utility: "../../commonJs/utility"
     },
 });
