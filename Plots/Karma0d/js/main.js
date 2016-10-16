@@ -6,6 +6,7 @@ require.config({
         plots: "../../commonJs/plots",
         pointBufferAnalyzer: "../../commonJs/pointBufferAnalyzer",
         s1s2Analyzer: "../../commonJs/s1s2Analyzer",
+        apdAnalyzer: "../../commonJs/APDAnalyzer",
         utility: "../../commonJs/utility"
     },
 });
@@ -17,6 +18,7 @@ require(["settings",
          "calculator", 
          "pointBufferAnalyzer",
          "s1s2Analyzer",
+         "apdAnalyzer",
          "plots"],
 function initialize(
     settings, 
@@ -25,6 +27,7 @@ function initialize(
     calculator, 
     pointBufferAnalyzer,
     s1s2Analyzer,
+    apdAnalyzer,
     plots) {
 
     
@@ -33,11 +36,20 @@ function initialize(
      */
     settings.initialize({
         formSettings: {
-            displayU: true
+            displayV: true,
+            displayAPDDI: true,
         }, 
         calculationSettings: {
             pointBuffer: {
-                bufferSize: 4
+                bufferSize: 4,
+                normalPoints:{
+                    v: new Point( 0 , 3.8 )
+                },
+                minMaxPoints: {}   
+            },
+            apdPoints: {
+                threshhold: 0.38,
+                vNormalize: new Point( 0 , 3.8 )
             }
         },
     });
@@ -46,7 +58,7 @@ function initialize(
     * Create an analyzer array that holds all the 
     * analyzers to be processed
     */
-    var analyzers = [pointBufferAnalyzer, s1s2Analyzer],
+    var analyzers = [pointBufferAnalyzer, s1s2Analyzer, apdAnalyzer],
     
 
     plotSettings = settings.getSettings();

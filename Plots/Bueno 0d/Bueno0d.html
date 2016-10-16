@@ -1,0 +1,193 @@
+---
+title: Bueno0d
+plot: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Bueno0d Model</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-620px;margin-left:550px;">
+
+		<fieldset>
+			<div>
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox" >
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div>
+			<div>
+				<input id="displayS1S2" name="displayS1S2" type="checkbox" >
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+			<div>
+				<input id="displayU" name="displayU" type="checkbox" >
+				<label for="displayU">Display Voltage</label>
+			</div>
+			<div>
+				<input id="displayV" name="displayV" type="checkbox" >
+				<label for="displayV">Display v</label>
+			</div>
+			<div>
+				<input id="displayW" name="displayW" type="checkbox" >
+				<label for="displayW">Display w</label>
+			</div>
+			<div>
+				<input id="displayS" name="displayS" type="checkbox" >
+				<label for="displayS">Display s</label>
+			</div>
+			<div class="plotter_inputgroup" >
+				<select id="secondaryPlot" name="secondaryPlot">
+					<option id = "displayXfi" 	value = "xfi">	</option>
+					<option id = "displayXsi" 	value = "xsi">	</option>
+					<option id = "displayXso" 	value = "xso">	</option>
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>
+		</fieldset>
+		<fieldset>
+            <div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="uo">uo</label>
+				<input type="text" name="uo"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="uu">uu</label>
+				<input type="text" name="uu"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="thv">thv</label>
+				<input type="text" name="thv"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="thw">thw</label>
+				<input type="text" name="thw"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="thvm">thvm</label>
+				<input type="text" name="thvm"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tho">tho</label>
+				<input type="text" name="tho"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tv1m">tv1m</label>
+				<input type="text" name="tv1m"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tv2m">tv2m</label>
+				<input type="text" name="tv2m"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tvp">tvp</label>
+				<input type="text" name="tvp"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tw1m">tw1m</label>
+				<input type="text" name="tw1m"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tw2m">tw2m</label>
+				<input type="text" name="tw2m"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="kwm">kwm</label>
+				<input type="text" name="kwm"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="uwm">uwm</label>
+				<input type="text" name="uwm"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tw1p">twp</label>
+				<input type="text" name="tw1p"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tfi">tfi</label>
+				<input type="text" name="tfi"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="to1">to1</label>
+				<input type="text" name="to1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="to2">to2</label>
+				<input type="text" name="to2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tso1">tso1</label>
+				<input type="text" name="tso1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tso2">tso2</label>
+				<input type="text" name="tso2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="kso">kso</label>
+				<input type="text" name="kso"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="uso">uso</label>
+				<input type="text" name="uso"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ts1">ts1</label>
+				<input type="text" name="ts1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ts2">ts2</label>
+				<input type="text" name="ts2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="tsi1">tsi</label>
+				<input type="text" name="tsi1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="twinf">twinf</label>
+				<input type="text" name="twinf"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="winfstar">winfstar</label>
+				<input type="text" name="winfstar"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<select id="iType" name="iType">					
+					<option id = 'displayEpi'  value = 'epi'>epi</option>
+					<option id = 'displayEndo' value ='endo'>endo</option>
+					<option id = 'displayM' value ='m'>m</option>
+				</select>
+					<label for="iType">iType</label>
+			</div>
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<center>
+				<button id="default" name="default">Defaults</button>
+				<button id="print" name="print">Save Data</button>
+				</center>
+			</div>
+		</fieldset>
+		</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
+	

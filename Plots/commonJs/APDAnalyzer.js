@@ -31,7 +31,8 @@ function APDAnalyzer(utils) {
                 end: null,
                 length: null,
             },
-            vNormalize: new Point( -90 , 30)
+            vNormalize: new Point( -90 , 30),
+            voltagePoint: "v"
         };
         if (!settings.calculationSettings.hasOwnProperty("apdPoints")) {
             settings.calculationSettings.apdPoints = bufferSettings;
@@ -44,10 +45,10 @@ function APDAnalyzer(utils) {
     /**
      * This function is called before the calculations are performed
      * 
-     * Record the initial value of V
+     * Record the initial value of v
      */
     function preAggregate(settings) {
-        vInitial = settings.calculationSettings.v;
+        vInitial = settings.calculationSettings[bufferSettings.voltagePoint];
     }
     
     
@@ -62,7 +63,7 @@ function APDAnalyzer(utils) {
      */
     function aggregate(settings) {
         var c = settings.calculationSettings; 
-        var vCur = settings.calculationSettings.v;
+        var vCur = settings.calculationSettings[bufferSettings.voltagePoint];
         
         // pointing reference to buffersettings
         bufferSettings = c.apdPoints;
@@ -78,15 +79,15 @@ function APDAnalyzer(utils) {
         if (count > 0) {
 
             if (vOld <= c.apdPoints.threshhold && vCur > c.apdPoints.threshhold) {
-                var eventtime = c.timestep * (count - ((c.v - c.apdPoints.threshhold)/(c.v - vOld)));
-                var vAvg = (c.v + vOld) / 2;
+                var eventtime = c.timestep * (count - ((c[bufferSettings.voltagePoint] - c.apdPoints.threshhold)/(c[bufferSettings.voltagePoint] - vOld)));
+                var vAvg = (c[bufferSettings.voltagePoint] + vOld) / 2;
                 var vNorm = utils.normalize(vAvg, bufferSettings.vNormalize);
                 var p = new Point(eventtime, vNorm);
                 c.apdPoints.crossed.push(p);
                 var tempIndex = 3;
             } else if (vOld >= c.apdPoints.threshhold && vCur < c.apdPoints.threshhold) {
-                var eventtime = c.timestep * (count - ((c.v - c.apdPoints.threshhold)/(c.v - vOld)));
-                var vAvg = (c.v + vOld) / 2;
+                var eventtime = c.timestep * (count - ((c[bufferSettings.voltagePoint] - c.apdPoints.threshhold)/(c[bufferSettings.voltagePoint] - vOld)));
+                var vAvg = (c[bufferSettings.voltagePoint] + vOld) / 2;
                 var vNorm = utils.normalize(vAvg, bufferSettings.vNormalize);
                 var p = new Point(eventtime, vNorm);
                 c.apdPoints.crossed.push(p);
@@ -100,7 +101,7 @@ function APDAnalyzer(utils) {
         // if so determine where the last "up" threshhold was.
         var s2Location;
             
-        if(c.s1Start === undefined  || c.s1Start < c.apdPoints.threshhold){
+        if(c.s1Start === undefined){
             s2Location = c.endTime;
             if(c.apdPoints.crossed.length == index && !crossed){
                 var apdDistance = c.apdPoints.crossed[index] - c.apdPoints.crossed[index - 1];
@@ -131,7 +132,7 @@ function APDAnalyzer(utils) {
             // }
         }
         
-        // log the current value of V
+        // log the current value of v
         vOld = vCur;
         count++;
     }
@@ -163,10 +164,10 @@ function APDAnalyzer(utils) {
             s2Index--;
         }
 
-        if((c.s1Start === undefined || c.s1Start < c.apdPoints.threshhold) && c.apdPoints.crossed.length % 2 === 0 ){
+        if((c.s1Start === undefined) && c.apdPoints.crossed.length % 2 === 0 ){
             s2Index = c.apdPoints.crossed.length - 3;
         }
-        else if (c.s1Start === undefined || c.s1Start < c.apdPoints.threshhold){
+        else if (c.s1Start === undefined){
             s2Index = c.apdPoints.crossed.length - 2;
         }
 
