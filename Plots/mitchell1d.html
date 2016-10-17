@@ -18,7 +18,7 @@ plot: true
 	var diffusion = 0.001;
 	var ddtOdx2 = diffusion * dt / Math.pow(dx, 2); // question: verify ddtOdx2 
 	//var jint = [], joutt = [], dvt = [], dht = []; //pre-computed exponent values used as lookup tables	
-	var cableLength = 701; //length of cable to be simulated and the threshold
+	var cableLength = 1101; //length of cable to be simulated and the threshold
 	var batchSize = 64, paused = false; //adjust batchSize to adjust speed
 	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 2, stimStrength = 0.5, stimLength = 0.5, stimPosition = 0.25;
 
@@ -149,7 +149,7 @@ plot: true
 
 	function restart()
 	{
-		cableLength = 701;
+		cableLength = 1101;
 		document.getElementById("cableLabel").innerHTML = "<strong>Cable Length: " + ((cableLength - 1) * dx).toFixed(2) + "cm</strong>";
 		app.editPlot(0, {domain: new Point(0, (cableLength - 1) * dx)}, true);
 		for (var i = 0; i < cableLength; i++)
@@ -191,7 +191,7 @@ plot: true
 
 	function buildGraph()
 	{                                             
-		app = createPlotter(document.getElementById("plot"), new Point(140, 115));
+		app = createPlotter(document.getElementById("plot"), new Point(160, 96));
 		
 		var settings =
 		{
@@ -250,7 +250,7 @@ plot: true
 		var cableSlider = document.getElementById("cableLength");
 		var cableLabel = document.getElementById("cableLabel");
 		cableLabel.innerHTML = "<strong>Cable Length: " + ((cableLength - 1) * dx).toFixed(2) + "cm</strong>";
-		cableSlider.value = 701;
+		cableSlider.value = 1101;
 		
 		//used by other events to update the cable length label and slider accordingly
 		function updateCableLength(length)
@@ -357,21 +357,21 @@ plot: true
 <body>
 	<div id="app">
 		<canvas id="plot">This graph requires HTML5 canvas support, sorry!</canvas>
-		<div style="position:absolute;top:15px;left:20px;border:2px solid black;padding:10px;">
+		<div style="position:absolute;top:15px;left:96px;border:2px solid black;padding:10px;">
 			<div style="float:left;margin-right:25px;">
 				<p style="margin:0px;"><label id="speedLabel" for="speedDown"><strong>Speed</strong></label></p>
 				<button id="speedDown">Slower</button>
-				<input id="speed" type="range" min="1" max="64" step="1" value="64" />
+				<input id="speed" type="range" min="1" max="128" step="1" value="64" />
 				<button id="speedUp">Faster</button>
 			</div>
 			<div style="float:right;">
 				<p style="margin:0px;"><label id="cableLabel" for="cableShorter"><strong>Cable Length</strong></label></p>
 				<button id="cableShorter">Shorter</button>
-				<input id="cableLength" type="range" min="1" max="701" step="1" value="701" />
+				<input id="cableLength" type="range" min="1" max="1101" step="1" value="1101" />
 				<button id="cableLonger">Longer</button>
 			</div>
 		</div>
-		<div style="position:absolute;top:84px;left:690px;border:2px solid black;padding:10px;">
+		<div style="position:absolute;top:84px;left:804px;border:2px solid black;padding:10px;">
 			<button id="restart">Restart</button>
 			<button id="pause">Pause</button>
 			<p style="margin:0px;"><label><strong>Geometry Type</strong></label></p>
@@ -387,7 +387,7 @@ plot: true
 			<p style="margin:0px;"><input id="graphHGate" type="checkbox" name="graphToggles" value="1" />
 			<label id="graphHGateLabel" for="graphHGate">h </label></p>			
 		</div>
-		<div style="position:absolute;top:450px;left:15px;border:2px solid black;padding:5px;width:645px;">
+		<div style="position:absolute;top:450px;left:55px;border:2px solid black;padding:5px;width:845px;">
 			<button id="applyS1">Apply S1</button>
 			<div style="position:relative;left:10px;padding-top:5px;">
 			<label id="stimSettings"><strong>Stimulation Settings</strong></label>
