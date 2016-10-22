@@ -18,25 +18,20 @@ plot: true
 
 	var a = 1.02, b = 0.15, eps = 0.02; 
 
-	/*, alpha0 = 1,
-	dalpha = 0.0025; */ 
 	//variable values for equation data
 	
 	// var vmax = 1, vmin = 0, dvt = 0.01, nvt = (vmax - vmin) / dvt;
 
-	var dt = 0.005, /*dx = 0.025;//*/ dx = 0.5;
+	var dt = 0.005, dx = 0.2; // original dx = 0.5, 
 	var diffusion = 1;
-
-	// var dt = 0.02, dx = 0.025;
-	// var diffusion = 0.001;
 
 	var ddtOdx2 = diffusion * dt / Math.pow(dx, 2);
 	
 	// var du=[], dv=[];//pre-computed exponent values used as lookup tables
 
-	var cableLength = 1100; //length of cable to be simulated and the threshold
+	var cableLength = 1101; //length of cable to be simulated and the threshold
 	var batchSize = 128, paused = false; //adjust batchSize to adjust speed
-	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 30, stimStrength = -0.9, stimLength = 0.5, stimPosition = 0.25;
+	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 30, stimStrength = 0.9;/*, stimLength = 0.5, stimPosition = 0.25;*/
 
 	var isCable = true;
 	var mouseWasDown = false;
@@ -86,8 +81,9 @@ plot: true
 			
 			var istim = (stimulating && i >= stimRange.x && i <= stimRange.y) ? stimStrength : 0;
 			
-			if(istim !== 0){console.log(istim);}
-		    var du = (1 / eps) * u[i] * (1 - u[i]) * (u[i] - ( b + v[i]) / a);
+			// if(istim !== 0){console.log(istim);}
+		    var du = (1 / eps) * u[i] * (1 - u[i]) * (u[i] - ( b + v[i]) / a) + istim;
+
 		    var dv = u[i] - v[i];
 
 			var xlap;
@@ -109,7 +105,7 @@ plot: true
 				xlap = u[i-1] + u[i+1];
 			
 
-			uNew[i] = u[i] + dt * (du + istim) + (ddtOdx2 * (xlap - 2 * u[i]));
+			uNew[i] = u[i] + dt * du + (ddtOdx2 * (xlap - 2 * u[i]));
 			
     		v[i] = v[i] + dt * dv;
 		}
@@ -153,7 +149,7 @@ plot: true
 		strength = typeof strength !== "undefined" ? strength : 1;
 		location = typeof location !== "undefined" ? location : 0;
 		width = typeof width !== "undefined" ? width : 1;
-		
+		console.log(strength, location, width);
 		location = Math.min(Math.max(0, location), cableLength - 1 - width)
 		
 		for (var i = location; i < location + width; i++)
@@ -162,7 +158,7 @@ plot: true
 
 	function restart()
 	{
-		cableLength = 1100;
+		cableLength = 1101;
 
 		document.getElementById("cableLabel").innerHTML = "<strong>Cable Length: " + ((cableLength - 1) * dx).toFixed(2) + "cm</strong>";
 		app.editPlot(0, {domain: new Point(0, (cableLength - 1) * dx)}, true);
@@ -186,12 +182,12 @@ plot: true
 		document.getElementById("a").value = a;
 		document.getElementById("b").value = b;
 		document.getElementById("eps").value = eps;
-		// stimStrength = -35;
-		// stimDuration = 30;
+		stimStrength = 0.9;
+		stimDuration = 30;
 		document.getElementById("stimStrength").value = stimStrength;
 		document.getElementById("stimDuration").value = stimDuration;
-		document.getElementById("stimLength").value = stimLength;
-		document.getElementById("stimPosition").value = stimPosition;
+		document.getElementById("stimLength").value = 0.5;
+		document.getElementById("stimPosition").value = 0.25;
 		stimulating = false;
 		step = 0;
 	}
@@ -208,9 +204,9 @@ plot: true
 			domain: new Point(0, (cableLength - 1) * dx),
 			range: new Point(-0.1, 1.1),
 			pixelPerUnit: new Point((cableLength - 1) * 0.65 / ((cableLength - 1) * dx), 250),
-			unitPerTick: new Point(35, 0.1),
+			unitPerTick: new Point(25, 0.1),
 			labelFrequency: new Point(1, 1),
-			xAxis: "Space (cm)",
+			xAxis: "Space",
 			yAxis: " ",
 			zeroBoundAxis: false,
 			labelPrecision: new Point(-1, 1)
@@ -352,7 +348,7 @@ plot: true
 			stimulating = true;
 			stimDuration = Math.round(Math.max(0, parseFloat(document.getElementById("stimDuration").value)) / dt);
 			stimStrength = parseFloat(document.getElementById("stimStrength").value);
-			console.log(stimStrength);
+			
 			var stimLoc = parseFloat(document.getElementById("stimPosition").value) / dx;
 			var stimGirth = parseFloat(document.getElementById("stimLength").value) / dx / 2;
 			stimRange.x = Math.min(Math.max(0, Math.round(stimLoc - stimGirth)), cableLength - 1);
@@ -401,7 +397,7 @@ plot: true
 			<button id="applyS1">Apply S1</button>
 			<label id="stimSettings"><strong>Stimulation Settings</strong></label>
 			<label id="stimStrengthLabel" for="stimStrength">strength</label>
-			<input id="stimStrength" type="number" step="1"/>
+			<input id="stimStrength" type="number" step="1" value = "0.9"/>
 			<label id="stimDurationLabel" for="stimDuration">duration</label>
 			<input id="stimDuration" type="number" min="0" step="1"/>
 			<label id="stimLengthLabel" for="stimLength">length</label>

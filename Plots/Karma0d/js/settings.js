@@ -28,7 +28,7 @@
 
                 // numerical parameters
                 ns1: 4,          s1Start: 0,
-                s1: 600,          s2: 800,
+                s1: 500,          s2: 300,
                 timestep: 0.25,
                 
 

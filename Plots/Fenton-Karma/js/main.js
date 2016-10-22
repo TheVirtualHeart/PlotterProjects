@@ -43,7 +43,7 @@ require([
             }, 
             calculationSettings: {
                 pointBuffer: {
-                    bufferSize: 1,
+                    bufferSize: 20,
                     minMaxPoints : {
                     }
                 },

@@ -21,7 +21,7 @@ function Settings(utils) {
 		uu: 1.55, 
 		thv: 0.3, 
 		thw: 0.13, 
-		thwinf: 0.006, //0.13 //thw, 
+		// thwinf: 0.006, //thwinf = tho, 
 		thvm: 0.006, 
 		tho: 0.006,
         tv1m: 60, 
@@ -118,7 +118,7 @@ function Settings(utils) {
     function setDependents(selectedItype,calcSettings){
         var values   = { 
           epi : { 
-                uu: 1.55,	thvm: 0.006,  tho: 0.006, tv1m: 60,	tv2m: 1150,	tw1m: 60,	
+                uu: 1.55,	thvm: 0.006, tho: 0.006, tv1m: 60,	tv2m: 1150,	tw1m: 60,	
                 tw2m: 15,	kwm: 65,	 uwm: 0.03,	tw1p: 200,	tfi: 0.11,	to1: 400,	to2: 6,	
                 tso1: 30.0181,	tso2: 0.9957,	kso: 2.0458,	uso: 0.65,	ts2: 16,	tsi1: 1.8875,	
                 twinf: 0.07,	winfstar: 0.94,	iType: "epi"

@@ -75,51 +75,9 @@ function Bueno0dCalculator(utils) {
         var hthv, hthw, hthso, hthsi, hthvm, htho, hthvinf, hthwinf,
         tvm, ts, to, twp, twm, tso, tsi, vinf, winf, dv, dw, ds;
         
-
         cS.istim = _s1s2Stimulus(count,data);
 
-        /* Trial again.
-
         // Step functions
-        hthv = (cS.u >= cS.thv);
-        hthw = (cS.u >= cS.thw);
-        hthso = (cS.u >= cS.thso);
-        hthsi = (cS.u >= cS.thsi);
-        hthvm = (cS.u >= cS.thvm);
-        htho = (cS.u >= cS.tho);
-        hthvinf = (cS.u >= cS.thvm);
-        hthwinf = (cS.u >= cS.thw);
-
-        // Multi-part terms
-        tvm = (1 - hthvm) * cS.tv1m + hthvm * cS.tv2m;
-        ts  = (1 - hthw) * cS.ts1 + hthw * cS.ts2;
-        to  = (1 - htho) * cS.to1 + htho * cS.to2;
-        twp = cS.tw1p + (cS.tw2p - cS.tw1p) * (1 + Math.tanh((cS.w - cS.wcp) * cS.kwp)) / 2;
-        twm = cS.tw1m + (cS.tw2m - cS.tw1m) * (1 + Math.tanh((cS.u - cS.uwm) * cS.kwm)) / 2;
-        tso = cS.tso1 + (cS.tso2 - cS.tso1) * (1 + Math.tanh((cS.u - cS.uso) * cS.kso)) / 2;
-        tsi = cS.tsi1 + (cS.tsi1 - cS.tsi1) * (1 + Math.tanh((cS.s - cS.sc) * cS.ksi)) / 2;
-        vinf = 1 - hthvinf;
-        winf = (1 - hthwinf) * (1 - cS.u / cS.twinf) + hthwinf * cS.winfstar;
-
-        // Gate evolution
-        dv = (1 - hthv) * (vinf - cS.v) / tvm - hthv * cS.v / cS.tvp;
-        dw = (1 - hthw) * (winf - cS.w) / twm - hthw * cS.w / twp;
-        ds = ((1 + Math.tanh((cS.u - cS.us) * cS.ks)) / 2 - cS.s) / ts;
-        cS.v = cS.v + cS.timestep * dv;
-        cS.w = cS.w + cS.timestep * dw;
-        cS.s = cS.s + cS.timestep * ds;
-        
-        // Currents
-        cS.xfi = -cS.v * hthv * (cS.u - cS.thv) * (cS.uu - cS.u) / cS.tfi;
-        cS.xso = (cS.u - cS.uo) * (1 - hthso) / to + hthso / tso;
-        cS.xsi = -hthsi * cS.w * cS.s / tsi;
-        
-        // update u using forward Euler
-        cS.u = cS.u - cS.timestep * (cS.xfi + cS.xso + cS.xsi - cS.istim);
-        */
-
-
-       // Step functions
         hthv = (cS.u >= cS.thv);
         hthw = (cS.u >= cS.thw);
         hthso = (cS.u >= cS.thw);
@@ -127,7 +85,7 @@ function Bueno0dCalculator(utils) {
         hthvm = (cS.u >= cS.thvm);
         htho = (cS.u >= cS.tho);
         hthvinf = (cS.u >= cS.thvm);
-        hthwinf = (cS.u >= cS.thwinf);
+        hthwinf = (cS.u >= cS.tho); //thwinf = tho.
 
         // Multi-part terms
         tvm = (1 - hthvm) * cS.tv1m + hthvm * cS.tv2m;

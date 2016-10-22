@@ -18,10 +18,10 @@ plot: true
 	var dt = 0.1, dx = 0.025;
 	var diffusion = 0.001;
 	var ddtOdx2 = diffusion * dt / Math.pow(dx, 2);
-	// var ax1t = [], bx1t = [], amt = [], bmt = [], aht = [], bht = [], ajt = [], bjt = [], adt = [], bdt = [], aft = [], bft = [], ik1t = [], gix1t = []; //pre-computed exponent values used as lookup tables
+	
 	var cableLength = 1101; //length of cable to be simulated and the threshold
 	var batchSize = 128, paused = false; //adjust batchSize to adjust speed
-	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 30, stimStrength = 0.4;
+	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 30, stimStrength = 0.03;
 	var isCable = true;
 	var mouseWasDown = false;
 	var step = 0, drawTime = true;
@@ -32,7 +32,6 @@ plot: true
 		buildForm();
 		// buildTables(nvt); //build tables with a nvt value of 24000
 		restart(); //initialize the data
-		// update();
 		setInterval(update, 1000/60); //run at 60fps
 	}
 	
@@ -174,7 +173,7 @@ plot: true
 		// document.getElementById("gna").value = gna;
 		// document.getElementById("gnac").value = gnac;
 		// document.getElementById("gs").value = gs;
-		stimStrength = 0.4;
+		stimStrength = 0.03;
 		stimDuration = 30;
 		document.getElementById("stimStrength").value = stimStrength;
 		document.getElementById("stimDuration").value = stimDuration;
@@ -186,7 +185,7 @@ plot: true
 	function getIndex(value) { return Math.round(value / dx); }
 	function buildGraph()
 	{
-		app = createPlotter(document.getElementById("plot"), new Point(160, 106));
+		app = createPlotter(document.getElementById("plot"), new Point(160, 76));
 		
 		var settings =
 		{
@@ -386,20 +385,18 @@ plot: true
 			<p style="margin:0px;"><input id="graphWGate" type="checkbox" name="graphToggles" value="2" />
 			<label id="graphWGateLabel" for="graphWGate">w</label></p>
 		</div>
-		<div style="position:absolute;top:450px;left:41px;border:2px solid black;padding:10px;width:860px;">
-		<div style="position:relative;left:10px;padding-top:5px;">
+		<div style="position:absolute;top:450px;left:71px;border:2px solid black;padding:10px;">
 			<button id="applyS1">Apply S1</button>
 			<label id="stimSettings"><strong>Stimulation Settings</strong></label>
 			<label id="stimStrengthLabel" for="stimStrength">strength</label>
-			<input id="stimStrength" type="number" step="1" value="0.4" />
+			<input id="stimStrength" type="number" step="1" value="0.03" />
 			<label id="stimDurationLabel" for="stimDuration">duration</label>
 			<input id="stimDuration" type="number" min="0" step="1" value="30" />
 			<label id="stimLengthLabel" for="stimLength">length</label>
 			<input id="stimLength" type="number" min="0" step="0.01" value="0.5" />
 			<label id="stimPositionLabel" for="stimPosition">position</label>
 			<input id="stimPosition" type="number" min="0" step="0.01" value="0.25" />
-			</div>
-			<div style="position:relative;left:10px;padding-top:5px;">
+			<div style="position:relative;left:120px;padding-top:5px;">
 				<label><strong>Conductance Values</strong></label>
 				<label id="tvpLabel" for="tvp">tvp</label>
 				<input id="tvp" type="number" name="variables" min="0" step="0.1" value="3.33"/>
@@ -410,11 +407,10 @@ plot: true
 				<label id="twpLabel" for="twp">twp</label>	
 				<input id="twp" type="number" name="variables" min="0" step="1" value="870"/>
 				<label id="twmLabel" for="twm">twm</label>	
-				<input id="twm" type="number" name="variables" min="0" step="1" value="41"/				
+				<input id="twm" type="number" name="variables" min="0" step="1" value="41"/>
+				<div style="position:relative;padding-top:5px;">
 				<label id="tdLabel" for="td">td</label>	
 				<input id="td" type="number" name="variables" min="0" step="0.01" value="0.25"/>
-				</div>
-				<div style="position:relative;left:10px;padding-top:5px;">
 				<label id="toLabel" for="to">to</label>	
 				<input id="to" type="number" name="variables" min="0" step="0.1" value="12.5"/>
 				<label id="trLabel" for="tr">tr</label>	
@@ -424,12 +420,14 @@ plot: true
 				<label id="xkLabel" for="xk">xk</label>	
 				<input id="xk" type="number" name="variables" min="0" step="1" value="10"/>
 				<label id="ucsiLabel" for="ucsi">ucsi</label>	
-				<input id="ucsi" type="number" name="variables" min="0" step="0.01" value="0.85"/>	
+				<input id="ucsi" type="number" name="variables" min="0" step="0.01" value="0.85"/>
+				<div style="position:relative;padding-top:5px;">
 				<label id="ucLabel" for="uc">uc</label>	
 				<input id="uc" type="number" name="variables" min="0" step="0.01" value="0.13"/>
 				<label id="uvLabel" for="uv">uv</label>	
 				<input id="uv" type="number" name="variables" min="0" step="0.01" value="0.04"/>
-				</div>				
+				</div>
+				</div>
 			</div>
 		</div>
 	</div>
