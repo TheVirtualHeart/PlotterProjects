@@ -175,6 +175,9 @@
         
         // draw the main plot
         app.selectPlot("primary");
+
+        _refitUnitPerTick(settings.plotSettings.primary.plots["mainPlot"], settings.calculationSettings);
+        
         _resizePlots("primary", 
         settings.plotSettings.primary, 
         settings.calculationSettings,
@@ -276,6 +279,8 @@
          _resetPointsForSecondaryPlot(settings);                  
         }
 
+       _refitUnitPerTick(settings.plotSettings.secondary.plots[settings.formSettings.secondaryPlot], 
+                         settings.calculationSettings);
         _resizePlots("secondary",
         settings.plotSettings.secondary, 
         settings.calculationSettings, 
@@ -303,6 +308,39 @@
               calculatedPlot.unitPerTick.x = selectedPlot.unitPerTick.x;
               utils.extend(selectedPlot, calculatedPlot);
         }
+      }
+
+      /*
+      * This function is used to recalculate unitPerTick for the plot.  
+      * @param {plot} - Plot object which can either be main plot or the secondary plot
+      * @param {calcSettings} - CalculationSetting object 
+       */ 
+      function _refitUnitPerTick(plot, calcSettings){
+        // uptX 
+
+        var uptX,   // x cordinates for UnitPerTick 
+            rangeX,
+            threshold; // x cordinates for range 
+      
+       if(! plot && ! calcSettings) return;
+
+       if(! calcSettings.s1 && ! calcSettings.ns1 && ! calcSettings.s2) return;
+
+        // set uptX
+        uptX = plot.unitPerTick.x ;
+        
+        // set rangeX
+        rangeX =  (calcSettings.s1Start + (calcSettings.s1 * calcSettings.ns1) + calcSettings.s2) * 1.1;
+
+        /*Note - The current graph can display 9 ticks appropriately
+         Set threshold = 9 */
+        threshold = 9;
+
+        // check if threshold is exceeded
+        if(Math.ceil(rangeX/uptX) > threshold){
+          //update unitPerTick 'x' to be within the threshold
+             plot.unitPerTick.x = Math.ceil(rangeX/threshold)
+         }      
       }
 
       /*

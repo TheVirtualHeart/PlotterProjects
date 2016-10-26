@@ -312,9 +312,10 @@ define(function NobleUtilities() {
 	          // logic for labelPrecision can be changed if someone has a better wasy to calculate it
 	          newPS.labelPrecision = new Point(0, (Math.abs(pMinMax["y"] - pMinMax["x"]) >= 1)?1 : 
 								          	(Math.abs(pMinMax["y"] - pMinMax["x"]) >= .5 
-								          		&& Math.abs(pMinMax["y"] - pMinMax["x"]) < 1) ? 2 :
-								          	(Math.abs(pMinMax["y"] - pMinMax["x"]) >= .1 
-								          		&& Math.abs(pMinMax["y"] - pMinMax["x"]) < .5) ? 3 : 4); 
+								          		&& Math.abs(pMinMax["y"] - pMinMax["x"]) < 1) ? 2 : 3); 
+								          	 
+              /*(Math.abs(pMinMax["y"] - pMinMax["x"]) >= .1 
+                                                && Math.abs(pMinMax["y"] - pMinMax["x"]) < .5) ? 3 : 4*/
       	}
       return newPS;
       } 
