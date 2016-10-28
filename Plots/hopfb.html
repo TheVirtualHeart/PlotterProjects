@@ -8,27 +8,43 @@ plot: true
 <head>
 	<meta charset="utf-8" />
 	<title>hopfb</title>
-	<script src="plotter.js"></script>
+	<script src="../Plotter/plotter.dev.js"></script>
 	<script>
 	var app; //the plotter object
 	var lineB; //the line to iterate against
 	var cutoff = 0; //the x value at which to cut off for a conduction block
-	
+	var points = []; //points for the scatter plot
+
 	//initialises the app and creates the graph
 	function init()
 	{
 		app = createPlotter(document.getElementById("plot"));
 		var settings =
-		{
-			domain: new Point(-25, 325),
-			range: new Point(0, 350),
-			pixelPerUnit: new Point(1.25, 1.25),
+		{	
+			domain: new Point(0, 325),
+			range: new Point(0, 325),
+			pixelPerUnit: new Point(1, 1),
 			unitPerTick: new Point(50, 50),
 			labelFrequency: new Point(2, 2),
 			xAxis: "DI (ms)",
 			yAxis: "APD (ms)"
 		};
-		app.newPlot(settings);
+		app.newPlot(settings, "graph");
+		// setInterval(update, 1000/60); //update once per frame at a desired 60fps
+		
+		settings =
+		{
+			offset: new Point(0, 400),
+			domain: new Point(250, 500),
+			range: new Point(0, 320),
+			pixelPerUnit: new Point(1.5, 1),
+			unitPerTick: new Point(50, 50),
+			labelFrequency: new Point(2, 2),
+			xAxis: "Period (ms)",
+			yAxis: "APD (ms)"
+		}
+		app.newPlot(settings, "scatter"); //creates the scatter plot
+		
 		setInterval(update, 1000/60); //update once per frame at a desired 60fps
 	}
 	
@@ -37,7 +53,7 @@ plot: true
 	//is optimally called once per frame at 60fps
 	function update()
 	{
-		app.selectPlot(0); //this clears the plot and gets it ready for interaction
+		app.selectPlot("graph"); //this clears the plot and gets it ready for interaction
 		
 		app.plotSlope(app.mouse.down, -1); //this draws the black line where you clicked down
 		app.plotFunction(curve, true, 1, cutoff); //this draws the curve starting at the cutoff
@@ -51,13 +67,45 @@ plot: true
 		if (lineB != undefined) //if the user has clicked down and dragged their mouse
 		{
 			app.ctx.strokeStyle = "#FF0000";
-			app.plotPoly(hop(app.mouse.down, 100, 2));
+			var pointsBuffer = hop(app.mouse.down, 100, 2); //do the hopf bifurcation iteration
+			app.plotPoly(pointsBuffer); //plot the points from the iteration
+
+			app.selectPlot("scatter"); //this clears the scatter plot and gets it ready for interaction
+			
+			if (pointsBuffer[pointsBuffer.length - 1].x >= cutoff) //cheeky way of checking if a conduction block has occurred
+			{
+				//this offsetSample value ensures that the following checks are applied to points on the curve from the pointsBuffer
+				var offsetSample = curve(pointsBuffer[pointsBuffer.length - 1].x) == pointsBuffer[pointsBuffer.length - 1].y ? 0 : 1;
+				//these two points are the last two points on the curve in the hopf bifurcation iteration
+				var newPointA = pointsBuffer[pointsBuffer.length - (3 + offsetSample)];
+				var newPointB = pointsBuffer[pointsBuffer.length - (1 + offsetSample)];
+				//this transforms the point to be ready for the scatter plot values
+				newPointA = new Point(newPointA.x + newPointB.y, newPointA.y);
+				newPointB = new Point(newPointB.x + newPointA.y, newPointB.y)
+				
+				//if the point is on the plot and it has not been plotted before, push it to the array
+				//these checks are done to ensure optimization and zero duplicate entries
+				if (!isPointPlotted(newPointA) && app.pointOnPlot(newPointA, "scatter"))
+					points.push(newPointA);
+				if (!isPointPlotted(newPointB) && app.pointOnPlot(newPointB, "scatter"))
+					points.push(newPointB);
 		}
 	}
-	
+	//plot the points on the scatter plot
+		for (var point in points)
+			app.plotPoint(points[point]);
+			
+		app.ctx.strokeStyle = "#FF0000"; //red
+		//highlight the currently plotted point if it is defined
+		if (newPointA != undefined)
+			app.plotPoint(newPointA, 3, false);
+		if (newPointB != undefined)
+			app.plotPoint(newPointB, 3, false);
+	}
+
 	//the curve that is iterated against
 	function curve(x)
-	{
+	{	
 		return 0.06 * (1 - 3000 * Math.exp(-x / 50) - 1500 * Math.exp(-x / 10)) + 300 + 50 * Math.exp(-(x - 60) * (x - 60) / 100.0);
 	}
 	
@@ -89,6 +137,16 @@ plot: true
 		
 		return points; //returns the points so that they can be rendered by plotPoly and/or re-used
 	}
+
+	//returns true if the point is already in the points array
+	function isPointPlotted(p)
+	{
+		for (var i = 0; i < points.length; i++)
+			if (p.x == points[i].x && p.y == points[i].y) //if the points share the same values
+				return true;
+		return false; //this is only reached if no point is found
+	}
+
 	</script>
 </head>
 <body>

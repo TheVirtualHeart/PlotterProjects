@@ -128,7 +128,7 @@ function Settings(utils) {
             
             // overriding the plot settings explicitly.
             var plotParams = {
-                unitPerTick    :  new Point(0.5, 0.10)
+                unitPerTick    :  new Point(0.6, 0.10)
             };
 
             //Setting plot setting dynamically            

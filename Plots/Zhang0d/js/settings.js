@@ -164,7 +164,7 @@ define(["utility"],
             
             // overriding the plot settings explicitly.
             var plotParams = {
-                unitPerTick    :  new Point(0.2, 0.10)
+                unitPerTick    :  new Point(0.3, 0.10)
             };
 
             //Setting plot setting dynamically            

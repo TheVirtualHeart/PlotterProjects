@@ -324,14 +324,22 @@
       
        if(! plot && ! calcSettings) return;
 
-       if(! calcSettings.s1 && ! calcSettings.ns1 && ! calcSettings.s2) return;
+       if(! calcSettings.s1 && ! calcSettings.ns1 && ! calcSettings.s2) {
+          if(calcSettings.endTime)
+              rangeX =  calcSettings.endTime * 1.1;
+          else
+            return;  
+        }
+        else{
+          // set rangeX
+          rangeX =  (calcSettings.s1Start + (calcSettings.s1 * calcSettings.ns1) + calcSettings.s2) * 1.1;
+  
+        }
 
         // set uptX
         uptX = plot.unitPerTick.x ;
         
-        // set rangeX
-        rangeX =  (calcSettings.s1Start + (calcSettings.s1 * calcSettings.ns1) + calcSettings.s2) * 1.1;
-
+        
         /*Note - The current graph can display 9 ticks appropriately
          Set threshold = 9 */
         threshold = 9;
