@@ -306,7 +306,7 @@ define(function NobleUtilities() {
         if(pMinMax){
               // update selected plot settings
               // padding range upper and lower bounds by additional 10%
-              newPS.range           = new Point((pMinMax["x"] - (Math.abs(pMinMax["x"]) * .1)), (pMinMax["y"] + (Math.abs(pMinMax["y"]) * .1)));
+              newPS.range           = new Point((pMinMax["x"] - (Math.abs(pMinMax["x"]) * .1)), (pMinMax["y"] + (Math.abs(pMinMax["y"]) * .1)));            
                newPS.unitPerTick     = new Point(260, Math.abs((newPS.range.y - newPS.range.x )/9));
               // logic for labelPrecision can be changed if someone has a better wasy to calculate it
               newPS.labelPrecision = new Point(0, (Math.abs(pMinMax["y"] - pMinMax["x"]) >= 1)?1 : 
