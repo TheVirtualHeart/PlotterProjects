@@ -903,7 +903,7 @@
     */
     function _getNumIterations(settings) {
 	 	var c   =    settings.calculationSettings;
-	 	var num   =    (((c.s1 * c.ns1) + c.s2) * 1.1) / c.timestep;
+	 	var num = ((c.s1 * (c.ns1 - 1)) + (2 * c.s2)) / c.timestep;
 	 	num   =    Math.floor(num);
 	 	return num;    
 	}

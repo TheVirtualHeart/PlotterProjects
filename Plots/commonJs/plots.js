@@ -93,8 +93,8 @@
           }*/
         }
 
-        var start = c.s1Start;
-        var end = ((c.s1Start + (c.s1 * c.ns1) + c.s2) * 1.1);
+        var start = c.s1Start;        
+        var end = ((c.s1Start + (c.s1 * (c.ns1 - 1)) + (2 * c.s2)));
         return new Point(start, end);
       }
 

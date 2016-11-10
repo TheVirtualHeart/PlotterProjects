@@ -489,8 +489,7 @@ define(["utility"],
       	this.nai3 = Math.pow(cS.nai,3);//nai * nai * nai
       	this.nao3 = Math.pow(cS.nao,3);//nao * nao * nao
 	    this.ek = 26.71 * Math.log(cS.ko / cS.ki);
-      	this.eks = this.rtof * Math.log((cS.ko + cS.pnak * cS.nao)
-      					/ (cS.ki + cS.pnak * cS.nai));
+      	this.eks = this.rtof * Math.log((cS.ko + cS.pnak * cS.nao)/ (cS.ki + cS.pnak * cS.nai));      					
       	this.ena = 26.71 * Math.log(cS.nao / cS.nai);
       	this.eca = 13.35 * Math.log(cS.cao / cS.cai);
       	this.inaknumer = 4.79e-2 * Math.pow((cS.nai / (cS.nai + 5.64)),3) 
