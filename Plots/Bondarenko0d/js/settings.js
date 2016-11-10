@@ -373,9 +373,15 @@ function Settings(utils) {
 		//Adding additional properties    
 		defaultSettings.calculationSettings.voltageVariables = _getVoltageVariables();
 		defaultSettings.calculationSettings.currentVariables =  _getCurrentVariables();
+
+		var plotParams = {
+           unitPerTick    :  new Point(50, 0.10)
+       };
 		
-		//Setting plot setting dynamically            
-		defaultSettings["plotSettings"] = utils.initializePlotSettings( _getCurrentVariables(), defaultSettings.formSettings);         
+		
+       //Setting plot setting dynamically            
+       defaultSettings["plotSettings"] = utils.initializePlotSettings( _getCurrentVariables(), defaultSettings.formSettings, plotParams);            
+		
 		
 		// assign colors            
 		defaultSettings["formSettings"]["colors"] =  utils.extend(defaultSettings["formSettings"]["colors"],

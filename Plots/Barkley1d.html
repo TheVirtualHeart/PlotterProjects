@@ -33,7 +33,7 @@ plot: true
 	var batchSize = 128, paused = false; //adjust batchSize to adjust speed
 	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 30, stimStrength = 0.9;/*, stimLength = 0.5, stimPosition = 0.25;*/
 
-	var isCable = true;
+	var isCable = true, isSupressed = false;
 	var mouseWasDown = false;
 	var step = 0, drawTime = true;
 	
@@ -98,8 +98,8 @@ plot: true
 			{
 				if (isCable)
 					xlap = 2 * u[cableLength-2];
-				else
-					xlap = u[cableLength-2] + u[0];
+				else 
+				 xlap = (! isSupressed) ? u[cableLength-2] + u[0] : 2 * u[cableLength-2];			
 			}
 			else
 				xlap = u[i-1] + u[i+1];
@@ -288,6 +288,18 @@ plot: true
 				cableSlider.value--;
 			updateCableLength(parseInt(cableSlider.value));
 		}, false);
+		document.getElementById("cableLength").addEventListener("mousedown",
+		function()
+		{ 
+		   if(! isCable) {isSupressed = true;}                        
+		}, false);
+
+		document.getElementById("cableLength").addEventListener("mouseup",
+		function()
+		{
+		isSupressed = false;
+		}, false);
+		
 		document.getElementById("cableLonger").addEventListener("click",
 		function()
 		{

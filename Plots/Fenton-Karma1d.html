@@ -22,7 +22,7 @@ plot: true
 	var cableLength = 1101; //length of cable to be simulated and the threshold
 	var batchSize = 128, paused = false; //adjust batchSize to adjust speed
 	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 30, stimStrength = 0.03;
-	var isCable = true;
+	var isCable = true, isSupressed = false;
 	var mouseWasDown = false;
 	var step = 0, drawTime = true;
 	
@@ -94,7 +94,7 @@ plot: true
 				if (isCable)
 					xlap = 2 * u[cableLength-2];
 				else
-					xlap = u[cableLength-2] + u[0];
+					 xlap = (! isSupressed) ? u[cableLength-2] + u[0] : 2 * u[cableLength-2];
 			}
 			else
 				xlap = u[i-1] + u[i+1];
@@ -270,6 +270,19 @@ plot: true
 		{
 			updateCableLength(parseInt(cableSlider.value));
 		}, false);
+		
+		document.getElementById("cableLength").addEventListener("mousedown",
+		function()
+		{ 
+		   if(! isCable) {isSupressed = true;}                        
+		}, false);
+
+		document.getElementById("cableLength").addEventListener("mouseup",
+		function()
+		{
+		isSupressed = false;
+		}, false);
+
 		//all the buttons for the sliders simply check if the number is in bounds for the operation and adjust it by 1 if it is, then updates the cable length
 		document.getElementById("cableShorter").addEventListener("click",
 		function()

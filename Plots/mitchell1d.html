@@ -23,7 +23,7 @@ plot: true
 	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 2, stimStrength = 0.5, stimLength = 0.5, stimPosition = 0.25;
 
 	// var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 2, stimStrength = 0.056;
-	var isCable = true;
+	var isCable = true, isSupressed = false;
 	var mouseWasDown = false;
 	var step = 0, drawTime = true;
 	
@@ -90,8 +90,8 @@ plot: true
 			{
 				if (isCable)
 					xlap = 2 * v[cableLength-2];
-				else
-					xlap = v[cableLength-2] + v[0];
+				else					
+				xlap = (! isSupressed) ? v[cableLength-2] + v[0] : 2 * v[cableLength-2];
 			}
 			else
 				xlap = v[i-1] + v[i+1];				
@@ -231,6 +231,19 @@ plot: true
 		{
 			updateSpeed(parseInt(speedSlider.value)); //just use the function previously declared
 		}, false);
+
+		document.getElementById("cableLength").addEventListener("mousedown",
+		function()
+		{ 
+		   if(! isCable) {isSupressed = true;}                        
+		}, false);
+
+		document.getElementById("cableLength").addEventListener("mouseup",
+		function()
+		{
+		isSupressed = false;
+		}, false);
+		
 		//all the buttons for the sliders simply check if the number is in bounds for the operation and adjust it by 1 if it is, then updates the speed
 		document.getElementById("speedDown").addEventListener("click",
 		function()
