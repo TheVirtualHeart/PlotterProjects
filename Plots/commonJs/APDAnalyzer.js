@@ -180,25 +180,27 @@ function APDAnalyzer(utils) {
                 // calculate apd values
                 c.apdPoints.apd.start = c.apdPoints.crossed[s2Index];
                 c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 1];
-                c.apdPoints.apd.length = c.apdPoints.apd.end.x - c.apdPoints.apd.start.x;
+                c.apdPoints.apd.length = (c.apdPoints.apd.end && c.apdPoints.apd.start) ?
+                                (c.apdPoints.apd.end.x - c.apdPoints.apd.start.x) : 0;
 
                 // calculate dl values
                 c.apdPoints.dl.start = c.apdPoints.crossed[s2Index - 1];
                 c.apdPoints.dl.end = c.apdPoints.crossed[s2Index];
-                c.apdPoints.dl.length = c.apdPoints.dl.end.x - c.apdPoints.dl.start.x;
-                // console.log(c.apdPoints.dl.length);
+                c.apdPoints.dl.length = (c.apdPoints.dl.end && c.apdPoints.dl.start) ?
+                                (c.apdPoints.dl.end.x - c.apdPoints.dl.start.x) : 0;
             } else {
                 
                 // calculate apd values
                 c.apdPoints.apd.start = c.apdPoints.crossed[s2Index + 1];
                 c.apdPoints.apd.end = c.apdPoints.crossed[s2Index + 2];
-                c.apdPoints.apd.length = c.apdPoints.apd.end.x - c.apdPoints.apd.start.x;
+                c.apdPoints.apd.length = (c.apdPoints.apd.end && c.apdPoints.apd.start) ?
+                                    (c.apdPoints.apd.end.x - c.apdPoints.apd.start.x) : 0;
                 
                 // calculate dl values
                 c.apdPoints.dl.start = c.apdPoints.crossed[s2Index];
                 c.apdPoints.dl.end = c.apdPoints.crossed[s2Index + 1];
-                c.apdPoints.dl.length = c.apdPoints.dl.end.x - c.apdPoints.dl.start.x;
-                // console.log(c.apdPoints.dl.length);
+                c.apdPoints.dl.length = (c.apdPoints.dl.end && c.apdPoints.dl.start) ?
+                                (c.apdPoints.dl.end.x - c.apdPoints.dl.start.x) : 0;
             }
         }
     }

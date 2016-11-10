@@ -21,7 +21,7 @@ plot: true
 	var ax1t = [], bx1t = [], amt = [], bmt = [], aht = [], bht = [], ajt = [], bjt = [], adt = [], bdt = [], aft = [], bft = [], ik1t = [], gix1t = []; //pre-computed exponent values used as lookup tables
 	var cableLength = 1101; //length of cable to be simulated and the threshold
 	var batchSize = 128, paused = false; //adjust batchSize to adjust speed
-	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 30, stimStrength = -3;
+	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 2, stimStrength = -20;
 	var isCable = true, modeBR = true, isSupressed = false;
 	var mouseWasDown = false;
 	var step = 0, drawTime = true;
@@ -227,8 +227,8 @@ plot: true
 		document.getElementById("gna").value = gna;
 		document.getElementById("gnac").value = gnac;
 		document.getElementById("gs").value = gs;
-		stimStrength = -3;
-		stimDuration = 30;
+		stimStrength = -20;
+		stimDuration = 2;
 		document.getElementById("stimStrength").value = stimStrength;
 		document.getElementById("stimDuration").value = stimDuration;
 		document.getElementById("stimLength").value = 0.5;
@@ -482,9 +482,9 @@ plot: true
 			<button id="applyS1">Apply S1</button>
 			<label id="stimSettings"><strong>Stimulation Settings</strong></label>
 			<label id="stimStrengthLabel" for="stimStrength">strength</label>
-			<input id="stimStrength" type="number" step="1" value="-3" />
+			<input id="stimStrength" type="number" step="1" value="-20" />
 			<label id="stimDurationLabel" for="stimDuration">duration</label>
-			<input id="stimDuration" type="number" min="0" step="1" value="30" />
+			<input id="stimDuration" type="number" min="0" step="1" value="2" />
 			<label id="stimLengthLabel" for="stimLength">length</label>
 			<input id="stimLength" type="number" min="0" step="0.01" value="0.5" />
 			<label id="stimPositionLabel" for="stimPosition">position</label>

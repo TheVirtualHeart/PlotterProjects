@@ -52,7 +52,7 @@ plot: true
 
 	var cableLength = 1101; //length of cable to be simulated and the threshold
 	var batchSize = 128, paused = false; //adjust batchSize to adjust speed
-	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 30, stimStrength = -0.66;
+	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 2, stimStrength = -0.66;
 	var isCable = true, modeType =  "epi", isSupressed = false; ///, endo, and  m ; epi
 	var mouseWasDown = false;
 	var step = 0, drawTime = true;
@@ -252,7 +252,7 @@ plot: true
 		//updating calculation object
 		createCalcObject();
 		stimStrength = -0.66;
-		stimDuration = 30;
+		stimDuration = 2;
 		document.getElementById("stimStrength").value = stimStrength;
 		document.getElementById("stimDuration").value = stimDuration;
 		document.getElementById("stimLength").value = 0.5;
@@ -489,7 +489,7 @@ plot: true
 			<label id="stimStrengthLabel" for="stimStrength">strength</label>
 			<input id="stimStrength" type="number" step="0.15" value="-0.66" />
 			<label id="stimDurationLabel" for="stimDuration">duration</label>
-			<input id="stimDuration" type="number" min="0" step="1" value="30" />
+			<input id="stimDuration" type="number" min="0" step="1" value="2" />
 			<label id="stimLengthLabel" for="stimLength">length</label>
 			<input id="stimLength" type="number" min="0" step="0.01" value="0.5" />
 			<label id="stimPositionLabel" for="stimPosition">position</label>

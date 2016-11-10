@@ -22,7 +22,7 @@ plot: true
 	
 	// var vmax = 1, vmin = 0, dvt = 0.01, nvt = (vmax - vmin) / dvt;
 
-	var dt = 0.005, dx = 0.2; // original dx = 0.5, 
+	var dt = 0.005, dx = 0.5; // manipulated dx = 0.2, 
 	var diffusion = 1;
 
 	var ddtOdx2 = diffusion * dt / Math.pow(dx, 2);
@@ -31,7 +31,7 @@ plot: true
 
 	var cableLength = 1101; //length of cable to be simulated and the threshold
 	var batchSize = 128, paused = false; //adjust batchSize to adjust speed
-	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 30, stimStrength = 0.9;/*, stimLength = 0.5, stimPosition = 0.25;*/
+	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 1, stimStrength = 0.9;
 
 	var isCable = true, isSupressed = false;
 	var mouseWasDown = false;
@@ -183,7 +183,7 @@ plot: true
 		document.getElementById("b").value = b;
 		document.getElementById("eps").value = eps;
 		stimStrength = 0.9;
-		stimDuration = 30;
+		stimDuration = 1;
 		document.getElementById("stimStrength").value = stimStrength;
 		document.getElementById("stimDuration").value = stimDuration;
 		document.getElementById("stimLength").value = 0.5;
