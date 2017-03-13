@@ -1,0 +1,95 @@
+---
+title: Hodgkin-Huxley0d
+plot: true
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Hodgkin-Huxley0d</title>
+	<link href="../../Plotter/plotter.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">hello</canvas>
+	</div>
+	<div id="controls" class="plotter_form" style="position:absolute;margin-top:-620px;margin-left:550px;">
+		<!-- inputs -->
+		<fieldset>
+			<!-- <div>
+				<input id="displayAPDDI" name="displayAPDDI" type="checkbox"/>
+				<label for="displayAPDDI">Display APD/DI</label>
+			</div> -->
+			<div>
+				<input id="displayS1S2" name="displayS1S2" type="checkbox"/>
+				<label for="displayS1S2">Display Timings</label>
+			</div>
+			
+			<div>
+				<input id="displayV" name="displayV" type="checkbox"/>
+				<label for="displayV">Display Voltage</label>
+			</div>	
+
+			<div>
+				<input id="displayH" name="displayH" type="checkbox"/>
+				<label for="displayH"> Display h </label>
+			</div>
+			<div>
+				<input id="displayM" name="displayM" type="checkbox"/>
+				<label for="displayM"> Display m </label>
+			</div>
+			<div>
+				<input id="displayN" name="displayN" type="checkbox"/>
+				<label for="displayN"> Display n </label>
+			</div>
+			<div class="plotter_inputgroup" >
+				<select id="secondaryPlot" name="secondaryPlot">
+					<option id = 'displayIna' value = 'ina'>	</option>
+					<option id = 'displayIk'  value = 'ik' >	</option>
+					<option id = 'displayIl'  value = 'il' >	</option>
+				</select>
+				<label for="secondaryPlot">Current Plot</label>
+			</div>
+		</fieldset>
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<label for="s1">S1</label>
+				<input type="text" name="s1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="ns1"># of S1 beats</label>
+				<input type="text" name="ns1"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="s2">S2</label>
+				<input type="text" name="s2"/>
+			</div>
+			<div class="plotter_inputgroup">
+				<label for="gbarna">g<sub>Na</sub></label>
+				<input type="text" name="gbarna"/>
+			</div>
+
+			<div class="plotter_inputgroup">
+				<label for="gbark">g<sub>K</sub></label>
+				<input type="text" name="gbark"/>
+			</div>
+
+			<div class="plotter_inputgroup">
+				<label for="gbarl">g<sub>L</sub></label>
+				<input type="text" name="gbarl"/>
+			</div>
+		</fieldset>
+		<!-- Buttons -->
+		<fieldset>
+			<div class="plotter_inputgroup">
+				<button id="default">Defaults</button>
+				<button id="print">Save Data</button>
+			</div>
+		</fieldset>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+	<script src="../../Plotter/plotter.dev.js"></script>
+	<script data-main="js/main.js" src="../../node_modules/requirejs/require.js"></script>
+</body>
+</html>
