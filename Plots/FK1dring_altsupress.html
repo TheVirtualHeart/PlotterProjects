@@ -1,0 +1,590 @@
+---
+title: FK1d Ring Alternans Supression
+plot: true
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>FK1d Ring Alternans Supression</title>
+	<script src="plotter.js"></script>
+	<script>
+	var app, plotState = 1; //plotState is a binary boolean array for graph modes
+	var plotColor = ["#FF0000", "#13AB13", "#0099FF"]; //colors for the plots
+	var u = [], v = [], w = []; //differential equation data
+	var initialStimulus = false; // To start the wave.
+	//variable values for equation data	
+	var cS = {},
+   	
+   	flag = false;
+    
+    commonVariables = {
+		tvp:  10,	td:  0.15, 		to:  1.5,
+		uc:  0.25,		 
+	},
+
+    dependentVariables = {		
+
+    	model1:{
+    		tv1m: 350, 	tv2m: 80, 	twp: 562, 
+    		twm: 48.5, 	tr: 12.5, 	tsi: 10,
+    		xk: 15, 	ucsi: 0.2, 	uv: 0.001,
+    		// these are new parameters
+    		ur: 0.16, 	k2: 0, 		ufi: 0.15
+    	},
+      	model2a: { 
+            tv1m: 20,	tv2m:  20,	twp:  800,
+			twm:  45.0, tr:  31, 	tsi:  26.5,
+			xk:  10.0,	ucsi:  0.7,	uv:  0.05, 
+			// these are new parameters
+			ur:  0.6, 	k2:  1, 	ufi:  0.11
+			
+        },
+      	model2b: { 
+            tv1m: 100,	tv2m:  20,	twp:  800,
+			twm:  45.0, tr:  31, 	tsi:  26.5,
+			xk:  10.0,	ucsi:  0.7,	uv:  0.05, 
+			// these are new parameters
+			ur:  0.6, 	k2:  1, 	ufi:  0.11
+			
+        },
+      	model2c: { 
+            tv1m: 150,	tv2m:  20,	twp:  800,
+			twm:  45.0, tr:  31, 	tsi:  26.5,
+			xk:  10.0,	ucsi:  0.7,	uv:  0.05, 
+			// these are new parameters
+			ur:  0.6, 	k2:  1, 	ufi:  0.11
+			
+        }
+    };
+
+    var dt = 0.1, dx = 0.025;
+	var diffusion = 0.001;
+	var ddtOdx2 = diffusion * dt / Math.pow(dx, 2);
+	
+	var cableLength = 1101; //length of cable to be simulated and the threshold
+	var batchSize = 45, paused = false; //adjust batchSize to adjust speed
+	var stimulating = false, stimRange = new Point(0, 0), stimTime = 0, stimDuration = 2, stimStrength = 0.2;
+	var isCable = true, modeType = "model2a", isSupressed = false;
+	var mouseWasDown = false;
+	var step = 0, drawTime = true;
+	
+	var iloc = 800; // location for calculating APD/period
+	var apdcurrent = -1;
+	var apdprevious = -1;
+	var period = -1;
+	var uptimecurrent = -1;
+	var uptimeprevious = -1;
+	var downtime = -1;
+	var Vthreshold = 0.3;
+
+	function init()
+	{
+		buildGraph(); //build the graph using the plotter.js object
+		buildForm();
+		restart(); //initialize the data
+		setInterval(update, 1000/60); //run at 60fps
+	}
+	
+	window.onload = init;
+
+	function createCalcObject(){
+
+		cS = {}; //target
+		var source = [commonVariables];
+		source.push(dependentVariables[modeType])	
+		console.log(source);
+		source.forEach(function(instance){
+			if (instance !== undefined && instance !== null) {
+				for (var nextKey in instance) {
+					if (instance.hasOwnProperty(nextKey)) {
+						if(!cS[nextKey]){
+							console.log(nextKey,"->",instance[nextKey]);
+							cS[nextKey]  = instance[nextKey];
+							document.getElementById(nextKey).value = cS[nextKey]; //updating the variable value on the UI.
+						}
+					}
+				}
+			}
+		});
+	}
+
+	function update()
+	{
+		if (paused)
+			return;
+		
+		// if (app.mouse.isUp && mouseWasDown){
+		// 	stimulateU(Math.min(Math.max(0, app.mouse.up.y), 1) * 1.2 - 0, Math.round(app.mouse.up.x / dx) - 2, 5);
+		// 	console.dir(app.mouse.up);
+		// }
+
+		if(!initialStimulus){
+			// hardcoded the stimulus co-ordinates to start the wave.
+			var normalizingFactor = (modeType == "model1") ? 1.5 : 1.2;
+			stimulateU(Math.min(Math.max(0, 0.8), 1) * normalizingFactor - 0, 
+													Math.round(0.8 / dx) - 2, 5); 
+			initialStimulus = true;
+		}
+
+		mouseWasDown = app.mouse.isDown;
+		
+		for (var bTemp = 0; bTemp < batchSize; bTemp++)
+		{
+			flag = true;
+			calcData(bTemp);
+			step++;
+			
+			if (stimulating && stimTime < stimDuration)
+				stimTime++;
+			else if (stimTime == stimDuration)
+				stimulating = false;
+		}
+		graphData();
+	}
+
+	function calcData(bTemp)
+	{
+		var uNew = [];
+
+		var test = false;
+		var temp;
+
+		for (var i = 0; i < cableLength; i++)
+		{	
+			// if((i >= (cableLength - 1) * .55 && u[i] >= 0.5)){
+			if(step * dt > 300){
+				isCable = false;
+			}
+		
+			var istim = (stimulating && i >= stimRange.x && i <= stimRange.y) ? stimStrength : 0;
+			var p = (u[i] >= cS.uc);
+			var q = (u[i] >= cS.uv);
+			var r = (u[i] >= cS.ur);
+
+			var dv = (1 - p) * (1 - v[i]) / ((1 - q) * cS.tv1m + cS.tv2m * q) - p * v[i] / cS.tvp;
+			var dw = (1 - p) * (1 - w[i]) / cS.twm - p * w[i] / cS.twp;
+
+			v[i] = v[i] + dt * dv;
+        	w[i] = w[i] + dt * dw;
+
+        	// calculate currents
+		    // this equation also changed slightly
+		    var jfi = -v[i] * p * (u[i] - cS.ufi) * (1 - u[i]) / cS.td;
+		    // this equation for jso changed a bit
+		    var jso = u[i] * (1 - r) * (1 - v[i] * cS.k2 ) / cS.to + r / cS.tr;
+		    var jsi = -w[i] * (1 + Math.tanh( cS.xk * (u[i] - cS.ucsi))) / (2 * cS.tsi);
+		    
+		    var xlap;
+			if (i == 0)
+			{
+				if (isCable)
+					xlap = 2 * u[1];
+				else
+					xlap = u[cableLength-1] + u[1];
+			}
+			else if (i == cableLength - 1)
+			{
+				if (isCable)
+					xlap = 2 * u[cableLength-2];
+				else
+					 xlap = (! isSupressed) ? u[cableLength-2] + u[0] : 2 * u[cableLength-2];
+			}
+			else
+				xlap = u[i-1] + u[i+1];
+			
+			temp = u[i];
+			uNew[i] = u[i] - (jfi + jso + jsi - istim) * dt + (ddtOdx2 * (xlap - 2 * u[i]));
+
+			
+		}
+		
+				flag   = false;
+				if(u[iloc] < Vthreshold && uNew[iloc] >= Vthreshold){
+			        // console.log("-------------------start------------------");
+			        // console.log("u[iloc]: ",u[iloc], "uNew[iloc]", uNew[iloc], " temp:",temp);
+			        var eventtime = dt * (bTemp - (uNew[iloc] - Vthreshold) / (uNew[iloc] - u[iloc]));
+			        if(uptimecurrent > 0){
+			            uptimeprevious = uptimecurrent;
+			            uptimecurrent = eventtime;
+			            // paused = true;
+			            // console.log("uptimecurrent: ", uptimecurrent, "uptimeprevious: ", uptimeprevious);
+			            period = uptimecurrent - uptimeprevious;
+			            // console.log("period = ",period);
+			        }
+			        else
+			            uptimecurrent = eventtime;
+			    }
+			    else if (u[iloc] > Vthreshold && uNew[iloc] <= Vthreshold){
+			    	// console.log("u[iloc]: ",u[iloc], "temp", temp);
+			        downtime = dt * (bTemp - (uNew[iloc] - Vthreshold)/(uNew[iloc] - u[iloc]));
+			        if(uptimeprevious > 0){
+			            apdprevious = apdcurrent;
+			            // console.log("downtime: ", downtime, "uptimecurrent: ", uptimecurrent);
+			            apdcurrent = downtime - uptimecurrent;
+			            // paused = true;
+			            // console.log("apdprevious = ",apdprevious," apdcurrent = ",apdcurrent);
+			        }
+			        else
+			            apdcurrent = downtime - uptimecurrent;
+				}
+			
+		// track up and down times; use linear interpolation
+		u = uNew;
+	}	
+
+	function graphData()
+	{
+		app.selectPlot(0);
+		app.ctx.lineWidth = 2;
+		for (var i = 0; i < 3; i++)
+		{
+			if (!(plotState >> i & 1))
+				continue;
+			
+			app.ctx.strokeStyle = plotColor[i];
+			app.plotFunction( function(x)
+			{
+				var normalizingFactor = (modeType == "model1") ? 1.5 : 1.2;
+				switch(i)
+				{
+					case 0:
+						return (u[getIndex(x)] + 0) / normalizingFactor;
+					case 1:
+						return v[getIndex(x)];
+					case 2:
+						return w[getIndex(x)];
+				}
+			}, true, dx);
+		}
+
+		if (drawTime)
+		{
+			app.ctx.textBaseline = "bottom";
+			app.ctx.textAlign = "start";
+			app.ctx.font = "20px Helvetica";
+			app.plotText("Time: " + (step * dt).toFixed(1) + "ms", new Point(1, 1));
+		}
+	}
+	
+	function stimulateU(strength, location, width)
+	{
+		strength = typeof strength !== "undefined" ? strength : 1;
+		location = typeof location !== "undefined" ? location : 0;
+		width = typeof width !== "undefined" ? width : 1;
+		
+		location = Math.min(Math.max(0, location), cableLength - 1 - width)
+		
+		for (var i = location; i < location + width; i++)
+			u[i] = strength;
+	}
+
+	function restart()
+	{
+		cableLength = 1101;
+		initialStimulus = false;
+
+		document.getElementById("cableLabel").innerHTML = "<strong>Cable Length: " + ((cableLength - 1) * dx).toFixed(2) + "cm</strong>";
+		app.editPlot(0, {domain: new Point(0, (cableLength - 1) * dx)}, true);
+		
+		for (var i = 0; i < cableLength; i++)
+		{
+			u[i] = 0;
+			v[i] = 1;
+			w[i] = 1;
+		}
+		app.selectPlot(0);
+		batchSize = 45;
+		document.getElementById("speedLabel").innerHTML = "<strong>Speed: " + batchSize + "</strong>";
+		document.getElementById("speed").value = batchSize;
+		document.getElementById("cableLength").value = cableLength;
+		isCable = true;
+
+		var items = document.getElementsByName("modeType");
+       	items.forEach(function(item){       		
+            item.selected =    (item.value === modeType) ? true : false;
+       	})
+
+		//updating calculation object
+		createCalcObject();
+
+		stimStrength = 0.2;
+		stimDuration = 2;
+		document.getElementById("stimStrength").value = stimStrength;
+		document.getElementById("stimDuration").value = stimDuration;
+		document.getElementById("stimLength").value = 0.5;
+		document.getElementById("stimPosition").value = 0.25;
+		stimulating = false;
+		step = 0;
+	}
+	function getIndex(value) { return Math.round(value / dx); }
+	function buildGraph()
+	{
+		app = createPlotter(document.getElementById("plot"), new Point(160, 130));
+		
+		var settings =
+		{
+			offset: new Point(0, 65),
+			domain: new Point(0, (cableLength - 1) * dx),
+			range: new Point(-0.1, 1.1),
+			pixelPerUnit: new Point((cableLength - 1) * 0.65 / ((cableLength - 1) * dx), 250),
+			unitPerTick: new Point(1, 0.1),
+			labelFrequency: new Point(1, 1),
+			xAxis: "Space (cm)",
+			yAxis: "Normalized Variables",
+			zeroBoundAxis: false,
+			labelPrecision: new Point(-1, 1)
+		}
+		app.newPlot(settings);
+	}
+
+	function buildForm()
+	{
+		var speedSlider = document.getElementById("speed");
+		var speedLabel = document.getElementById("speedLabel");
+		speedLabel.innerHTML = "<strong>Speed: " + batchSize + "</strong>";
+		speedSlider.value = batchSize;
+		
+		//used by other events to update the speed label and slider value accordingly
+		function updateSpeed(speed)
+		{
+			if (speed == batchSize) //if it is not changed, do nothing
+				return;
+			
+			speedSlider.value = speed;
+			speedLabel.innerHTML = "<strong>Speed: " + speed + "</strong>";
+			batchSize = speed;
+		}
+		speedSlider.addEventListener("input",
+		function()
+		{
+			updateSpeed(parseInt(speedSlider.value)); //just use the function previously declared
+		}, false);
+		//all the buttons for the sliders simply check if the number is in bounds for the operation and adjust it by 1 if it is, then updates the speed
+		document.getElementById("speedDown").addEventListener("click",
+		function()
+		{
+			if(parseInt(speedSlider.value) > parseInt(speedSlider.min))
+				speedSlider.value--;
+			updateSpeed(parseInt(speedSlider.value));
+		}, false);
+		document.getElementById("speedUp").addEventListener("click",
+		function()
+		{
+			if(parseInt(speedSlider.value) < parseInt(speedSlider.max))
+				speedSlider.value++;
+			updateSpeed(parseInt(speedSlider.value));
+		}, false);
+		
+		var cableSlider = document.getElementById("cableLength");
+		var cableLabel = document.getElementById("cableLabel");
+		cableLabel.innerHTML = "<strong>Cable Length: " + ((cableLength - 1) * dx).toFixed(2) + "cm</strong>";
+		cableSlider.value = 1101;
+		
+		//used by other events to update the cable length label and slider accordingly
+		function updateCableLength(length)
+		{
+			if (length == cableLength) //if it is not changed, do nothing
+				return;
+			
+			cableSlider.value = length;
+			cableLabel.innerHTML = "<strong>Cable Length: " + ((length - 1) * dx).toFixed(2) + "cm</strong>";
+			if (length > cableLength)
+				for (var i = cableLength; i < length; i++)
+				{
+					u[i] = u[cableLength-1];
+					v[i] = v[cableLength-1];
+					w[i] = w[cableLength-1];
+				}
+			cableLength = length;
+			app.editPlot(0, {domain: new Point(0, (cableLength - 1) * dx)}, true, true);
+			graphData();
+		}
+		cableSlider.addEventListener("input",
+		function()
+		{
+			updateCableLength(parseInt(cableSlider.value));
+		}, false);
+		
+		document.getElementById("cableLength").addEventListener("mousedown",
+		function()
+		{ 
+		   if(! isCable) {isSupressed = true;}                        
+		}, false);
+
+		document.getElementById("cableLength").addEventListener("mouseup",
+		function()
+		{
+		isSupressed = false;
+		}, false);
+
+		//all the buttons for the sliders simply check if the number is in bounds for the operation and adjust it by 1 if it is, then updates the cable length
+		document.getElementById("cableShorter").addEventListener("click",
+		function()
+		{
+			if(parseInt(cableSlider.value) > parseInt(cableSlider.min))
+				cableSlider.value--;
+			updateCableLength(parseInt(cableSlider.value));
+		}, false);
+		document.getElementById("cableLonger").addEventListener("click",
+		function()
+		{
+			if(parseInt(cableSlider.value) < parseInt(cableSlider.max))
+				cableSlider.value++;
+			updateCableLength(parseInt(cableSlider.value));
+		}, false);
+		
+		//simply bind the restart button to the restart function
+		document.getElementById("restart").addEventListener("click", restart, false);
+		
+		var pauseButton = document.getElementById("pause");
+		pauseButton.addEventListener("click",
+		function()
+		{
+			paused = !paused; //toggle paused
+			pauseButton.innerHTML = paused ? "Resume" : "Pause"; //and update the button accordingly
+		}, false);
+		
+		var model = document.getElementsByName("modeType");	
+		for (var i = 0; i < model.length; i++){
+			model[i].addEventListener("click", function(e) { 
+				console.log(e.target.value);
+				modeType = e.target.value; 
+			 	restart(); 		            
+			 }, false);
+		}
+
+		var renderTime = document.getElementById("graphTime");
+		renderTime.checked = true;
+		renderTime.addEventListener("change", function(e) { drawTime = e.target.checked; }, false);
+		
+		var graphToggles = document.getElementsByName("graphToggles");
+		for (var i = 0; i < graphToggles.length; i++)
+		{
+			graphToggles[i].addEventListener("change",
+			function(e)
+			{
+				plotState += (e.target.checked ? 1 : -1) * Math.pow(2, parseInt(e.target.value));
+			}, false);
+			
+			graphToggles[i].checked = graphToggles[i].id == "graphVoltage";
+			graphToggles[i].parentElement.style.backgroundColor = plotColor[i];
+			graphToggles[i].parentElement.style.color = "white";
+			graphToggles[i].parentElement.style.textShadow = "#000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px";
+		}
+		
+		document.getElementById("applyS1").addEventListener("click",
+		function()
+		{
+			stimTime = 0;
+			stimulating = true;
+			stimDuration = Math.round(Math.max(0, parseFloat(document.getElementById("stimDuration").value)) / dt);
+			stimStrength = parseFloat(document.getElementById("stimStrength").value);
+			var stimLoc = parseFloat(document.getElementById("stimPosition").value) / dx;
+			var stimGirth = parseFloat(document.getElementById("stimLength").value) / dx / 2;
+			stimRange.x = Math.min(Math.max(0, Math.round(stimLoc - stimGirth)), cableLength - 1);
+			stimRange.y = Math.min(Math.max(0, Math.round(stimLoc + stimGirth)), cableLength - 1);
+		}, false);
+	}
+	</script>
+	<style>
+	input[type="number"] { width: 60px; }
+	</style>
+</head>
+<body>
+	<div id="app">
+		<canvas id="plot">This graph requires HTML5 canvas support, sorry!</canvas>
+		<div style="position:absolute;top:15px;left:96px;border:2px solid black;padding:10px;">
+			<div style="float:left;margin-right:25px;">
+				<p style="margin:0px;"><label id="speedLabel" for="speedDown"><strong>Speed</strong></label></p>
+				<button id="speedDown">Slower</button>
+				<input id="speed" type="range" min="1" max="128" step="1" value="128" />
+				<button id="speedUp">Faster</button>
+			</div>
+			<div style="float:right;">
+				<p style="margin:0px;"><label id="cableLabel" for="cableShorter"><strong>Cable Length</strong></label></p>
+				<button id="cableShorter">Shorter</button>
+				<input id="cableLength" type="range" min="1" max="1101" step="1" value="1101" />
+				<button id="cableLonger">Longer</button>
+			</div>
+		</div>
+		<div style="position:absolute;top:84px;left:804px;border:2px solid black;padding:10px;">
+			<button id="restart">Restart</button>
+			<button id="pause">Pause</button>
+			<!-- <p style="margin:0px;"><label><strong>Geometry Type</strong></label></p>
+			<input id="geometryCable" type="radio" name="geometry" value="cable" checked="checked" />
+			<label id="geometryCableLabel" for="geometryCable">cable</label>
+			<input id="geometryRing" type="radio" name="geometry" value="ring" />
+			<label id="geometryRingLabel" for="geometryRing">ring</label> -->
+			<p style="margin:0px;"><label><strong>Cell Type</strong></label></p>
+			<input id="model1" type="radio" name="modeType" value = "model1" />
+			<label id="model1Label" for="model1">1</label>
+			<input id="model2a" type="radio" name="modeType" value = "model2a" checked="checked" />
+			<label id="model2aLabel" for="model2a">2a</label>
+			<input id="model2b" type="radio" name="modeType" value = "model2b" />
+			<label id="model2bLabel" for="model2b">2b</label> </br>
+			<input id="model2c" type="radio" name="modeType" value = "model2c"/>
+			<label id="model2cLabel" for="model2c">2c</label>
+			<p style="margin:0px;"><input id="graphTime" type="checkbox" checked="checked" />
+			<label id="graphTimeLabel" for="graphTime">show time</label></p>
+			<p style="margin:0px;"><label><strong>Graph</strong></label></p>
+			<p style="margin:0px;"><input id="graphVoltage" type="checkbox" name="graphToggles" value="0" checked="checked" />
+			<label id="graphVoltageLabel" for="graphVoltage">voltage</label></p>
+			<!-- <p style="margin:0px;"><input id="graphVGate" type="checkbox" name="graphToggles" value="1" />
+			<label id="graphVGateLabel" for="graphVGate">v</label></p>
+			<p style="margin:0px;"><input id="graphWGate" type="checkbox" name="graphToggles" value="2" />
+			<label id="graphWGateLabel" for="graphWGate">w</label></p> -->
+		</div>
+		<div style="position:absolute;top:450px;left:41px;border:2px solid black;padding:10px; width:720px;">
+			<button id="applyS1">Apply S1</button>
+			<label id="stimSettings"><strong>Stimulation Settings</strong></label>
+			<label id="stimStrengthLabel" for="stimStrength">strength</label>
+			<input id="stimStrength" type="number" step="1" value="0.2" />
+			<label id="stimDurationLabel" for="stimDuration">duration</label>
+			<input id="stimDuration" type="number" min="0" step="1" value="2" />
+			<label id="stimLengthLabel" for="stimLength">length</label>
+			<input id="stimLength" type="number" min="0" step="0.01" value="0.5" />
+			<label id="stimPositionLabel" for="stimPosition">position</label>
+			<input id="stimPosition" type="number" min="0" step="0.01" value="0.25" />
+			<div style="position:relative;left:65px;padding-top:5px; width:775px;">
+				<label><strong>Conductance Values</strong></label>
+				<label id="tvpLabel" for="tvp">tvp</label>
+				<input id="tvp" type="number" name="variables" min="0" step="0.1" value="10"/>
+				<label id="tv1mLabel" for="tv1m">tv1m</label>	
+				<input id="tv1m" type="number" name="variables" min="0" step="1" value="20"/>
+				<label id="tv2mLabel" for="tv2m">tv2m</label>	
+				<input id="tv2m" type="number" name="variables" min="0" step="0.1" value="20"/>
+				<label id="twpLabel" for="twp">twp</label>	
+				<input id="twp" type="number" name="variables" min="0" step="1" value="800"/>
+				<label id="twmLabel" for="twm">twm</label>	
+				<input id="twm" type="number" name="variables" min="0" step="1" value="45"/>
+				<div style="position:relative;left:15px;padding-top:5px; width:775px;">
+				<label id="tdLabel" for="td">td</label>	
+				<input id="td" type="number" name="variables" min="0" step="0.01" value="0.15"/>
+				<label id="toLabel" for="to">to</label>	
+				<input id="to" type="number" name="variables" min="0" step="0.1" value="1.5"/>
+				<label id="trLabel" for="tr">tr</label>	
+				<input id="tr" type="number" name="variables" min="0" step="1" value="31"/>
+				<label id="tsiLabel" for="tsi">tsi</label>	
+				<input id="tsi" type="number" name="variables" min="0" step="1" value="26.5"/>
+				<label id="xkLabel" for="xk">xk</label>	
+				<input id="xk" type="number" name="variables" min="0" step="1" value="10"/>
+				<label id="ucsiLabel" for="ucsi">ucsi</label>	
+				<input id="ucsi" type="number" name="variables" min="0" step="0.01" value="0.7"/>
+				<label id="ucLabel" for="uc">uc</label>	
+				<input id="uc" type="number" name="variables" min="0" step="0.01" value="0.25"/>
+				<div style="position:relative;left:0px;padding-top:5px; width:775px;">
+				<label id="uvLabel" for="uv">uv</label>
+				<input id="uv" type="number" name="variables" min="0" step="0.01" value="0.05"/>
+				<label id="urLabel" for="ur">ur</label><input id="ur" type="number" name="variables" min="0" step="0.01" value="0.6"/>		
+				<label id="k2Label" for="k2">k2</label><input id="k2" type="number" name="variables" min="0" step="0.1" value="1"/>		
+				<label id="ufiLabel" for="ufi">ufi</label>
+				<input id="ufi" type="number" name="variables" min="0" step="0.01" value="0.11"/>		
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
